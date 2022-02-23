@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";
 import { MantineProvider } from "@mantine/core";
+import "./App.css";
 
 ReactDOM.render(
   <React.StrictMode>
@@ -24,6 +25,7 @@ ReactDOM.render(
         },
         primaryColor: "yellow",
         fontFamily: "Montserrat, sans-serif",
+        colorScheme: "dark",
       }}
     >
       <App />

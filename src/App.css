@@ -1,0 +1,14 @@
+html,
+body,
+#root,
+#root > div {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+}
+
+div#root {
+  background-color: #212529;
+}
