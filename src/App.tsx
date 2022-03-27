@@ -6,13 +6,13 @@ import {
   useLocation,
 } from "react-router-dom";
 import Home from "./pages/Home";
-import Login from "./pages/Login";
+import Auth from "./pages/Auth";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={<Login />} />
+        <Route path="/auth" element={<Auth />} />
         <Route
           path="/"
           element={
@@ -28,11 +28,10 @@ function App() {
 
 function RequireAuth({ children }: { children: JSX.Element }) {
   let location = useLocation();
-  const logged = localStorage.getItem("username");
+  const logged = localStorage.getItem("token");
   if (!logged) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    return <Navigate to="/auth" state={{ from: location }} replace />;
   }
-
   return children;
 }
 

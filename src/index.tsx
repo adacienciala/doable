@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import App from "./App";
 import { MantineProvider } from "@mantine/core";
 import "./App.css";
+import { NotificationsProvider } from "@mantine/notifications";
 
 ReactDOM.render(
   <React.StrictMode>
@@ -28,7 +29,9 @@ ReactDOM.render(
         colorScheme: "dark",
       }}
     >
-      <App />
+      <NotificationsProvider>
+        <App />
+      </NotificationsProvider>
     </MantineProvider>
   </React.StrictMode>,
   document.getElementById("root")

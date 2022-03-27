@@ -5,7 +5,7 @@ function Home() {
   let navigate = useNavigate();
 
   function logOut() {
-    localStorage.setItem("username", "");
+    localStorage.clear();
     navigate("/");
   }
 
