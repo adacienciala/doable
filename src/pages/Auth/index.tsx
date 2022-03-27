@@ -227,7 +227,12 @@ export default function Auth() {
               )}
 
               <Group position="apart" mt="xl">
-                <Button type="submit">
+                <Button
+                  type="submit"
+                  styles={(theme) => ({
+                    root: { color: theme.colors.gray[9] },
+                  })}
+                >
                   {formType === "register" ? "Register" : "Login"}
                 </Button>
                 <Anchor
