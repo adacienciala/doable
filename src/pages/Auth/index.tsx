@@ -20,12 +20,6 @@ import { useNotifications } from "@mantine/notifications";
 
 export default function Auth() {
   const [mounted, setMounted] = useState(false);
-  const [alertMsg, setAlertMsg] = useState({
-    title: `A problem occured 🤔`,
-    message: "Try again later",
-    color: "red",
-    icon: <MdClose />,
-  });
   const [formType, setFormType] = useState<"register" | "login">("login");
   const [loading, setLoading] = useState(false);
 
@@ -59,19 +53,18 @@ export default function Auth() {
     setMounted(true);
   }, []);
 
-  useEffect(() => {
-    if (mounted) notifications.showNotification(alertMsg);
-  }, [alertMsg]);
-
   const toggleFormType = () => {
     setFormType((current) => (current === "register" ? "login" : "register"));
   };
 
   const showError = (msg: string = "Try again later") => {
-    setAlertMsg((prev) => ({
-      ...prev,
+    const alertMsg = {
+      title: `A problem occured 🤔`,
       message: msg,
-    }));
+      color: "red",
+      icon: <MdClose />,
+    };
+    notifications.showNotification(alertMsg);
   };
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -94,7 +87,6 @@ export default function Auth() {
       }
       localStorage.setItem("token", token);
       localStorage.setItem("tokenSelector", tokenSelector);
-      setLoading(false);
       navigate(from, { replace: true });
     }, 250);
   }
