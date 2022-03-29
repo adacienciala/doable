@@ -13,7 +13,12 @@ import {
 import { useForm } from "@mantine/hooks";
 import { useNotifications } from "@mantine/notifications";
 import { useEffect, useState } from "react";
-import { MdClose, MdLockOutline, MdOutlineEmail } from "react-icons/md";
+import {
+  MdClose,
+  MdLockOutline,
+  MdOutlineEmail,
+  MdPersonOutline,
+} from "react-icons/md";
 import { useLocation, useNavigate } from "react-router-dom";
 import { request } from "../../api/utils";
 import lemon from "./lemon-shadow.svg";
@@ -44,7 +49,7 @@ export default function Auth() {
     },
     errorMessages: {
       email: "Is this an email?",
-      password: "Please, min. 6 characters with min. 1 digit.",
+      password: "What about min. 6 characters and 1 digit?",
       confirmPassword: "Hmm, passwords don't match... Try again.",
     },
   });
@@ -202,6 +207,7 @@ export default function Auth() {
                     required
                     label="Name"
                     placeholder="Name"
+                    icon={<MdPersonOutline />}
                     value={form.values.name}
                     onBlur={() => form.validateField("name")}
                     {...form.getInputProps("name")}
@@ -211,6 +217,7 @@ export default function Auth() {
                     required
                     label="Surname"
                     placeholder="Surname"
+                    icon={<MdPersonOutline />}
                     value={form.values.surname}
                     onBlur={() => form.validateField("surname")}
                     {...form.getInputProps("surname")}
