@@ -11,12 +11,12 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useForm } from "@mantine/hooks";
-import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import lemon from "./lemon-shadow.svg";
-import { MdLockOutline, MdOutlineEmail, MdClose } from "react-icons/md";
-import { request } from "../../api/utils";
 import { useNotifications } from "@mantine/notifications";
+import { useEffect, useState } from "react";
+import { MdClose, MdLockOutline, MdOutlineEmail } from "react-icons/md";
+import { useLocation, useNavigate } from "react-router-dom";
+import { request } from "../../api/utils";
+import lemon from "./lemon-shadow.svg";
 
 export default function Auth() {
   const [mounted, setMounted] = useState(false);
@@ -97,7 +97,7 @@ export default function Auth() {
     name: string,
     surname: string
   ): Promise<any> {
-    let data: any = { email, password };
+    const data: any = { email, password };
     let endpoint = "/login";
     if (formType === "register") {
       data.name = name;

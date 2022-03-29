@@ -2,7 +2,7 @@ import { Button, Center } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 
 function Home() {
-  let navigate = useNavigate();
+  const navigate = useNavigate();
 
   function logOut() {
     localStorage.clear();

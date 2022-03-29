@@ -5,8 +5,8 @@ import {
   Routes,
   useLocation,
 } from "react-router-dom";
-import Home from "./pages/Home";
 import Auth from "./pages/Auth";
+import Home from "./pages/Home";
 
 function App() {
   return (
@@ -27,7 +27,7 @@ function App() {
 }
 
 function RequireAuth({ children }: { children: JSX.Element }) {
-  let location = useLocation();
+  const location = useLocation();
   const logged = localStorage.getItem("token");
   if (!logged) {
     return <Navigate to="/auth" state={{ from: location }} replace />;
