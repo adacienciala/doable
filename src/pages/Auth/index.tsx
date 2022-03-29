@@ -97,7 +97,7 @@ export default function Auth() {
     name: string,
     surname: string
   ): Promise<any> {
-    const data: any = { email, password };
+    const data: Record<string, string> = { email, password };
     let endpoint = "/login";
     if (formType === "register") {
       data.name = name;
