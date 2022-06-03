@@ -6,7 +6,7 @@ import {
   useLocation,
 } from "react-router-dom";
 import Auth from "./pages/Auth";
-import Home from "./pages/Home";
+import Dashboard from "./pages/Dashboard";
 
 function App() {
   return (
@@ -17,7 +17,47 @@ function App() {
           path="/"
           element={
             <RequireAuth>
-              <Home />
+              <Dashboard page="dashboard" />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/projects"
+          element={
+            <RequireAuth>
+              <Dashboard page="projects" />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/calendar"
+          element={
+            <RequireAuth>
+              <Dashboard page="calendar" />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/party"
+          element={
+            <RequireAuth>
+              <Dashboard page="party" />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/rewards"
+          element={
+            <RequireAuth>
+              <Dashboard page="rewards" />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <RequireAuth>
+              <p>settings</p>
             </RequireAuth>
           }
         />
