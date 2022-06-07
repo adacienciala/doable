@@ -81,7 +81,7 @@ export default function Auth() {
 
     setLoading(true);
     setTimeout(async () => {
-      const { token, tokenSelector } = await authenticate(
+      const { token, tokenSelector, user } = await authenticate(
         form.values.email,
         form.values.password,
         form.values.name,
@@ -92,6 +92,7 @@ export default function Auth() {
       }
       localStorage.setItem("token", token);
       localStorage.setItem("tokenSelector", tokenSelector);
+      localStorage.setItem("user", JSON.stringify(user));
       navigate(from, { replace: true });
     }, 250);
   }
