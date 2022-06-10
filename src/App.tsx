@@ -5,6 +5,7 @@ import {
   Routes,
   useLocation,
 } from "react-router-dom";
+import MainLayout from "./layouts/MainLayout";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 
@@ -17,7 +18,9 @@ function App() {
           path="/"
           element={
             <RequireAuth>
-              <Dashboard page="dashboard" />
+              <MainLayout page="dashboard">
+                <Dashboard />
+              </MainLayout>
             </RequireAuth>
           }
         />
@@ -25,7 +28,7 @@ function App() {
           path="/projects"
           element={
             <RequireAuth>
-              <Dashboard page="projects" />
+              <MainLayout page="projects"></MainLayout>
             </RequireAuth>
           }
         />
@@ -33,7 +36,7 @@ function App() {
           path="/calendar"
           element={
             <RequireAuth>
-              <Dashboard page="calendar" />
+              <MainLayout page="calendar"></MainLayout>
             </RequireAuth>
           }
         />
@@ -41,7 +44,7 @@ function App() {
           path="/party"
           element={
             <RequireAuth>
-              <Dashboard page="party" />
+              <MainLayout page="party"></MainLayout>
             </RequireAuth>
           }
         />
@@ -49,7 +52,7 @@ function App() {
           path="/rewards"
           element={
             <RequireAuth>
-              <Dashboard page="rewards" />
+              <MainLayout page="rewards"></MainLayout>
             </RequireAuth>
           }
         />
