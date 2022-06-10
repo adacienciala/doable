@@ -110,8 +110,8 @@ export default function Auth() {
       data.surname = surname;
       endpoint = "/register";
     }
-    // const url = process.env.REACT_APP_DOABLE_API + endpoint;
-    const url = process.env.REACT_APP_DOABLE_LOCALHOST + endpoint;
+    const url = process.env.REACT_APP_DOABLE_API + endpoint;
+    // const url = process.env.REACT_APP_DOABLE_LOCALHOST + endpoint;
     const res = (await request("POST", url, data)) as Response;
     if (res === null) {
       showError("Server error occured, try again later");

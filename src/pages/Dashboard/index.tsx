@@ -1,7 +1,7 @@
 import { Box } from "@mantine/core";
 
 const Dashboard = () => {
-  return <Box classNames={"contenccc"}>contenttt</Box>;
+  return <Box>Dashboard content</Box>;
 };
 
 export default Dashboard;
