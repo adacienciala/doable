@@ -5,8 +5,8 @@ import {
   Box,
   Button,
   Center,
-  Container,
   FloatingTooltip,
+  Group,
   RingProgress,
   Text,
 } from "@mantine/core";
@@ -106,9 +106,9 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
 
   const NavbarFooter = () => {
     return (
-      <Box
+      <Group
         sx={(theme) => ({
-          display: "flex",
+          width: "100%",
           justifyContent: "space-between",
           gridArea: "navbar",
         })}
@@ -119,7 +119,7 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
         <ActionIcon size={30} component={Link} to="/settings">
           <RiSettings2Line size={30} />
         </ActionIcon>
-      </Box>
+      </Group>
     );
   };
 
@@ -189,7 +189,6 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
     <>
       <Box
         sx={(theme) => ({
-          backgroundColor: theme.colors.gray[7],
           display: "grid",
           color: "white",
           gridTemplateRows: "70px auto",
@@ -199,12 +198,14 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
             "navbar content"
             "navbar content"
           `,
+          backgroundImage: "url(./background.png)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
         })}
       >
-        <Container
+        <Group
           sx={(theme) => ({
             gridArea: "navbar",
-            display: "flex",
             backgroundColor: theme.colors.gray[8],
             flexDirection: "column",
             padding: 20,
@@ -212,25 +213,23 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
             width: "100%",
           })}
         >
-          <Box
+          <Group
             sx={(theme) => ({
               flexGrow: 3,
               gap: 10,
-              display: "flex",
               alignItems: "center",
               flexDirection: "column",
             })}
           >
             <NavbarProfile />
             <NavbarLinks />
-          </Box>
+          </Group>
           <NavbarFooter />
-        </Container>
-        <Box
+        </Group>
+        <Group
           sx={(theme) => ({
             backgroundColor: theme.colors.yellow[6],
             gridArea: "header",
-            display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
             padding: 20,
@@ -238,7 +237,7 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
           })}
         >
           <Text>You're doing great, {user.name}!</Text>
-        </Box>
+        </Group>
         <Box
           sx={(theme) => ({
             gridArea: "content",
