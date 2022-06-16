@@ -28,7 +28,7 @@ type Props = {
 };
 
 const MainLayout: React.FC<Props> = ({ page, children }) => {
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")!));
+  const user = JSON.parse(localStorage.getItem("user")!); // TODO: state in the future
 
   function logOut() {
     localStorage.clear();
@@ -130,7 +130,7 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
     useEffect(() => {
       setXp(user?.statistics?.xp || 0);
       setMaxXp(user?.statistics?.maxXp || 100);
-    }, [user]);
+    }, []);
 
     return (
       <>
