@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import MainLayout from "./layouts/MainLayout";
 import Auth from "./pages/Auth";
+import Calendar from "./pages/Calendar";
 import Dashboard from "./pages/Dashboard";
 
 function App() {
@@ -36,7 +37,9 @@ function App() {
           path="/calendar"
           element={
             <RequireAuth>
-              <MainLayout page="calendar"></MainLayout>
+              <MainLayout page="calendar">
+                <Calendar />
+              </MainLayout>
             </RequireAuth>
           }
         />
