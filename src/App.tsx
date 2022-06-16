@@ -5,8 +5,9 @@ import {
   Routes,
   useLocation,
 } from "react-router-dom";
+import MainLayout from "./layouts/MainLayout";
 import Auth from "./pages/Auth";
-import Home from "./pages/Home";
+import Dashboard from "./pages/Dashboard";
 
 function App() {
   return (
@@ -17,7 +18,49 @@ function App() {
           path="/"
           element={
             <RequireAuth>
-              <Home />
+              <MainLayout page="dashboard">
+                <Dashboard />
+              </MainLayout>
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/projects"
+          element={
+            <RequireAuth>
+              <MainLayout page="projects"></MainLayout>
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/calendar"
+          element={
+            <RequireAuth>
+              <MainLayout page="calendar"></MainLayout>
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/party"
+          element={
+            <RequireAuth>
+              <MainLayout page="party"></MainLayout>
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/rewards"
+          element={
+            <RequireAuth>
+              <MainLayout page="rewards"></MainLayout>
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <RequireAuth>
+              <p>settings</p>
             </RequireAuth>
           }
         />

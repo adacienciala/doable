@@ -81,7 +81,7 @@ export default function Auth() {
 
     setLoading(true);
     setTimeout(async () => {
-      const { token, tokenSelector } = await authenticate(
+      const { token, tokenSelector, user } = await authenticate(
         form.values.email,
         form.values.password,
         form.values.name,
@@ -92,6 +92,7 @@ export default function Auth() {
       }
       localStorage.setItem("token", token);
       localStorage.setItem("tokenSelector", tokenSelector);
+      localStorage.setItem("user", JSON.stringify(user));
       navigate(from, { replace: true });
     }, 250);
   }
@@ -110,6 +111,7 @@ export default function Auth() {
       endpoint = "/register";
     }
     const url = process.env.REACT_APP_DOABLE_API + endpoint;
+    // const url = process.env.REACT_APP_DOABLE_LOCALHOST + endpoint;
     const res = (await request("POST", url, data)) as Response;
     if (res === null) {
       showError("Server error occured, try again later");
@@ -143,9 +145,9 @@ export default function Auth() {
       {(styles) => (
         <Center>
           <Paper
-            padding={50}
             shadow={"sm"}
             style={{
+              padding: "50px",
               width: "400px",
               ...styles["login-box"],
               backgroundColor: "rgba(61, 67, 75, 0.75)",
