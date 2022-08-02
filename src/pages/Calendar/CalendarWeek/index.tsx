@@ -18,11 +18,7 @@ export const CalendarWeek = ({ tasks }: { tasks: TaskData[] }) => {
   const DayOfWeek = (date: Date) => {
     return (
       <>
-        <Text
-          sx={() => ({
-            marginBottom: "20px",
-          })}
-        >
+        <Text style={{ marginBottom: "20px" }}>
           {format(date, "EEEE, do MMM")}
         </Text>
         <TaskList

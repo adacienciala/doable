@@ -1,6 +1,6 @@
 import { Group, Text } from "@mantine/core";
 import { addDays, endOfWeek, format, startOfWeek } from "date-fns";
-import { AnimatePresence, motion, useAnimation } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { CalendarNoDate } from "./CalendarNoDate";
 import { CalendarToday } from "./CalendarToday";
@@ -32,9 +32,15 @@ const Calendar = () => {
     },
     {
       id: 4,
-      title: "TitleMonday2",
+      title: "TitleToday",
       description: "Some description 1",
-      date: addDays(firstDayOfWeek, 0),
+      date: new Date(),
+    },
+    {
+      id: 5,
+      title: "TitleToday",
+      description: "Some description 1",
+      date: new Date(),
     },
   ]);
 
@@ -87,40 +93,30 @@ const Calendar = () => {
   const CalendarTab = ({ title, range, tabView }: CalendarTabProps) => {
     const open = view === tabView;
 
-    const animation = useAnimation();
-
-    async function sequenceIn() {
-      await animation.start({ opacity: 1 });
-      animation.start({ width: "100%" });
-    }
-
-    async function sequenceOut() {
-      await animation.start({ opacity: 0 });
-      animation.start({ width: 0 });
-    }
-
-    const MotionDiv = motion.div;
+    const MotionGroup = motion(Group);
 
     return (
-      <Group
+      <MotionGroup
         direction="row"
         style={{
           alignItems: "stretch",
           flexGrow: open ? 1 : 0,
           flexWrap: "nowrap",
         }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{
+          ease: "easeOut",
+          duration: 1,
+        }}
       >
         <VerticalTab title={title} range={range} view={tabView} />
-        <AnimatePresence exitBeforeEnter>
+        <AnimatePresence>
           {open && (
-            <MotionDiv
-              animate={animation}
-              transition={{
-                ease: "easeOut",
-                duration: 1,
-                when: "beforeChildren",
-              }}
+            <div
               style={{
+                width: "100%",
                 borderRight: "1px solid gray",
                 padding: "20px",
               }}
@@ -128,10 +124,10 @@ const Calendar = () => {
               {view === "today" && <CalendarToday tasks={tasks} />}
               {view === "week" && <CalendarWeek tasks={tasks} />}
               {view === "no-date" && <CalendarNoDate tasks={tasks} />}
-            </MotionDiv>
+            </div>
           )}
         </AnimatePresence>
-      </Group>
+      </MotionGroup>
     );
   };
 

@@ -13,7 +13,12 @@ export const TaskList = ({
   const [items, setItems] = useState(tasks);
   return (
     <>
-      <Reorder.Group axis="y" values={items} onReorder={setItems}>
+      <Reorder.Group
+        axis="y"
+        values={items}
+        onReorder={setItems}
+        style={{ listStyle: "none", padding: 0, margin: 0 }}
+      >
         {items.map((item) => (
           <Reorder.Item key={item.id} value={item}>
             <TaskPill data={item} view={view} />
