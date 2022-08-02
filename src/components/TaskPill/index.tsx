@@ -33,7 +33,7 @@ export const TaskPill = ({
       <Checkbox radius="xl" />
       <Text weight={500}>{title}</Text>
       {view === "today" && <Text weight={300}>{description}</Text>}
-      {/* <Text weight={300}>{format(date, "dd/MM/yyyy")}</Text> */}
+      {view === "no-date" && <Text weight={300}>{description}</Text>}
     </Group>
   );
 };

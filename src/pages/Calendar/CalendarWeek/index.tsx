@@ -1,4 +1,4 @@
-import { Box, Grid, Text } from "@mantine/core";
+import { Box, Grid, Group, Text } from "@mantine/core";
 import { addDays, format, isSameDay, startOfWeek } from "date-fns";
 import { endOfWeek } from "date-fns/esm";
 import { useCallback } from "react";
@@ -26,6 +26,26 @@ export const CalendarWeek = ({ tasks }: { tasks: TaskData[] }) => {
           tasks={tasks.filter((t) => isSameDay(t.date, date))}
           view="week"
         />
+      </>
+    );
+  };
+
+  const HabitTracker = () => {
+    return (
+      <>
+        <Group
+          sx={(theme) => ({
+            backgroundColor: theme.colors.yellow[6],
+            borderRadius: "10px",
+            padding: "20px",
+            color: "black",
+            height: "100%",
+            justifyContent: "center",
+            fontStyle: "italic",
+          })}
+        >
+          Work In Progress
+        </Group>
       </>
     );
   };
@@ -69,7 +89,7 @@ export const CalendarWeek = ({ tasks }: { tasks: TaskData[] }) => {
             order: 3,
           })}
         >
-          Lol
+          <HabitTracker />
         </Grid.Col>
       </Grid>
     </>

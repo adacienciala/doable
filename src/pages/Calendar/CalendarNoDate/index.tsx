@@ -5,7 +5,9 @@ import { TaskList } from "../../../containers/TaskList";
 export const CalendarNoDate = ({ tasks }: { tasks: TaskData[] }) => {
   return (
     <>
-      <Text style={{ marginBottom: "20px" }}>Not scheduled</Text>
+      <Text weight={"bold"} style={{ marginBottom: "20px" }}>
+        Not scheduled
+      </Text>
       <Box>
         <TaskList tasks={tasks} view="no-date" />
       </Box>
