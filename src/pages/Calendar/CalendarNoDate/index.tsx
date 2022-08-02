@@ -1,14 +1,13 @@
 import { Box, Text } from "@mantine/core";
-import { TaskData, TaskPill } from "../../../components/TaskPill";
+import { TaskData } from "../../../components/TaskPill";
+import { TaskList } from "../../../containers/TaskList";
 
 export const CalendarNoDate = ({ tasks }: { tasks: TaskData[] }) => {
   return (
     <>
       <Text>Not scheduled</Text>
       <Box>
-        {tasks.map((t, idx) => (
-          <TaskPill data={t} view={"no-date"} key={idx} />
-        ))}
+        <TaskList tasks={tasks} view="no-date" />
       </Box>
     </>
   );

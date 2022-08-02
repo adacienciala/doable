@@ -5,6 +5,7 @@ export interface TaskData {
   title: string;
   description: string;
   date: Date;
+  id: number;
 }
 
 interface TaskPillProps {

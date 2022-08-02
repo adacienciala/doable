@@ -1,6 +1,6 @@
 import { Group, Text } from "@mantine/core";
 import { addDays, endOfWeek, format, startOfWeek } from "date-fns";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion, useAnimation } from "framer-motion";
 import { useState } from "react";
 import { CalendarNoDate } from "./CalendarNoDate";
 import { CalendarToday } from "./CalendarToday";
@@ -13,19 +13,28 @@ const Calendar = () => {
   const [view, setView] = useState<CalendarView>("today");
   const [tasks, setTasks] = useState([
     {
+      id: 1,
       title: "TitleMonday",
       description: "Some description 1",
       date: addDays(firstDayOfWeek, 0),
     },
     {
+      id: 2,
       title: "TitleWednesday",
       description: "Some description 2",
       date: addDays(firstDayOfWeek, 2),
     },
     {
+      id: 3,
       title: "TitleSaturday",
       description: "Some description 3",
       date: addDays(firstDayOfWeek, 5),
+    },
+    {
+      id: 4,
+      title: "TitleMonday2",
+      description: "Some description 1",
+      date: addDays(firstDayOfWeek, 0),
     },
   ]);
 
@@ -78,33 +87,51 @@ const Calendar = () => {
   const CalendarTab = ({ title, range, tabView }: CalendarTabProps) => {
     const open = view === tabView;
 
-    const MotionGroup = motion(Group);
+    const animation = useAnimation();
+
+    async function sequenceIn() {
+      await animation.start({ opacity: 1 });
+      animation.start({ width: "100%" });
+    }
+
+    async function sequenceOut() {
+      await animation.start({ opacity: 0 });
+      animation.start({ width: 0 });
+    }
+
+    const MotionDiv = motion.div;
 
     return (
-      <MotionGroup
+      <Group
         direction="row"
-        initial={false}
-        animate={{ flexGrow: open ? 1 : 0 }}
         style={{
           alignItems: "stretch",
+          flexGrow: open ? 1 : 0,
           flexWrap: "nowrap",
         }}
       >
         <VerticalTab title={title} range={range} view={tabView} />
-        {open && (
-          <div
-            style={{
-              width: "100%",
-              borderRight: "1px solid gray",
-              padding: "20px",
-            }}
-          >
-            {view === "today" && <CalendarToday tasks={tasks} />}
-            {view === "week" && <CalendarWeek tasks={tasks} />}
-            {view === "no-date" && <CalendarNoDate tasks={tasks} />}
-          </div>
-        )}
-      </MotionGroup>
+        <AnimatePresence exitBeforeEnter>
+          {open && (
+            <MotionDiv
+              animate={animation}
+              transition={{
+                ease: "easeOut",
+                duration: 1,
+                when: "beforeChildren",
+              }}
+              style={{
+                borderRight: "1px solid gray",
+                padding: "20px",
+              }}
+            >
+              {view === "today" && <CalendarToday tasks={tasks} />}
+              {view === "week" && <CalendarWeek tasks={tasks} />}
+              {view === "no-date" && <CalendarNoDate tasks={tasks} />}
+            </MotionDiv>
+          )}
+        </AnimatePresence>
+      </Group>
     );
   };
 

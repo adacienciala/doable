@@ -1,7 +1,8 @@
-import { Box, Grid, Text } from "@mantine/core";
+import { Grid, Text } from "@mantine/core";
 import { addDays, format, isSameDay, startOfWeek } from "date-fns";
 import { useCallback } from "react";
-import { TaskData, TaskPill } from "../../../components/TaskPill";
+import { TaskData } from "../../../components/TaskPill";
+import { TaskList } from "../../../containers/TaskList";
 
 const firstDayOfWeek = startOfWeek(Date.now(), { weekStartsOn: 1 });
 
@@ -24,13 +25,10 @@ export const CalendarWeek = ({ tasks }: { tasks: TaskData[] }) => {
         >
           {format(date, "EEEE, do MMM")}
         </Text>
-        <Box>
-          {tasks
-            .filter((t) => isSameDay(t.date, date))
-            .map((t, idx) => (
-              <TaskPill data={t} view={"week"} key={idx} />
-            ))}
-        </Box>
+        <TaskList
+          tasks={tasks.filter((t) => isSameDay(t.date, date))}
+          view="week"
+        />
       </>
     );
   };
