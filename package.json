@@ -6,6 +6,7 @@
     "@mantine/core": "^4.2.7",
     "@mantine/hooks": "^4.2.7",
     "@mantine/notifications": "^4.2.7",
+    "@tanstack/react-query": "^4.0.10",
     "@testing-library/jest-dom": "^5.15.1",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",

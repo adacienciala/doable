@@ -1,48 +1,32 @@
-import { Group, Text } from "@mantine/core";
-import { addDays, endOfWeek, format, startOfWeek } from "date-fns";
+import { Group, LoadingOverlay, Text } from "@mantine/core";
+import { useQuery } from "@tanstack/react-query";
+import { endOfWeek, format, startOfWeek } from "date-fns";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
+import { APIClient, Method } from "../../api/task";
+import { TaskData } from "../../components/TaskPill";
 import { CalendarNoDate } from "./CalendarNoDate";
 import { CalendarToday } from "./CalendarToday";
 import { CalendarWeek } from "./CalendarWeek";
-const firstDayOfWeek = startOfWeek(Date.now(), { weekStartsOn: 1 });
 
 export type CalendarView = "today" | "week" | "no-date";
 
 const Calendar = () => {
   const [view, setView] = useState<CalendarView>("today");
-  const [tasks, setTasks] = useState([
-    {
-      id: 1,
-      title: "TitleMonday",
-      description: "Some description 1",
-      date: addDays(firstDayOfWeek, 0),
-    },
-    {
-      id: 2,
-      title: "TitleWednesday",
-      description: "Some description 2",
-      date: addDays(firstDayOfWeek, 2),
-    },
-    {
-      id: 3,
-      title: "TitleSaturday",
-      description: "Some description 3",
-      date: addDays(firstDayOfWeek, 5),
-    },
-    {
-      id: 4,
-      title: "TitleToday",
-      description: "Some description 1",
-      date: new Date(),
-    },
-    {
-      id: 5,
-      title: "TitleToday",
-      description: "Some description 2",
-      date: new Date(),
-    },
-  ]);
+
+  const {
+    isLoading,
+    isSuccess,
+    error,
+    data: tasks,
+  } = useQuery(["tasks"], () => {
+    const client = new APIClient();
+    return client.tasks(Method.GET);
+  });
+
+  if (isSuccess) {
+    tasks.forEach((task: TaskData) => (task.date = new Date(task.date))); // <-- data is guaranteed to be defined
+  }
 
   interface VerticalTabProps {
     title: string;
@@ -53,7 +37,7 @@ const Calendar = () => {
   const VerticalTab = ({ title, range, view }: VerticalTabProps) => {
     return (
       <Group
-        sx={(themes) => ({
+        sx={() => ({
           padding: "10px 40px",
           width: "80px",
           flexDirection: "row",
@@ -133,33 +117,45 @@ const Calendar = () => {
 
   return (
     <>
-      <Group
-        direction="row"
-        align={"stretch"}
+      <LoadingOverlay
+        visible={isLoading}
+        overlayOpacity={0.8}
         style={{
+          width: "100%",
           height: "100%",
-          gap: 0,
+          position: "relative",
         }}
-        noWrap
-      >
-        <CalendarTab
-          title="Today"
-          range={format(Date.now(), "dd/MM/yyyy")}
-          tabView="today"
-        />
-        <CalendarTab
-          title="Week"
-          range={`${format(
-            startOfWeek(Date.now(), { weekStartsOn: 1 }),
-            "dd/MM/yyyy"
-          )} - ${format(
-            endOfWeek(Date.now(), { weekStartsOn: 1 }),
-            "dd/MM/yyyy"
-          )}`}
-          tabView="week"
-        />
-        <CalendarTab title="Not scheduled" tabView="no-date" />
-      </Group>
+      />
+      {error && "An error has occurred"}
+      {tasks && (
+        <Group
+          direction="row"
+          align={"stretch"}
+          style={{
+            height: "100%",
+            gap: 0,
+          }}
+          noWrap
+        >
+          <CalendarTab
+            title="Today"
+            range={format(Date.now(), "dd/MM/yyyy")}
+            tabView="today"
+          />
+          <CalendarTab
+            title="Week"
+            range={`${format(
+              startOfWeek(Date.now(), { weekStartsOn: 1 }),
+              "dd/MM/yyyy"
+            )} - ${format(
+              endOfWeek(Date.now(), { weekStartsOn: 1 }),
+              "dd/MM/yyyy"
+            )}`}
+            tabView="week"
+          />
+          <CalendarTab title="Not scheduled" tabView="no-date" />
+        </Group>
+      )}
     </>
   );
 };
