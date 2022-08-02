@@ -1,7 +1,13 @@
-import { Box, Checkbox, Grid, Group, Text } from "@mantine/core";
-import { addDays, endOfWeek, format, isSameDay, startOfWeek } from "date-fns";
-import { useCallback, useState } from "react";
+import { Group, Text } from "@mantine/core";
+import { addDays, endOfWeek, format, startOfWeek } from "date-fns";
+import { motion } from "framer-motion";
+import { useState } from "react";
+import { CalendarNoDate } from "./CalendarNoDate";
+import { CalendarToday } from "./CalendarToday";
+import { CalendarWeek } from "./CalendarWeek";
 const firstDayOfWeek = startOfWeek(Date.now(), { weekStartsOn: 1 });
+
+export type CalendarView = "today" | "week" | "no-date";
 
 const Calendar = () => {
   const [view, setView] = useState<CalendarView>("today");
@@ -22,132 +28,6 @@ const Calendar = () => {
       date: addDays(firstDayOfWeek, 5),
     },
   ]);
-
-  type CalendarView = "today" | "week" | "no-date";
-  interface TaskPillProps {
-    data: {
-      title: string;
-      description: string;
-      date: Date;
-    };
-  }
-
-  const TaskPill = ({ data: { title, description, date } }: TaskPillProps) => {
-    return (
-      <Group
-        position="apart"
-        noWrap
-        sx={(theme) => ({
-          backgroundColor: "white",
-          color: theme.colors.gray[7],
-          marginBottom: "20px",
-          padding: "10px",
-          borderRadius: "10px",
-          cursor: "grab",
-        })}
-      >
-        <Checkbox radius="xl" />
-        <Text weight={500}>{title}</Text>
-        {view === "today" && <Text weight={300}>{description}</Text>}
-        {/* <Text weight={300}>{format(date, "dd/MM/yyyy")}</Text> */}
-      </Group>
-    );
-  };
-
-  const CalendarToday = () => {
-    return (
-      <>
-        <Text weight={"bold"} style={{ display: "inline-block" }}>
-          Today
-        </Text>
-        <Text style={{ display: "inline-block" }}>
-          {format(Date.now(), "EEEE, do MMM")}
-        </Text>
-        <Box>
-          {tasks
-            .filter((t) => isSameDay(t.date, new Date()))
-            .map((t, idx) => (
-              <TaskPill data={t} key={idx} />
-            ))}
-        </Box>
-      </>
-    );
-  };
-
-  const CalendarWeek = () => {
-    const WeekDates = useCallback(() => {
-      const weekDates = [];
-      for (let dayIdx = 0; dayIdx < 7; dayIdx++) {
-        weekDates.push(addDays(firstDayOfWeek, dayIdx));
-      }
-      return weekDates;
-    }, []);
-
-    const DayOfWeek = (date: Date) => {
-      return (
-        <>
-          <Text
-            sx={() => ({
-              marginBottom: "20px",
-            })}
-          >
-            {format(date, "EEEE, do MMM")}
-          </Text>
-          <Box>
-            {tasks
-              .filter((t) => isSameDay(t.date, date))
-              .map((t, idx) => (
-                <TaskPill data={t} key={idx} />
-              ))}
-          </Box>
-        </>
-      );
-    };
-
-    return (
-      <>
-        <Grid
-          justify="space-between"
-          columns={4}
-          gutter={50}
-          style={{ height: "100%" }}
-        >
-          {WeekDates().map((date, idx) => (
-            <Grid.Col
-              key={idx}
-              span={1}
-              sx={() => ({
-                order: idx < 3 ? idx : idx + 1,
-              })}
-            >
-              {DayOfWeek(date)}
-            </Grid.Col>
-          ))}
-          <Grid.Col
-            span={1}
-            sx={() => ({
-              order: 3,
-            })}
-          >
-            Lol
-          </Grid.Col>
-        </Grid>
-      </>
-    );
-  };
-
-  const CalendarNoDate = () => {
-    return (
-      <>
-        <Text>Not scheduled</Text>
-        <Box>
-          {tasks.map((t, idx) => (
-            <TaskPill data={t} key={idx} />
-          ))}
-        </Box>
-      </>
-    );
-  };
 
   interface VerticalTabProps {
     title: string;
@@ -179,28 +59,13 @@ const Calendar = () => {
             transformOrigin: "left center",
             flexWrap: "nowrap",
             transform: "rotate(90deg)",
+            fontWeight: "bold",
           }}
         >
           <Text>{title}</Text>
           {range && <Text>{range}</Text>}
         </Group>
       </Group>
-    );
-  };
-
-  const CalendarContent = ({ view }: { view: CalendarView }) => {
-    return (
-      <Box
-        style={{
-          flexGrow: 1,
-          borderRight: "1px solid gray",
-          padding: "20px",
-        }}
-      >
-        {view === "today" && <CalendarToday />}
-        {view === "week" && <CalendarWeek />}
-        {view === "no-date" && <CalendarNoDate />}
-      </Box>
     );
   };
 
@@ -211,11 +76,35 @@ const Calendar = () => {
   }
 
   const CalendarTab = ({ title, range, tabView }: CalendarTabProps) => {
+    const open = view === tabView;
+
+    const MotionGroup = motion(Group);
+
     return (
-      <Group direction="row" style={{ alignItems: "stretch" }}>
+      <MotionGroup
+        direction="row"
+        initial={false}
+        animate={{ flexGrow: open ? 1 : 0 }}
+        style={{
+          alignItems: "stretch",
+          flexWrap: "nowrap",
+        }}
+      >
         <VerticalTab title={title} range={range} view={tabView} />
-        {view === tabView && <CalendarContent view={tabView} />}
-      </Group>
+        {open && (
+          <div
+            style={{
+              width: "100%",
+              borderRight: "1px solid gray",
+              padding: "20px",
+            }}
+          >
+            {view === "today" && <CalendarToday tasks={tasks} />}
+            {view === "week" && <CalendarWeek tasks={tasks} />}
+            {view === "no-date" && <CalendarNoDate tasks={tasks} />}
+          </div>
+        )}
+      </MotionGroup>
     );
   };
 
