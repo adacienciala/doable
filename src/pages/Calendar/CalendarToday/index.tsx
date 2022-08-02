@@ -7,7 +7,10 @@ export const CalendarToday = ({ tasks }: { tasks: TaskData[] }) => {
   return (
     <>
       <Box style={{ marginBottom: "20px" }}>
-        <Text weight={"bold"} style={{ display: "inline-block" }}>
+        <Text
+          weight={"bold"}
+          style={{ display: "inline-block", marginRight: "10px" }}
+        >
           Today
         </Text>
         <Text style={{ display: "inline-block" }}>

@@ -39,7 +39,7 @@ const Calendar = () => {
     {
       id: 5,
       title: "TitleToday",
-      description: "Some description 1",
+      description: "Some description 2",
       date: new Date(),
     },
   ]);

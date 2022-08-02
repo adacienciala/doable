@@ -1,5 +1,6 @@
-import { Grid, Text } from "@mantine/core";
+import { Box, Grid, Text } from "@mantine/core";
 import { addDays, format, isSameDay, startOfWeek } from "date-fns";
+import { endOfWeek } from "date-fns/esm";
 import { useCallback } from "react";
 import { TaskData } from "../../../components/TaskPill";
 import { TaskList } from "../../../containers/TaskList";
@@ -31,6 +32,20 @@ export const CalendarWeek = ({ tasks }: { tasks: TaskData[] }) => {
 
   return (
     <>
+      <Box style={{ marginBottom: "20px" }}>
+        <Text
+          weight={"bold"}
+          style={{ display: "inline-block", marginRight: "10px" }}
+        >
+          Week
+        </Text>
+        <Text style={{ display: "inline-block" }}>
+          {`${format(firstDayOfWeek, "do MMM")} - ${format(
+            endOfWeek(new Date()),
+            "do MMM"
+          )} `}
+        </Text>
+      </Box>
       <Grid
         justify="space-between"
         columns={4}
