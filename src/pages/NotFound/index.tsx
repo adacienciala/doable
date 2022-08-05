@@ -1,12 +1,9 @@
 import { Button, Group, Image } from "@mantine/core";
 import { useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import notFound from "./404.svg";
 
 export default function NotFound() {
-  const location = useLocation() as any;
-  const from = location.state?.from?.pathname || "/";
-
   useEffect(() => {
     localStorage.removeItem("token");
     localStorage.removeItem("tokenSelector");
