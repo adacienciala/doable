@@ -11,7 +11,7 @@ export async function request(
       Authorization: `Bearer ${token}.${tokenSelector}`,
     },
     method: method,
-    body: data,
+    body: JSON.stringify(data),
   };
   try {
     return await fetch(url, options);
