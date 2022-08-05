@@ -1,8 +1,10 @@
-import { Group, LoadingOverlay, Text } from "@mantine/core";
+import { Button, Group, LoadingOverlay, Modal, Text } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import { endOfWeek, format, startOfWeek } from "date-fns";
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import { useCallback, useState } from "react";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { ApiError } from "../../api/errors";
 import { APIClient, Method } from "../../api/task";
 import { TaskData } from "../../components/TaskPill";
 import { CalendarNoDate } from "./CalendarNoDate";
@@ -13,6 +15,8 @@ export type CalendarView = "today" | "week" | "no-date";
 
 const Calendar = () => {
   const [view, setView] = useState<CalendarView>("today");
+  const location = useLocation() as any;
+  const navigate = useNavigate();
 
   const {
     isLoading,
@@ -24,8 +28,20 @@ const Calendar = () => {
     return client.tasks(Method.GET);
   });
 
+  const isAccessError = useCallback(
+    () => (error ? new ApiError(error).code === 403 : false),
+    [error]
+  );
+
   if (isSuccess) {
-    tasks.forEach((task: TaskData) => (task.date = new Date(task.date))); // <-- data is guaranteed to be defined
+    tasks.forEach((task: TaskData) => (task.date = new Date(task.date)));
+  }
+
+  if (error) {
+    const errObj = new ApiError(error);
+    if (errObj.code === 404) {
+      return <Navigate to="/500" state={{ from: location, errorMsg: error }} />;
+    }
   }
 
   interface VerticalTabProps {
@@ -126,7 +142,29 @@ const Calendar = () => {
           position: "relative",
         }}
       />
-      {error && "An error has occurred"}
+      <Modal
+        centered
+        overlayBlur={3}
+        transition="fade"
+        transitionDuration={600}
+        onClose={() => {
+          navigate("/auth", { state: { from: location }, replace: false });
+        }}
+        opened={isAccessError()}
+        withCloseButton={false}
+      >
+        <Group direction="column" align={"center"}>
+          You no longer have access to this page.
+          <Button
+            variant="subtle"
+            onClick={() => {
+              navigate("/auth", { state: { from: location }, replace: false });
+            }}
+          >
+            Log In
+          </Button>
+        </Group>
+      </Modal>
       {tasks && (
         <Group
           direction="row"

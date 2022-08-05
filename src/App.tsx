@@ -9,6 +9,8 @@ import MainLayout from "./layouts/MainLayout";
 import Auth from "./pages/Auth";
 import Calendar from "./pages/Calendar";
 import Dashboard from "./pages/Dashboard";
+import NotFound from "./pages/NotFound";
+import ServerError from "./pages/ServerError";
 
 function App() {
   return (
@@ -67,6 +69,9 @@ function App() {
             </RequireAuth>
           }
         />
+        <Route path="/404" element={<NotFound />} />
+        <Route path="/500" element={<ServerError />} />
+        <Route path="*" element={<Navigate to="/404" replace />} />
       </Routes>
     </BrowserRouter>
   );

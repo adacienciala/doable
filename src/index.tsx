@@ -6,7 +6,14 @@ import ReactDOM from "react-dom";
 import App from "./App";
 import "./App.css";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: (_, error: any) =>
+        error.statusCode === 404 || error.statusCode === 403,
+    },
+  },
+});
 
 ReactDOM.render(
   <React.StrictMode>

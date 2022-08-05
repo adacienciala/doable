@@ -29,14 +29,10 @@ export class APIClient {
     if (res === null) {
       throw new Error("Server error occured");
     }
-    try {
-      const json = await res.json();
-      if (res.status === 404) {
-        throw new Error("Endpoint is gone");
-      }
-      return json;
-    } catch (e) {
-      throw new Error("Server error occured");
+    const json = await res.json();
+    if (!res.ok) {
+      throw new Error(JSON.stringify({ code: res.status, msg: json.msg }));
     }
+    return json;
   }
 }

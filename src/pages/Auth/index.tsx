@@ -117,17 +117,13 @@ export default function Auth() {
       showError("Server error occured, try again later");
       return {};
     }
-    try {
-      const json = await res.json();
-      if (!res.ok) {
-        showError(`Problem: ${json.msg}, try again`);
-        return {};
-      }
-      return json;
-    } catch (e) {
-      showError("Server error occured, try again later");
+
+    const json = await res.json();
+    if (!res.ok) {
+      showError(`Problem: ${json.msg}, try again`);
       return {};
     }
+    return json;
   }
 
   return (
