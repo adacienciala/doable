@@ -10,7 +10,7 @@ export async function request(
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}.${tokenSelector}`,
     },
-    method: method,
+    method,
     body: JSON.stringify(data),
   };
   try {
