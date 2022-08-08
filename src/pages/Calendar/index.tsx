@@ -158,6 +158,7 @@ const Calendar = () => {
           <Button
             variant="subtle"
             onClick={() => {
+              localStorage.clear();
               navigate("/auth", { state: { from: location }, replace: false });
             }}
           >

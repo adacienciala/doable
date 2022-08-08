@@ -1,15 +1,8 @@
 import { Button, Group, Image } from "@mantine/core";
-import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import notFound from "./404.svg";
 
 export default function NotFound() {
-  useEffect(() => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("tokenSelector");
-    localStorage.removeItem("user");
-  }, []);
-
   return (
     <Group
       direction="column"
