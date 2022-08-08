@@ -19,13 +19,8 @@ export class APIClient {
   async tasks(method: Method, options?: any): Promise<any> {
     const tasksEndpoint = "/tasks";
     const url = process.env.REACT_APP_DOABLE_API + tasksEndpoint;
-    const res = (await request(
-      method,
-      url,
-      this.token,
-      this.tokenSelector
-    )) as Response;
-    if (res === null) {
+    const res = await request(method, url, this.token, this.tokenSelector);
+    if (res instanceof Error) {
       throw new Error("Server error occured");
     }
     const json = await res.json();

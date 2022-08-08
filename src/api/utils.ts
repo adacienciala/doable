@@ -4,7 +4,7 @@ export async function request(
   token: string,
   tokenSelector: string,
   data?: any
-): Promise<any> {
+): Promise<Response | Error> {
   const options = {
     headers: {
       "Content-Type": "application/json",
@@ -16,7 +16,7 @@ export async function request(
   try {
     return await fetch(url, options);
   } catch (e) {
-    return e;
+    return e as Error;
   }
 }
 

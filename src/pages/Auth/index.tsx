@@ -111,8 +111,8 @@ export default function Auth() {
       endpoint = "/register";
     }
     const url = process.env.REACT_APP_DOABLE_API + endpoint;
-    const res = (await request("POST", url, "", "", data)) as Response;
-    if (res === null) {
+    const res = await request("POST", url, "", "", data);
+    if (res instanceof Error) {
       showError("Server error occured, try again later");
       return {};
     }
