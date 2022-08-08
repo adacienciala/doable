@@ -111,23 +111,18 @@ export default function Auth() {
       endpoint = "/register";
     }
     const url = process.env.REACT_APP_DOABLE_API + endpoint;
-    // const url = process.env.REACT_APP_DOABLE_LOCALHOST + endpoint;
-    const res = (await request("POST", url, data)) as Response;
-    if (res === null) {
+    const res = await request("POST", url, "", "", data);
+    if (res instanceof Error) {
       showError("Server error occured, try again later");
       return {};
     }
-    try {
-      const json = await res.json();
-      if (!res.ok) {
-        showError(`Problem: ${json.msg}, try again`);
-        return {};
-      }
-      return json;
-    } catch (e) {
-      showError("Server error occured, try again later");
+
+    const json = await res.json();
+    if (!res.ok) {
+      showError(`Problem: ${json.msg}, try again`);
       return {};
     }
+    return json;
   }
 
   return (

@@ -1,9 +1,19 @@
 import { MantineProvider } from "@mantine/core";
 import { NotificationsProvider } from "@mantine/notifications";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";
 import "./App.css";
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: (_, error: any) =>
+        error.statusCode === 404 || error.statusCode === 403,
+    },
+  },
+});
 
 ReactDOM.render(
   <React.StrictMode>
@@ -30,7 +40,9 @@ ReactDOM.render(
       }}
     >
       <NotificationsProvider>
-        <App />
+        <QueryClientProvider client={queryClient}>
+          <App />
+        </QueryClientProvider>
       </NotificationsProvider>
     </MantineProvider>
   </React.StrictMode>,

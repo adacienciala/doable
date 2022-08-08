@@ -1,15 +1,22 @@
-export async function request(method: string, url: string, data: Object = {}): Promise<any> {
+export async function request(
+  method: string,
+  url: string,
+  token: string,
+  tokenSelector: string,
+  data?: any
+): Promise<Response | Error> {
   const options = {
     headers: {
-      'Content-Type': 'application/json'
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}.${tokenSelector}`,
     },
-    method: method,
-    body: JSON.stringify(data)
+    method,
+    body: JSON.stringify(data),
   };
   try {
-    return await fetch(url, options)
-  } catch(e) {
-    return e;
+    return await fetch(url, options);
+  } catch (e) {
+    return e as Error;
   }
 }
 
@@ -17,7 +24,7 @@ export function parseJson(json: string): any {
   try {
     return JSON.parse(json);
   } catch (e) {
-    console.log('Could not parse json:', json);
+    console.log("Could not parse json:", json);
     return null;
   }
 }
