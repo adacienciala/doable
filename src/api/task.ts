@@ -12,14 +12,13 @@ export class APIClient {
   private tokenSelector: string = "";
 
   constructor() {
-    this.token = localStorage.getItem("token") || "";
-    this.tokenSelector = localStorage.getItem("tokenSelector") || "";
+    this.token = localStorage.getItem("token") ?? "";
+    this.tokenSelector = localStorage.getItem("tokenSelector") ?? "";
   }
 
   async tasks(method: Method, options?: any): Promise<any> {
     const tasksEndpoint = "/tasks";
-    // const url = process.env.REACT_APP_DOABLE_API + tasksEndpoint;
-    const url = process.env.REACT_APP_DOABLE_LOCALHOST + tasksEndpoint;
+    const url = process.env.REACT_APP_DOABLE_API + tasksEndpoint;
     const res = (await request(
       method,
       url,
