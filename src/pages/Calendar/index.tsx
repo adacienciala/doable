@@ -40,6 +40,9 @@ const Calendar = () => {
   if (error) {
     const errObj = new ApiError(error);
     if (errObj.code === 404) {
+      return <Navigate to="/404" state={{ from: location, errorMsg: error }} />;
+    }
+    if (errObj.code === 500) {
       return <Navigate to="/500" state={{ from: location, errorMsg: error }} />;
     }
   }

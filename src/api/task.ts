@@ -21,7 +21,9 @@ export class APIClient {
     const url = process.env.REACT_APP_DOABLE_API + tasksEndpoint;
     const res = await request(method, url, this.token, this.tokenSelector);
     if (res instanceof Error) {
-      throw new Error("Server error occured");
+      throw new Error(
+        JSON.stringify({ code: 500, msg: "Server error occured" })
+      );
     }
     const json = await res.json();
     if (!res.ok) {
