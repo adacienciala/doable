@@ -151,6 +151,7 @@ const Calendar = () => {
         transition="fade"
         transitionDuration={600}
         onClose={() => {
+          localStorage.clear();
           navigate("/auth", { state: { from: location }, replace: false });
         }}
         opened={isAccessError()}
