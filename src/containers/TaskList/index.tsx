@@ -20,7 +20,7 @@ export const TaskList = ({
         style={{ listStyle: "none", padding: 0, margin: 0 }}
       >
         {items.map((item) => (
-          <Reorder.Item key={item.id} value={item}>
+          <Reorder.Item key={item.taskId} value={item}>
             <TaskPill data={item} view={view} />
           </Reorder.Item>
         ))}
