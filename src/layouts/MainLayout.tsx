@@ -11,7 +11,7 @@ import {
   Text,
 } from "@mantine/core";
 import avatar from "animal-avatar-generator";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AiOutlineProject } from "react-icons/ai";
 import { FiCalendar } from "react-icons/fi";
 import {
@@ -22,13 +22,14 @@ import {
   RiSettings2Line,
 } from "react-icons/ri";
 import { Link } from "react-router-dom";
+import { UserContext } from "../App";
 
 type Props = {
   page: string;
 };
 
 const MainLayout: React.FC<Props> = ({ page, children }) => {
-  const user = JSON.parse(localStorage.getItem("user")!); // TODO: state in the future
+  const { user } = useContext(UserContext);
 
   function logOut() {
     localStorage.clear();
@@ -101,7 +102,7 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
   };
 
   function getUserSeed() {
-    return user.settings?.avatarSeed || user.email || "default";
+    return user?.settings?.avatarSeed || user?.email || "default";
   }
 
   const NavbarFooter = () => {
@@ -169,7 +170,7 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
         </FloatingTooltip>
 
         <Text size="xl" weight={"bold"}>
-          {user.name} {user.surname}
+          {user?.name} {user?.surname}
         </Text>
 
         <Button
@@ -179,7 +180,7 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
             padding: [10, 20],
           })}
         >
-          {user.statistics.rank}
+          {user?.statistics.rank}
         </Button>
       </>
     );
@@ -236,7 +237,7 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
             color: theme.colors.gray[9],
           })}
         >
-          <Text>You're doing great, {user.name}!</Text>
+          <Text>You're doing great, {user?.name}!</Text>
         </Group>
         <Box
           sx={(theme) => ({

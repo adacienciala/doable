@@ -12,7 +12,7 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/hooks";
 import { useNotifications } from "@mantine/notifications";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   MdClose,
   MdLockOutline,
@@ -21,9 +21,11 @@ import {
 } from "react-icons/md";
 import { useLocation, useNavigate } from "react-router-dom";
 import { request } from "../../api/utils";
+import { UserContext } from "../../App";
 import lemon from "./lemon-shadow.svg";
 
 export default function Auth() {
+  const { setUser } = useContext(UserContext);
   const [mounted, setMounted] = useState(false);
   const [formType, setFormType] = useState<"register" | "login">("login");
   const [loading, setLoading] = useState(false);
@@ -93,6 +95,7 @@ export default function Auth() {
       localStorage.setItem("token", token);
       localStorage.setItem("tokenSelector", tokenSelector);
       localStorage.setItem("user", JSON.stringify(user));
+      setUser(user);
       navigate(from, { replace: true });
     }, 250);
   }
