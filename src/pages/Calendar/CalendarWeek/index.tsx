@@ -7,7 +7,13 @@ import { TaskList } from "../../../containers/TaskList";
 
 const firstDayOfWeek = startOfWeek(Date.now(), { weekStartsOn: 1 });
 
-export const CalendarWeek = ({ tasks }: { tasks: TaskData[] }) => {
+export const CalendarWeek = ({
+  tasks,
+  onTaskDone,
+}: {
+  tasks: TaskData[];
+  onTaskDone: (taskId: string) => void;
+}) => {
   const WeekDates = useCallback(() => {
     const weekDates = [];
     for (let dayIdx = 0; dayIdx < 7; dayIdx++) {
@@ -25,6 +31,7 @@ export const CalendarWeek = ({ tasks }: { tasks: TaskData[] }) => {
         <TaskList
           tasks={tasks.filter((t) => isSameDay(t.date, date))}
           view="week"
+          onTaskDone={onTaskDone}
         />
       </>
     );

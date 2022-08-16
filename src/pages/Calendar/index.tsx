@@ -2,10 +2,11 @@ import { Button, Group, LoadingOverlay, Modal, Text } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import { endOfWeek, format, startOfWeek } from "date-fns";
 import { AnimatePresence, motion } from "framer-motion";
-import { useCallback, useState } from "react";
+import { useCallback, useContext, useState } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { ApiError } from "../../api/errors";
 import { APIClient, Method } from "../../api/task";
+import { UserContext } from "../../App";
 import { TaskData } from "../../components/TaskPill";
 import { CalendarNoDate } from "./CalendarNoDate";
 import { CalendarToday } from "./CalendarToday";
@@ -17,6 +18,10 @@ const Calendar = () => {
   const [view, setView] = useState<CalendarView>("today");
   const location = useLocation() as any;
   const navigate = useNavigate();
+  const client = new APIClient();
+  const { user, setUser } = useContext(UserContext);
+
+  console.log("user", user);
 
   const {
     isLoading,
@@ -24,7 +29,6 @@ const Calendar = () => {
     error,
     data: tasks,
   } = useQuery(["tasks"], () => {
-    const client = new APIClient();
     return client.tasks(Method.GET);
   });
 
@@ -96,6 +100,15 @@ const Calendar = () => {
   const CalendarTab = ({ title, range, tabView }: CalendarTabProps) => {
     const open = view === tabView;
 
+    const handleTaskDone = useCallback(async (taskId: string) => {
+      const { userUpdated } = await client.singleTask(Method.PUT, taskId, {
+        body: { isDone: true },
+      });
+      if (!userUpdated) return;
+      const newUser = await client.singleUser(Method.GET, user?.doableId!);
+      setUser(newUser);
+    }, []);
+
     const MotionGroup = motion(Group);
 
     return (
@@ -124,9 +137,15 @@ const Calendar = () => {
                 padding: "20px",
               }}
             >
-              {view === "today" && <CalendarToday tasks={tasks} />}
-              {view === "week" && <CalendarWeek tasks={tasks} />}
-              {view === "no-date" && <CalendarNoDate tasks={tasks} />}
+              {view === "today" && (
+                <CalendarToday tasks={tasks} onTaskDone={handleTaskDone} />
+              )}
+              {view === "week" && (
+                <CalendarWeek tasks={tasks} onTaskDone={handleTaskDone} />
+              )}
+              {view === "no-date" && (
+                <CalendarNoDate tasks={tasks} onTaskDone={handleTaskDone} />
+              )}
             </div>
           )}
         </AnimatePresence>

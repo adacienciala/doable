@@ -3,7 +3,13 @@ import { format, isSameDay } from "date-fns";
 import { TaskData } from "../../../components/TaskPill";
 import { TaskList } from "../../../containers/TaskList";
 
-export const CalendarToday = ({ tasks }: { tasks: TaskData[] }) => {
+export const CalendarToday = ({
+  tasks,
+  onTaskDone,
+}: {
+  tasks: TaskData[];
+  onTaskDone: (taskId: string) => void;
+}) => {
   return (
     <>
       <Box style={{ marginBottom: "20px" }}>
@@ -21,6 +27,7 @@ export const CalendarToday = ({ tasks }: { tasks: TaskData[] }) => {
       <TaskList
         tasks={tasks.filter((t) => isSameDay(t.date, new Date()))}
         view="today"
+        onTaskDone={onTaskDone}
       />
     </>
   );

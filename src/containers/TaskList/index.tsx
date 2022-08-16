@@ -6,9 +6,11 @@ import { CalendarView } from "../../pages/Calendar";
 export const TaskList = ({
   tasks,
   view,
+  onTaskDone,
 }: {
   tasks: TaskData[];
   view: CalendarView;
+  onTaskDone: (taskId: string) => void;
 }) => {
   const [items, setItems] = useState(tasks);
   return (
@@ -21,7 +23,7 @@ export const TaskList = ({
       >
         {items.map((item) => (
           <Reorder.Item key={item.taskId} value={item}>
-            <TaskPill data={item} view={view} />
+            <TaskPill data={item} view={view} onTaskDone={onTaskDone} />
           </Reorder.Item>
         ))}
       </Reorder.Group>
