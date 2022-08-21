@@ -10,8 +10,9 @@ import {
   RingProgress,
   Text,
 } from "@mantine/core";
+import { useQuery } from "@tanstack/react-query";
 import avatar from "animal-avatar-generator";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { AiOutlineProject } from "react-icons/ai";
 import { FiCalendar } from "react-icons/fi";
 import {
@@ -22,14 +23,22 @@ import {
   RiSettings2Line,
 } from "react-icons/ri";
 import { Link } from "react-router-dom";
-import { UserContext } from "../App";
+import { APIClient, Method } from "../api/task";
 
 type Props = {
   page: string;
 };
 
 const MainLayout: React.FC<Props> = ({ page, children }) => {
-  const { user } = useContext(UserContext);
+  const client = new APIClient();
+
+  const { data: user } = useQuery(
+    ["user", localStorage.getItem("doableId")!],
+    () => {
+      const doableId = localStorage.getItem("doableId")!;
+      return client.singleUser(Method.GET, doableId);
+    }
+  );
 
   function logOut() {
     localStorage.clear();
