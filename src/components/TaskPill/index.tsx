@@ -1,5 +1,7 @@
 import { Checkbox, Group, Text } from "@mantine/core";
+import { MouseEvent, useCallback } from "react";
 import { CalendarView } from "../../pages/Calendar";
+import { isCheckbox } from "../../utils/utils";
 
 export interface TaskData {
   title: string;
@@ -12,13 +14,24 @@ interface TaskPillProps {
   data: TaskData;
   view: CalendarView;
   onTaskDone: (taskId: string) => void;
+  onTaskClick: (taskId: string) => void;
 }
 
 export const TaskPill = ({
   data: { title, description, date, taskId },
   view,
   onTaskDone,
+  onTaskClick,
 }: TaskPillProps) => {
+  const handleTaskClick = useCallback(
+    async (event: MouseEvent<HTMLDivElement>) => {
+      if (event.target instanceof Element && !isCheckbox(event.target)) {
+        onTaskClick(taskId);
+      }
+    },
+    [onTaskClick, taskId]
+  );
+
   return (
     <Group
       position="apart"
@@ -31,6 +44,7 @@ export const TaskPill = ({
         borderRadius: "10px",
         cursor: "grab",
       })}
+      onClick={handleTaskClick}
     >
       <Checkbox
         radius="xl"

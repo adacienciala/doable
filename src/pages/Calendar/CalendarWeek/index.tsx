@@ -10,9 +10,11 @@ const firstDayOfWeek = startOfWeek(Date.now(), { weekStartsOn: 1 });
 export const CalendarWeek = ({
   tasks,
   onTaskDone,
+  onTaskClick,
 }: {
   tasks: TaskData[];
   onTaskDone: (taskId: string) => void;
+  onTaskClick: (taskId: string) => void;
 }) => {
   const WeekDates = useCallback(() => {
     const weekDates = [];
@@ -32,6 +34,7 @@ export const CalendarWeek = ({
           tasks={tasks.filter((t) => isSameDay(t.date, date))}
           view="week"
           onTaskDone={onTaskDone}
+          onTaskClick={onTaskClick}
         />
       </>
     );

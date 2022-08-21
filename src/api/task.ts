@@ -7,6 +7,8 @@ export enum Method {
   DELETE = "DELETE",
 }
 
+// TODO: make it a singleton
+
 export class APIClient {
   private token: string = "";
   private tokenSelector: string = "";

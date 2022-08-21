@@ -7,10 +7,12 @@ export const TaskList = ({
   tasks,
   view,
   onTaskDone,
+  onTaskClick,
 }: {
   tasks: TaskData[];
   view: CalendarView;
   onTaskDone: (taskId: string) => void;
+  onTaskClick: (taskId: string) => void;
 }) => {
   const [items, setItems] = useState(tasks);
   return (
@@ -23,7 +25,12 @@ export const TaskList = ({
       >
         {items.map((item) => (
           <Reorder.Item key={item.taskId} value={item}>
-            <TaskPill data={item} view={view} onTaskDone={onTaskDone} />
+            <TaskPill
+              data={item}
+              view={view}
+              onTaskDone={onTaskDone}
+              onTaskClick={onTaskClick}
+            />
           </Reorder.Item>
         ))}
       </Reorder.Group>

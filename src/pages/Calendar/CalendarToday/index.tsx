@@ -6,9 +6,11 @@ import { TaskList } from "../../../containers/TaskList";
 export const CalendarToday = ({
   tasks,
   onTaskDone,
+  onTaskClick,
 }: {
   tasks: TaskData[];
   onTaskDone: (taskId: string) => void;
+  onTaskClick: (taskId: string) => void;
 }) => {
   return (
     <>
@@ -28,6 +30,7 @@ export const CalendarToday = ({
         tasks={tasks.filter((t) => isSameDay(t.date, new Date()))}
         view="today"
         onTaskDone={onTaskDone}
+        onTaskClick={onTaskClick}
       />
     </>
   );

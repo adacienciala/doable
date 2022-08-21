@@ -8,6 +8,7 @@ import { ApiError } from "../../api/errors";
 import { APIClient, Method } from "../../api/task";
 import { UserContext } from "../../App";
 import { TaskData } from "../../components/TaskPill";
+import { TaskEditDrawer } from "../../containers/TaskEditDrawer";
 import { CalendarNoDate } from "./CalendarNoDate";
 import { CalendarToday } from "./CalendarToday";
 import { CalendarWeek } from "./CalendarWeek";
@@ -20,17 +21,28 @@ const Calendar = () => {
   const navigate = useNavigate();
   const client = new APIClient();
   const { user, setUser } = useContext(UserContext);
-
-  console.log("user", user);
+  const [drawerOpened, setDrawerOpened] = useState(false);
+  const [taskEdited, setTaskEdited] = useState("");
 
   const {
     isLoading,
     isSuccess,
     error,
     data: tasks,
+    refetch,
   } = useQuery(["tasks"], () => {
     return client.tasks(Method.GET);
   });
+
+  const handleDrawerOpen = useCallback((taskId: string) => {
+    setTaskEdited(taskId);
+    setDrawerOpened(true);
+  }, []);
+
+  const handleDrawerClosed = useCallback(() => {
+    setTaskEdited("");
+    setDrawerOpened(false);
+  }, []);
 
   const isAccessError = useCallback(
     () => (error ? new ApiError(error).code === 403 : false),
@@ -95,9 +107,15 @@ const Calendar = () => {
     title: string;
     range?: string;
     tabView: CalendarView;
+    onTaskClick: (taskId: string) => void;
   }
 
-  const CalendarTab = ({ title, range, tabView }: CalendarTabProps) => {
+  const CalendarTab = ({
+    title,
+    range,
+    tabView,
+    onTaskClick,
+  }: CalendarTabProps) => {
     const open = view === tabView;
 
     const handleTaskDone = useCallback(async (taskId: string) => {
@@ -107,6 +125,7 @@ const Calendar = () => {
       if (!userUpdated) return;
       const newUser = await client.singleUser(Method.GET, user?.doableId!);
       setUser(newUser);
+      refetch();
     }, []);
 
     const MotionGroup = motion(Group);
@@ -138,13 +157,25 @@ const Calendar = () => {
               }}
             >
               {view === "today" && (
-                <CalendarToday tasks={tasks} onTaskDone={handleTaskDone} />
+                <CalendarToday
+                  tasks={tasks}
+                  onTaskDone={handleTaskDone}
+                  onTaskClick={onTaskClick}
+                />
               )}
               {view === "week" && (
-                <CalendarWeek tasks={tasks} onTaskDone={handleTaskDone} />
+                <CalendarWeek
+                  tasks={tasks}
+                  onTaskDone={handleTaskDone}
+                  onTaskClick={onTaskClick}
+                />
               )}
               {view === "no-date" && (
-                <CalendarNoDate tasks={tasks} onTaskDone={handleTaskDone} />
+                <CalendarNoDate
+                  tasks={tasks}
+                  onTaskDone={handleTaskDone}
+                  onTaskClick={onTaskClick}
+                />
               )}
             </div>
           )}
@@ -189,6 +220,11 @@ const Calendar = () => {
           </Button>
         </Group>
       </Modal>
+      <TaskEditDrawer
+        opened={drawerOpened}
+        onClose={handleDrawerClosed}
+        taskId={taskEdited}
+      />
       {tasks && (
         <Group
           direction="row"
@@ -203,6 +239,7 @@ const Calendar = () => {
             title="Today"
             range={format(Date.now(), "dd/MM/yyyy")}
             tabView="today"
+            onTaskClick={handleDrawerOpen}
           />
           <CalendarTab
             title="Week"
@@ -214,8 +251,13 @@ const Calendar = () => {
               "dd/MM/yyyy"
             )}`}
             tabView="week"
+            onTaskClick={handleDrawerOpen}
           />
-          <CalendarTab title="Not scheduled" tabView="no-date" />
+          <CalendarTab
+            title="Not scheduled"
+            tabView="no-date"
+            onTaskClick={handleDrawerOpen}
+          />
         </Group>
       )}
     </>

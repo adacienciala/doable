@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import React, { createContext, useState } from "react";
 import {
   BrowserRouter,
   Navigate,
@@ -19,10 +20,12 @@ interface IUserContext {
   setUser: React.Dispatch<React.SetStateAction<IUser | null>>;
 }
 
-export const UserContext = React.createContext<IUserContext>({
+export const UserContext = createContext<IUserContext>({
   user: JSON.parse(localStorage.getItem("user") || "{}"),
   setUser: (user: any) => {},
 });
+
+const queryClient = new QueryClient();
 
 function App() {
   const [user, setUser] = useState<IUser | null>(
@@ -31,66 +34,68 @@ function App() {
 
   return (
     <BrowserRouter>
-      <UserContext.Provider value={{ user, setUser }}>
-        <Routes>
-          <Route path="/auth" element={<Auth />} />
-          <Route
-            path="/"
-            element={
-              <RequireAuth>
-                <MainLayout page="dashboard">
-                  <Dashboard />
-                </MainLayout>
-              </RequireAuth>
-            }
-          />
-          <Route
-            path="/projects"
-            element={
-              <RequireAuth>
-                <MainLayout page="projects"></MainLayout>
-              </RequireAuth>
-            }
-          />
-          <Route
-            path="/calendar"
-            element={
-              <RequireAuth>
-                <MainLayout page="calendar">
-                  <Calendar />
-                </MainLayout>
-              </RequireAuth>
-            }
-          />
-          <Route
-            path="/party"
-            element={
-              <RequireAuth>
-                <MainLayout page="party"></MainLayout>
-              </RequireAuth>
-            }
-          />
-          <Route
-            path="/rewards"
-            element={
-              <RequireAuth>
-                <MainLayout page="rewards"></MainLayout>
-              </RequireAuth>
-            }
-          />
-          <Route
-            path="/settings"
-            element={
-              <RequireAuth>
-                <p>settings</p>
-              </RequireAuth>
-            }
-          />
-          <Route path="/404" element={<NotFound />} />
-          <Route path="/500" element={<ServerError />} />
-          <Route path="*" element={<Navigate to="/404" replace />} />
-        </Routes>
-      </UserContext.Provider>
+      <QueryClientProvider client={queryClient}>
+        <UserContext.Provider value={{ user, setUser }}>
+          <Routes>
+            <Route path="/auth" element={<Auth />} />
+            <Route
+              path="/"
+              element={
+                <RequireAuth>
+                  <MainLayout page="dashboard">
+                    <Dashboard />
+                  </MainLayout>
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/projects"
+              element={
+                <RequireAuth>
+                  <MainLayout page="projects"></MainLayout>
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/calendar"
+              element={
+                <RequireAuth>
+                  <MainLayout page="calendar">
+                    <Calendar />
+                  </MainLayout>
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/party"
+              element={
+                <RequireAuth>
+                  <MainLayout page="party"></MainLayout>
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/rewards"
+              element={
+                <RequireAuth>
+                  <MainLayout page="rewards"></MainLayout>
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/settings"
+              element={
+                <RequireAuth>
+                  <p>settings</p>
+                </RequireAuth>
+              }
+            />
+            <Route path="/404" element={<NotFound />} />
+            <Route path="/500" element={<ServerError />} />
+            <Route path="*" element={<Navigate to="/404" replace />} />
+          </Routes>
+        </UserContext.Provider>
+      </QueryClientProvider>
     </BrowserRouter>
   );
 }
