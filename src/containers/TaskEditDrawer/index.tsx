@@ -22,7 +22,6 @@ interface TaskEditDrawerProps {
   onClose: () => void;
 }
 
-// TODO: Handle errors better
 export const TaskEditDrawer = ({
   taskId,
   opened,
@@ -39,7 +38,11 @@ export const TaskEditDrawer = ({
   } = useQuery<ITask>(
     ["task", taskId],
     () => client.singleTask(Method.GET, taskId),
-    { enabled: taskId !== "" }
+    {
+      enabled: taskId !== "",
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+    }
   );
 
   const editTaskMutation = useMutation(
@@ -116,7 +119,7 @@ export const TaskEditDrawer = ({
         padding="xl"
         size="50%"
       >
-        {error && <p>"Jesteś fajna lol"</p>}
+        {error && <p>"Try refreshing lol"</p>}
         <form onSubmit={handleSubmit}>
           <TextInput
             data-autofocus
