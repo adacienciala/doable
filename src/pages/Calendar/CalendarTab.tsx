@@ -38,19 +38,13 @@ export const CalendarTab = ({
       }),
     {
       onSettled: (data) => {
-        console.log("mutate > before invalid tasks");
         queryClient.invalidateQueries(["tasks"]);
-        console.log("mutate > after invalid tasks");
         if (data.userUpdated) {
-          console.log("mutate > before invalid user");
           queryClient.invalidateQueries(["user"]);
-          console.log("mutate > after invalid user");
         }
       },
     }
   );
-
-  console.log("rendering calendar tab");
 
   const CurrentCalendarView = useMemo(() => {
     switch (view) {

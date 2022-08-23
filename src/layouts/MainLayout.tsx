@@ -138,11 +138,10 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
     const minXp = user?.statistics?.minXp || 0;
     const maxXp = user?.statistics?.maxXp || 100;
 
-    const getCurrentProgress = useCallback(() => {
-      console.log(xp, minXp, maxXp, ((xp - minXp) / (maxXp - minXp)) * 100);
-
-      return ((xp - minXp) / (maxXp - minXp)) * 100;
-    }, [xp, minXp, maxXp]);
+    const getCurrentProgress = useCallback(
+      () => ((xp - minXp) / (maxXp - minXp)) * 100,
+      [xp, minXp, maxXp]
+    );
 
     return (
       <>
