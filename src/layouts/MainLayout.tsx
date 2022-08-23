@@ -12,7 +12,7 @@ import {
 } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import avatar from "animal-avatar-generator";
-import { useEffect, useState } from "react";
+import { useCallback } from "react";
 import { AiOutlineProject } from "react-icons/ai";
 import { FiCalendar } from "react-icons/fi";
 import {
@@ -134,13 +134,15 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
   };
 
   const NavbarProfile = () => {
-    const [xp, setXp] = useState(user?.statistics?.xp || 0);
-    const [maxXp, setMaxXp] = useState(user?.statistics?.maxXp || 100);
+    const xp = user?.statistics?.xp || 0;
+    const minXp = user?.statistics?.minXp || 0;
+    const maxXp = user?.statistics?.maxXp || 100;
 
-    useEffect(() => {
-      setXp(user?.statistics?.xp || 0);
-      setMaxXp(user?.statistics?.maxXp || 100);
-    }, []);
+    const getCurrentProgress = useCallback(() => {
+      console.log(xp, minXp, maxXp, ((xp - minXp) / (maxXp - minXp)) * 100);
+
+      return ((xp - minXp) / (maxXp - minXp)) * 100;
+    }, [xp, minXp, maxXp]);
 
     return (
       <>
@@ -148,7 +150,7 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
           transition="skew-up"
           transitionDuration={100}
           openDelay={500}
-          label={`${xp}/${maxXp}`}
+          label={`${xp}XP`}
         >
           <RingProgress
             size={200}
@@ -156,7 +158,7 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
             roundCaps
             sections={[
               {
-                value: (xp / maxXp) * 100,
+                value: getCurrentProgress(),
                 color: "yellow",
               },
             ]}
