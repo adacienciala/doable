@@ -1,7 +1,6 @@
-import { Group } from "@mantine/core";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { AnimatePresence, motion } from "framer-motion";
-import { useCallback, useMemo } from "react";
+import { AnimatePresence } from "framer-motion";
+import { useMemo } from "react";
 import { CalendarView } from ".";
 import { APIClient, Method } from "../../api/task";
 import { ITask } from "../../models/task";
@@ -64,33 +63,12 @@ export const CalendarTab = ({
     }
   }, [view]);
 
-  const handleTaskDone = useCallback(
-    (taskId: string) => {
-      console.log("before mutate");
-      finishTaskMutation.mutate(taskId);
-      console.log("after mutate");
-    },
-    [finishTaskMutation]
-  );
-
-  const MotionGroup = motion(Group);
+  const handleTaskDone = (taskId: string) => {
+    finishTaskMutation.mutate(taskId);
+  };
 
   return (
-    <MotionGroup
-      direction="row"
-      style={{
-        alignItems: "stretch",
-        flexGrow: open ? 1 : 0,
-        flexWrap: "nowrap",
-      }}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{
-        ease: "easeOut",
-        duration: 1,
-      }}
-    >
+    <>
       <VerticalTab
         title={title}
         range={range}
@@ -105,16 +83,14 @@ export const CalendarTab = ({
               padding: "20px",
             }}
           >
-            {
-              <CurrentCalendarView
-                tasks={tasks}
-                onTaskDone={handleTaskDone}
-                onTaskClick={onTaskClick}
-              />
-            }
+            <CurrentCalendarView
+              tasks={tasks}
+              onTaskDone={handleTaskDone}
+              onTaskClick={onTaskClick}
+            />
           </div>
         )}
       </AnimatePresence>
-    </MotionGroup>
+    </>
   );
 };

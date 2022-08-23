@@ -1,7 +1,8 @@
 import { Button, Group, LoadingOverlay, Modal } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import { endOfWeek, format, startOfWeek } from "date-fns";
-import { useCallback, useMemo, useState } from "react";
+import { motion } from "framer-motion";
+import { useCallback, useState } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { ApiError } from "../../api/errors";
 import { APIClient, Method } from "../../api/task";
@@ -43,45 +44,24 @@ const Calendar = () => {
     [error]
   );
 
-  const calendarTabs = useMemo(
-    () => (
-      <>
-        <CalendarTab
-          title="Today"
-          range={format(Date.now(), "dd/MM/yyyy")}
-          view={view}
-          tasks={tasks}
-          changeViewHandler={() => setView("today")}
-          open={view === "today"}
-          onTaskClick={handleDrawerOpen}
-        />
-        <CalendarTab
-          title="Week"
-          range={`${format(
-            startOfWeek(Date.now(), { weekStartsOn: 1 }),
-            "dd/MM/yyyy"
-          )} - ${format(
-            endOfWeek(Date.now(), { weekStartsOn: 1 }),
-            "dd/MM/yyyy"
-          )}`}
-          view={view}
-          tasks={tasks}
-          changeViewHandler={() => setView("week")}
-          open={view === "week"}
-          onTaskClick={handleDrawerOpen}
-        />
-        <CalendarTab
-          title="Not scheduled"
-          view={view}
-          tasks={tasks}
-          changeViewHandler={() => setView("no-date")}
-          open={view === "no-date"}
-          onTaskClick={handleDrawerOpen}
-        />
-      </>
-    ),
-    [view, tasks, setView, handleDrawerOpen]
-  );
+  const MotionGroup = motion(Group);
+
+  const calendarTabsOptions: {
+    title: string;
+    view: CalendarView;
+    range?: string;
+  }[] = [
+    { title: "Today", view: "today", range: format(Date.now(), "dd/MM/yyyy") },
+    {
+      title: "Week",
+      view: "week",
+      range: `${format(
+        startOfWeek(Date.now(), { weekStartsOn: 1 }),
+        "dd/MM/yyyy"
+      )} - ${format(endOfWeek(Date.now(), { weekStartsOn: 1 }), "dd/MM/yyyy")}`,
+    },
+    { title: "Not scheduled", view: "no-date" },
+  ];
 
   if (isSuccess) {
     tasks.forEach((task: TaskData) => (task.date = new Date(task.date)));
@@ -96,7 +76,6 @@ const Calendar = () => {
       return <Navigate to="/500" state={{ from: location, errorMsg: error }} />;
     }
   }
-  console.log("rendering calendar");
 
   return (
     <>
@@ -149,7 +128,34 @@ const Calendar = () => {
           }}
           noWrap
         >
-          {calendarTabs}
+          {calendarTabsOptions.map((options) => (
+            <MotionGroup
+              key={options.view}
+              direction="row"
+              style={{
+                alignItems: "stretch",
+                flexGrow: view === options.view ? 1 : 0,
+                flexWrap: "nowrap",
+              }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{
+                ease: "easeOut",
+                duration: 1,
+              }}
+            >
+              <CalendarTab
+                title={options.title}
+                range={options.range}
+                view={view}
+                tasks={tasks}
+                changeViewHandler={() => setView(options.view)}
+                open={view === options.view}
+                onTaskClick={handleDrawerOpen}
+              />
+            </MotionGroup>
+          ))}
         </Group>
       )}
     </>
