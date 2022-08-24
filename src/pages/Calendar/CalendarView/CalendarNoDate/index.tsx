@@ -22,7 +22,7 @@ export const CalendarNoDate = ({
       </Group>
       <Box>
         <TaskList
-          tasks={tasks}
+          tasks={tasks.filter((t) => !t.date)}
           view="no-date"
           onTaskDone={onTaskDone}
           onTaskClick={onTaskClick}
