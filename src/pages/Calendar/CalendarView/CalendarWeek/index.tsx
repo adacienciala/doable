@@ -2,8 +2,8 @@ import { Box, Grid, Group, Text } from "@mantine/core";
 import { addDays, format, isSameDay, startOfWeek } from "date-fns";
 import { endOfWeek } from "date-fns/esm";
 import { useCallback } from "react";
-import { TaskData } from "../../../components/TaskPill";
-import { TaskList } from "../../../containers/TaskList";
+import { CalendarViewProps } from "..";
+import { TaskList } from "../../../../containers/TaskList";
 
 const firstDayOfWeek = startOfWeek(Date.now(), { weekStartsOn: 1 });
 
@@ -11,11 +11,8 @@ export const CalendarWeek = ({
   tasks,
   onTaskDone,
   onTaskClick,
-}: {
-  tasks: TaskData[];
-  onTaskDone: (taskId: string) => void;
-  onTaskClick: (taskId: string) => void;
-}) => {
+  onAddTask,
+}: CalendarViewProps) => {
   const WeekDates = useCallback(() => {
     const weekDates = [];
     for (let dayIdx = 0; dayIdx < 7; dayIdx++) {
@@ -31,7 +28,9 @@ export const CalendarWeek = ({
           {format(date, "EEEE, do MMM")}
         </Text>
         <TaskList
-          tasks={tasks.filter((t) => isSameDay(t.date, date))}
+          tasks={tasks.filter((t) =>
+            t.date ? isSameDay(t.date, date) : false
+          )}
           view="week"
           onTaskDone={onTaskDone}
           onTaskClick={onTaskClick}

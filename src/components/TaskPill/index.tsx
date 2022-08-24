@@ -1,10 +1,10 @@
 import { Checkbox, Group, Text } from "@mantine/core";
-import { CalendarView } from "../../pages/Calendar";
+import { CalendarView } from "../../pages/Calendar/CalendarView";
 
 export interface TaskData {
   title: string;
   description: string;
-  date: Date;
+  date?: Date;
   taskId: string;
 }
 

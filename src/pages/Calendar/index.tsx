@@ -7,18 +7,20 @@ import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { ApiError } from "../../api/errors";
 import { APIClient, Method } from "../../api/task";
 import { TaskData } from "../../components/TaskPill";
+import { CalendarTab } from "../../containers/CalendarTab";
+import { TaskAddDrawer } from "../../containers/TaskAddDrawer";
 import { TaskEditDrawer } from "../../containers/TaskEditDrawer";
-import { CalendarTab } from "./CalendarTab";
-
-export type CalendarView = "today" | "week" | "no-date";
+import { CalendarView } from "./CalendarView";
 
 const Calendar = () => {
   const [view, setView] = useState<CalendarView>("today");
   const location = useLocation() as any;
   const navigate = useNavigate();
   const client = new APIClient();
-  const [drawerOpened, setDrawerOpened] = useState(false);
+  const [editTaskDrawerOpened, setEditTaskDrawerOpened] = useState(false);
   const [taskEdited, setTaskEdited] = useState("");
+  const [addTaskDrawerOpened, setAddTaskDrawerOpened] = useState(false);
+  const [addTaskData, setAddTaskData] = useState<Partial<TaskData>>({});
 
   const {
     isLoading,
@@ -29,14 +31,24 @@ const Calendar = () => {
     return client.tasks(Method.GET);
   });
 
-  const handleDrawerOpen = useCallback((taskId: string) => {
-    setTaskEdited(taskId);
-    setDrawerOpened(true);
+  const handleEditTaskDrawerOpen = useCallback((taskId: string) => {
+    setTaskEdited(taskId ?? "");
+    setEditTaskDrawerOpened(true);
   }, []);
 
-  const handleDrawerClosed = useCallback(() => {
+  const handleEditTaskDrawerClosed = useCallback(() => {
     setTaskEdited("");
-    setDrawerOpened(false);
+    setEditTaskDrawerOpened(false);
+  }, []);
+
+  const handleAddTaskDrawerOpen = useCallback((date?: Date) => {
+    setAddTaskData({ date });
+    setAddTaskDrawerOpened(true);
+  }, []);
+
+  const handleAddTaskDrawerClosed = useCallback(() => {
+    setAddTaskData({});
+    setAddTaskDrawerOpened(false);
   }, []);
 
   const isAccessError = useCallback(
@@ -64,7 +76,11 @@ const Calendar = () => {
   ];
 
   if (isSuccess) {
-    tasks.forEach((task: TaskData) => (task.date = new Date(task.date)));
+    tasks.forEach((task: TaskData) => {
+      if (task.date) {
+        task.date = new Date(task.date);
+      }
+    });
   }
 
   if (error) {
@@ -114,9 +130,14 @@ const Calendar = () => {
         </Group>
       </Modal>
       <TaskEditDrawer
-        opened={drawerOpened}
-        onClose={handleDrawerClosed}
         taskId={taskEdited}
+        opened={editTaskDrawerOpened}
+        onClose={handleEditTaskDrawerClosed}
+      />
+      <TaskAddDrawer
+        data={addTaskData}
+        opened={addTaskDrawerOpened}
+        onClose={handleAddTaskDrawerClosed}
       />
       {tasks && (
         <Group
@@ -152,7 +173,8 @@ const Calendar = () => {
                 tasks={tasks}
                 changeViewHandler={() => setView(options.view)}
                 open={view === options.view}
-                onTaskClick={handleDrawerOpen}
+                onTaskClick={handleEditTaskDrawerOpen}
+                onAddTask={handleAddTaskDrawerOpen}
               />
             </MotionGroup>
           ))}

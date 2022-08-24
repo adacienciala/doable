@@ -57,6 +57,8 @@ export const TaskEditDrawer = ({
     }
   );
 
+  // TODO: delete doesn't refresh the tasks list
+
   const deleteTaskMutation = useMutation(
     () => client.singleTask(Method.DELETE, taskId),
     {
@@ -102,6 +104,7 @@ export const TaskEditDrawer = ({
       return;
     }
     editTaskMutation.mutate(form.values);
+    onClose();
   }
 
   function handleDelete(event: MouseEvent<HTMLElement>) {

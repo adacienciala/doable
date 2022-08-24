@@ -1,7 +1,7 @@
 import { Reorder } from "framer-motion";
 import { MouseEvent, useCallback, useState } from "react";
 import { TaskData, TaskPill } from "../../components/TaskPill";
-import { CalendarView } from "../../pages/Calendar";
+import { CalendarView } from "../../pages/Calendar/CalendarView";
 import { isCheckbox } from "../../utils/utils";
 
 export const TaskList = ({

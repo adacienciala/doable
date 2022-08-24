@@ -1,17 +1,14 @@
 import { Box, Text } from "@mantine/core";
 import { format, isSameDay } from "date-fns";
-import { TaskData } from "../../../components/TaskPill";
-import { TaskList } from "../../../containers/TaskList";
+import { CalendarViewProps } from "..";
+import { TaskList } from "../../../../containers/TaskList";
 
 export const CalendarToday = ({
   tasks,
   onTaskDone,
   onTaskClick,
-}: {
-  tasks: TaskData[];
-  onTaskDone: (taskId: string) => void;
-  onTaskClick: (taskId: string) => void;
-}) => {
+  onAddTask,
+}: CalendarViewProps) => {
   return (
     <>
       <Box style={{ marginBottom: "20px" }}>
@@ -27,7 +24,9 @@ export const CalendarToday = ({
       </Box>
 
       <TaskList
-        tasks={tasks.filter((t) => isSameDay(t.date, new Date()))}
+        tasks={tasks.filter((t) =>
+          t.date ? isSameDay(t.date, new Date()) : false
+        )}
         view="today"
         onTaskDone={onTaskDone}
         onTaskClick={onTaskClick}

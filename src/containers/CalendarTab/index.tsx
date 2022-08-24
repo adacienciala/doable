@@ -1,13 +1,15 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence } from "framer-motion";
 import { useMemo } from "react";
-import { CalendarView } from ".";
 import { APIClient, Method } from "../../api/task";
+import { VerticalTab } from "../../components/VerticalTab";
 import { ITask } from "../../models/task";
-import { CalendarNoDate } from "./CalendarNoDate";
-import { CalendarToday } from "./CalendarToday";
-import { CalendarWeek } from "./CalendarWeek";
-import { VerticalTab } from "./VerticalTab";
+import {
+  CalendarNoDate,
+  CalendarToday,
+  CalendarView,
+  CalendarWeek,
+} from "../../pages/Calendar/CalendarView";
 
 interface CalendarTabProps {
   title: string;
@@ -17,6 +19,7 @@ interface CalendarTabProps {
   view: CalendarView;
   changeViewHandler: any;
   onTaskClick: (taskId: string) => void;
+  onAddTask: (date?: Date) => void;
 }
 
 export const CalendarTab = ({
@@ -26,6 +29,7 @@ export const CalendarTab = ({
   open,
   tasks,
   onTaskClick,
+  onAddTask,
   changeViewHandler,
 }: CalendarTabProps) => {
   const queryClient = useQueryClient();
@@ -46,6 +50,10 @@ export const CalendarTab = ({
     }
   );
 
+  const handleTaskDone = (taskId: string) => {
+    finishTaskMutation.mutate(taskId);
+  };
+
   const CurrentCalendarView = useMemo(() => {
     switch (view) {
       case "today":
@@ -56,10 +64,6 @@ export const CalendarTab = ({
         return CalendarNoDate;
     }
   }, [view]);
-
-  const handleTaskDone = (taskId: string) => {
-    finishTaskMutation.mutate(taskId);
-  };
 
   return (
     <>
@@ -81,6 +85,7 @@ export const CalendarTab = ({
               tasks={tasks}
               onTaskDone={handleTaskDone}
               onTaskClick={onTaskClick}
+              onAddTask={onAddTask}
             />
           </div>
         )}
