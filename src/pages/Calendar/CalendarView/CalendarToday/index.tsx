@@ -14,20 +14,18 @@ export const CalendarToday = ({
   return (
     <>
       <Group
-        sx={(theme) => ({
+        sx={() => ({
           marginBottom: "20px",
         })}
       >
-        <Text
-          weight={"bold"}
-          style={{ display: "inline-block", marginRight: "10px" }}
-        >
-          Today
-        </Text>
-        <Text style={{ display: "inline-block" }}>
-          {format(Date.now(), "EEEE, do MMM")}
-        </Text>
-        <AddButton onClick={() => onAddTask(todayDate)} />
+        <Text weight={"bold"}>Today</Text>
+        <Text>{format(Date.now(), "EEEE, do MMM")}</Text>
+        <AddButton
+          sx={() => ({
+            marginLeft: "auto",
+          })}
+          onClick={() => onAddTask(todayDate)}
+        />
       </Group>
 
       <TaskList
