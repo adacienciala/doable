@@ -45,7 +45,7 @@ export const TaskAddDrawer = ({
       title: "",
       description: "",
       xp: 5,
-      date: data.date,
+      date: undefined,
       repeat: "",
     },
     validationRules: {
@@ -112,6 +112,7 @@ export const TaskAddDrawer = ({
             label="Date"
             placeholder="Date"
             value={form.values.date}
+            defaultValue={data.date}
             {...form.getInputProps("date")}
           />
           <TextInput

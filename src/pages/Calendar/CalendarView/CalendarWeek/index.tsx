@@ -3,6 +3,7 @@ import { addDays, format, isSameDay, startOfWeek } from "date-fns";
 import { endOfWeek } from "date-fns/esm";
 import { useCallback } from "react";
 import { CalendarViewProps } from "..";
+import { AddButton } from "../../../../components/AddButton";
 import { TaskList } from "../../../../containers/TaskList";
 
 const firstDayOfWeek = startOfWeek(Date.now(), { weekStartsOn: 1 });
@@ -24,9 +25,17 @@ export const CalendarWeek = ({
   const DayOfWeek = (date: Date) => {
     return (
       <>
-        <Text style={{ marginBottom: "20px" }}>
-          {format(date, "EEEE, do MMM")}
-        </Text>
+        <Group
+          sx={(theme) => ({
+            justifyContent: "space-between",
+            marginBottom: "20px",
+            flexWrap: "nowrap",
+          })}
+        >
+          <Text>{format(date, "EEEE, do MMM")}</Text>
+          <AddButton onClick={() => onAddTask(date)} />
+        </Group>
+
         <TaskList
           tasks={tasks.filter((t) =>
             t.date ? isSameDay(t.date, date) : false

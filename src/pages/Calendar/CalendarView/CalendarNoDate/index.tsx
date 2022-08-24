@@ -1,6 +1,6 @@
-import { ActionIcon, Box, Group, Text } from "@mantine/core";
-import { RiAddFill } from "react-icons/ri";
+import { Box, Group, Text } from "@mantine/core";
 import { CalendarViewProps } from "..";
+import { AddButton } from "../../../../components/AddButton";
 import { TaskList } from "../../../../containers/TaskList";
 
 export const CalendarNoDate = ({
@@ -18,14 +18,7 @@ export const CalendarNoDate = ({
         })}
       >
         <Text weight={"bold"}>Not scheduled</Text>
-        <ActionIcon
-          color="yellow.6"
-          radius="xl"
-          variant="outline"
-          onClick={() => onAddTask()}
-        >
-          <RiAddFill size={18} />
-        </ActionIcon>
+        <AddButton onClick={onAddTask} />
       </Group>
       <Box>
         <TaskList
