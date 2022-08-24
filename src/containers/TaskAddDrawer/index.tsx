@@ -9,7 +9,7 @@ import {
 import { DatePicker } from "@mantine/dates";
 import { useForm } from "@mantine/hooks";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { FormEvent } from "react";
+import { FormEvent, useEffect } from "react";
 import { APIClient, Method } from "../../api/task";
 import { TaskData } from "../../components/TaskPill";
 import { ITask } from "../../models/task";
@@ -40,13 +40,13 @@ export const TaskAddDrawer = ({
     }
   );
 
-  const form = useForm({
+  const form = useForm<Partial<ITask> & Pick<ITask, "title">>({
     initialValues: {
       title: "",
-      description: "",
+      description: undefined,
       xp: 5,
       date: undefined,
-      repeat: "",
+      repeat: undefined,
     },
     validationRules: {
       title: (value: string) => value.length > 0,
@@ -70,6 +70,13 @@ export const TaskAddDrawer = ({
     form.reset();
     onClose();
   }
+
+  useEffect(() => {
+    if (data.date) {
+      form.setFieldValue("date", data.date!);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
 
   return (
     <>
@@ -112,7 +119,6 @@ export const TaskAddDrawer = ({
             label="Date"
             placeholder="Date"
             value={form.values.date}
-            defaultValue={data.date}
             {...form.getInputProps("date")}
           />
           <TextInput
