@@ -66,13 +66,13 @@ export const TaskEditDrawer = ({
     }
   );
 
-  const form = useForm({
+  const form = useForm<Partial<ITask> & Pick<ITask, "title">>({
     initialValues: {
-      title: task?.title || "",
-      description: task?.description || "",
-      xp: task?.xp || 5,
-      date: task?.date || undefined,
-      repeat: task?.repeat || "",
+      title: "",
+      description: "",
+      xp: 5,
+      date: undefined,
+      repeat: "",
     },
     validationRules: {
       title: (value: string) => value.length > 0,
@@ -96,18 +96,25 @@ export const TaskEditDrawer = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuccess, task]);
 
+  const handleClose = () => {
+    form.reset();
+    onClose();
+  };
+
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!form.validate()) {
       return;
     }
     editTaskMutation.mutate(form.values);
+    form.reset();
     onClose();
   }
 
   function handleDelete(event: MouseEvent<HTMLElement>) {
     deleteTaskMutation.mutate();
     setOpenDeleteModal(false);
+    form.reset();
     onClose();
   }
 
@@ -115,7 +122,7 @@ export const TaskEditDrawer = ({
     <>
       <Drawer
         opened={opened}
-        onClose={onClose}
+        onClose={handleClose}
         title="Edit Task"
         padding="xl"
         size="50%"

@@ -43,10 +43,10 @@ export const TaskAddDrawer = ({
   const form = useForm<Partial<ITask> & Pick<ITask, "title">>({
     initialValues: {
       title: "",
-      description: undefined,
+      description: "",
       xp: 5,
       date: undefined,
-      repeat: undefined,
+      repeat: "",
     },
     validationRules: {
       title: (value: string) => value.length > 0,
