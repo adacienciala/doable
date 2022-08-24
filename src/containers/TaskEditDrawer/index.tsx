@@ -57,8 +57,6 @@ export const TaskEditDrawer = ({
     }
   );
 
-  // TODO: delete doesn't refresh the tasks list
-
   const deleteTaskMutation = useMutation(
     () => client.singleTask(Method.DELETE, taskId),
     {

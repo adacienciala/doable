@@ -18,6 +18,22 @@ export class APIClient {
     this.tokenSelector = localStorage.getItem("tokenSelector") ?? "";
   }
 
+  private async handleRes(res: Response | Error): Promise<any> {
+    if (res instanceof Error) {
+      throw new Error(
+        JSON.stringify({ code: 500, msg: "Server error occured" })
+      );
+    }
+    if (res.status === 204) {
+      return;
+    }
+    const json = await res.json();
+    if (!res.ok) {
+      throw new Error(JSON.stringify({ code: res.status, msg: json.msg }));
+    }
+    return json;
+  }
+
   async singleUser(
     method: Method,
     userId: string,
@@ -32,16 +48,7 @@ export class APIClient {
       this.tokenSelector,
       options?.body
     );
-    if (res instanceof Error) {
-      throw new Error(
-        JSON.stringify({ code: 500, msg: "Server error occured" })
-      );
-    }
-    const json = await res.json();
-    if (!res.ok) {
-      throw new Error(JSON.stringify({ code: res.status, msg: json.msg }));
-    }
-    return json;
+    return await this.handleRes(res);
   }
 
   async tasks(method: Method, options?: any): Promise<any> {
@@ -54,16 +61,7 @@ export class APIClient {
       this.tokenSelector,
       options?.body
     );
-    if (res instanceof Error) {
-      throw new Error(
-        JSON.stringify({ code: 500, msg: "Server error occured" })
-      );
-    }
-    const json = await res.json();
-    if (!res.ok) {
-      throw new Error(JSON.stringify({ code: res.status, msg: json.msg }));
-    }
-    return json;
+    return await this.handleRes(res);
   }
 
   async singleTask(
@@ -80,15 +78,6 @@ export class APIClient {
       this.tokenSelector,
       options?.body
     );
-    if (res instanceof Error) {
-      throw new Error(
-        JSON.stringify({ code: 500, msg: "Server error occured" })
-      );
-    }
-    const json = await res.json();
-    if (!res.ok) {
-      throw new Error(JSON.stringify({ code: res.status, msg: json.msg }));
-    }
-    return json;
+    return await this.handleRes(res);
   }
 }
