@@ -6,16 +6,19 @@ import {
   Stack,
 } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { APIClient, Method } from "../../api/client";
 import { ApiError } from "../../api/errors";
-import { ProjectCard } from "../../containers/ProjectCard";
+import { AddButton } from "../../components/AddButton";
+import { ProjectAddDrawer } from "../../containers/ProjectAddDrawer";
+import { ProjectCard, ProjectData } from "../../containers/ProjectCard";
 
 const Projects = () => {
   const location = useLocation() as any;
   const navigate = useNavigate();
   const client = new APIClient();
+  const [addProjectDrawerOpened, setAddProjectDrawerOpened] = useState(false);
 
   const {
     isLoading,
@@ -29,6 +32,14 @@ const Projects = () => {
     () => (error ? new ApiError(error).code === 403 : false),
     [error]
   );
+
+  const handleAddProjectDrawerOpen = useCallback(() => {
+    setAddProjectDrawerOpened(true);
+  }, []);
+
+  const handleAddProjectDrawerClosed = useCallback(() => {
+    setAddProjectDrawerOpened(false);
+  }, []);
 
   if (error) {
     const errObj = new ApiError(error);
@@ -76,15 +87,26 @@ const Projects = () => {
           </Button>
         </Stack>
       </Modal>
+      <ProjectAddDrawer
+        opened={addProjectDrawerOpened}
+        onClose={handleAddProjectDrawerClosed}
+      />
       {projects && (
         <SimpleGrid
           cols={3}
           style={{
-            margin: "10px",
+            margin: "20px",
           }}
         >
-          {projects.map((p: any) => (
-            <ProjectCard key={p.projectId} name={p.name} owners={p.owner} />
+          <AddButton
+            sx={() => ({
+              placeSelf: "center",
+            })}
+            size="xl"
+            onClick={(e) => handleAddProjectDrawerOpen()}
+          />
+          {projects.map((project: ProjectData) => (
+            <ProjectCard key={project.projectId} data={project} />
           ))}
         </SimpleGrid>
       )}

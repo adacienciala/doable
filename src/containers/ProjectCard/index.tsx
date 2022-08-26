@@ -1,14 +1,68 @@
-import { ActionIcon, Card, Group, Image, Menu, Text } from "@mantine/core";
-import { RiDeleteBin5Fill, RiEyeFill, RiMore2Fill } from "react-icons/ri";
+import {
+  ActionIcon,
+  Card,
+  Group,
+  Image,
+  Menu,
+  RingProgress,
+  Text,
+} from "@mantine/core";
+import { useCallback } from "react";
+import { RiDeleteBin5Fill, RiMore2Fill, RiSettings2Fill } from "react-icons/ri";
+import { IProject } from "../../models/project";
 import { UserCluster } from "../UserCluster";
 
+export interface ProjectData extends IProject {}
+
 export const ProjectCard = ({
-  name,
-  owners,
+  data: { name, owner, cover, historyTasksNumber, currentTasksNumber },
 }: {
-  name: string;
-  owners: string[];
+  data: ProjectData;
 }) => {
+  const getCurrentProgress = useCallback(
+    () =>
+      historyTasksNumber !== 0
+        ? Math.floor(
+            ((historyTasksNumber - currentTasksNumber) / historyTasksNumber) *
+              100
+          )
+        : 0,
+    [currentTasksNumber, historyTasksNumber]
+  );
+
+  const getCurrentColor = useCallback(() => {
+    const progress = getCurrentProgress();
+    if (progress < 50) return "red";
+    if (progress < 60) return "orange.5";
+    if (progress < 90) return "yellow";
+    return "green";
+  }, [getCurrentProgress]);
+
+  const getCoverImage = useCallback(() => {
+    if (cover) {
+      return <Image height="150px" src={cover} />;
+    }
+    return (
+      <RingProgress
+        size={150}
+        thickness={12}
+        roundCaps
+        sections={[{ value: getCurrentProgress(), color: getCurrentColor() }]}
+        sx={(theme) => ({
+          "circle:first-of-type": {
+            stroke: theme.colors.gray[7],
+          },
+          margin: "auto",
+        })}
+        label={
+          <Text color={getCurrentColor()} weight={700} align="center" size="xl">
+            {`${getCurrentProgress()}%`}
+          </Text>
+        }
+      />
+    );
+  }, [getCurrentProgress, getCurrentColor, cover]);
+
   return (
     <>
       <Card withBorder shadow="sm" radius="md">
@@ -22,20 +76,18 @@ export const ProjectCard = ({
             </Menu.Target>
 
             <Menu.Dropdown>
-              <Menu.Item icon={<RiEyeFill size={14} />}>Preview all</Menu.Item>
+              <Menu.Item icon={<RiSettings2Fill size={14} />}>Edit</Menu.Item>
               <Menu.Item icon={<RiDeleteBin5Fill size={14} />} color="red">
-                Delete all
+                Delete
               </Menu.Item>
             </Menu.Dropdown>
           </Menu>
         </Group>
 
-        <Card.Section mt="sm">
-          <Image src="https://images.unsplash.com/photo-1579263477001-7a703f1974e6?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80" />
-        </Card.Section>
+        <Card.Section mt="sm">{getCoverImage()}</Card.Section>
 
         <Card.Section inheritPadding mt="sm" pb="md">
-          <UserCluster users={owners} />
+          <UserCluster users={owner} />
         </Card.Section>
       </Card>
     </>
