@@ -10,7 +10,7 @@ import { DatePicker } from "@mantine/dates";
 import { useForm } from "@mantine/hooks";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FormEvent, useEffect } from "react";
-import { APIClient, Method } from "../../api/task";
+import { APIClient, Method } from "../../api/client";
 import { TaskData } from "../../components/TaskPill";
 import { ITask } from "../../models/task";
 

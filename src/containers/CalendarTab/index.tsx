@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence } from "framer-motion";
 import { useMemo } from "react";
-import { APIClient, Method } from "../../api/task";
+import { APIClient, Method } from "../../api/client";
 import { VerticalTab } from "../../components/VerticalTab";
 import { ITask } from "../../models/task";
 import {

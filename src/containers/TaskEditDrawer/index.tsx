@@ -12,7 +12,7 @@ import { DatePicker } from "@mantine/dates";
 import { useForm } from "@mantine/hooks";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { FormEvent, MouseEvent, useEffect, useState } from "react";
-import { APIClient, Method } from "../../api/task";
+import { APIClient, Method } from "../../api/client";
 import { ITask } from "../../models/task";
 import { isValidDate } from "../../utils/utils";
 

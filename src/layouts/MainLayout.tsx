@@ -23,7 +23,7 @@ import {
   RiSettings2Line,
 } from "react-icons/ri";
 import { Link } from "react-router-dom";
-import { APIClient, Method } from "../api/task";
+import { APIClient, Method } from "../api/client";
 
 type Props = {
   page: string;
