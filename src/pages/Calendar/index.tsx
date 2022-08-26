@@ -1,4 +1,4 @@
-import { Button, Group, LoadingOverlay, Modal } from "@mantine/core";
+import { Button, Group, LoadingOverlay, Modal, Stack } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import { endOfWeek, format, startOfWeek } from "date-fns";
 import { motion } from "framer-motion";
@@ -116,7 +116,7 @@ const Calendar = () => {
         opened={isAccessError()}
         withCloseButton={false}
       >
-        <Group direction="column" align={"center"}>
+        <Stack align={"center"}>
           You no longer have access to this page.
           <Button
             variant="subtle"
@@ -127,7 +127,7 @@ const Calendar = () => {
           >
             Log In
           </Button>
-        </Group>
+        </Stack>
       </Modal>
       <TaskEditDrawer
         taskId={taskEdited}
@@ -141,7 +141,6 @@ const Calendar = () => {
       />
       {tasks && (
         <Group
-          direction="row"
           align={"stretch"}
           style={{
             height: "100%",
@@ -152,7 +151,6 @@ const Calendar = () => {
           {calendarTabsOptions.map((options) => (
             <MotionGroup
               key={options.view}
-              direction="row"
               style={{
                 alignItems: "stretch",
                 flexGrow: view === options.view ? 1 : 0,

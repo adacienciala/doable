@@ -5,10 +5,10 @@ import {
   Box,
   Button,
   Center,
-  FloatingTooltip,
   Group,
   RingProgress,
   Text,
+  Tooltip,
 } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import avatar from "animal-avatar-generator";
@@ -145,10 +145,11 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
 
     return (
       <>
-        <FloatingTooltip
-          transition="skew-up"
-          transitionDuration={100}
-          openDelay={500}
+        <Tooltip.Floating
+          // ! new version of mantine should support that but doesn't
+          // transition="skew-up"
+          // transitionDuration={100}
+          // openDelay={500}
           label={`${xp}XP`}
         >
           <RingProgress
@@ -177,7 +178,7 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
               </Center>
             }
           />
-        </FloatingTooltip>
+        </Tooltip.Floating>
 
         <Text size="xl" weight={"bold"}>
           {user?.name} {user?.surname}
