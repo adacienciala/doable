@@ -10,6 +10,7 @@ import Auth from "./pages/Auth";
 import Calendar from "./pages/Calendar";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
+import Projects from "./pages/Projects";
 import ServerError from "./pages/ServerError";
 
 function App() {
@@ -31,7 +32,9 @@ function App() {
           path="/projects"
           element={
             <RequireAuth>
-              <MainLayout page="projects"></MainLayout>
+              <MainLayout page="projects">
+                <Projects />
+              </MainLayout>
             </RequireAuth>
           }
         />
