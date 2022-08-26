@@ -10,8 +10,8 @@ import {
   PasswordInput,
   TextInput,
 } from "@mantine/core";
-import { useForm } from "@mantine/hooks";
-import { useNotifications } from "@mantine/notifications";
+import { useForm } from "@mantine/form";
+import { showNotification } from "@mantine/notifications";
 import { useEffect, useState } from "react";
 import {
   MdClose,
@@ -29,7 +29,6 @@ export default function Auth() {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-  const notifications = useNotifications();
   const location = useLocation() as any;
   const from = location.state?.from?.pathname || "/";
 
@@ -41,13 +40,13 @@ export default function Auth() {
       name: "",
       surname: "",
     },
-    validationRules: {
+    validate: {
       email: (value) => /^\S+@\S+$/.test(value),
       password: (value) => /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(value),
       confirmPassword: (val, values) =>
         formType === "login" || val === values?.password,
     },
-    errorMessages: {
+    initialErrors: {
       email: "Is this an email?",
       password: "What about min. 6 characters and 1 digit?",
       confirmPassword: "Hmm, passwords don't match... Try again.",
@@ -69,7 +68,7 @@ export default function Auth() {
       color: "red",
       icon: <MdClose />,
     };
-    notifications.showNotification(alertMsg);
+    showNotification(alertMsg);
   };
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -143,7 +142,7 @@ export default function Auth() {
             shadow={"sm"}
             style={{
               padding: "50px",
-              width: "400px",
+              width: "430px",
               ...styles["login-box"],
               backgroundColor: "rgba(61, 67, 75, 0.75)",
             }}
@@ -234,7 +233,7 @@ export default function Auth() {
                 <Anchor
                   component="button"
                   type="button"
-                  color="gray"
+                  color="gray.5"
                   onClick={toggleFormType}
                   size="sm"
                 >
