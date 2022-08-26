@@ -7,7 +7,7 @@ import {
   TextInput,
 } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
-import { useForm } from "@mantine/hooks";
+import { useForm } from "@mantine/form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FormEvent, useEffect } from "react";
 import { APIClient, Method } from "../../api/task";
@@ -48,10 +48,10 @@ export const TaskAddDrawer = ({
       date: undefined,
       repeat: "",
     },
-    validationRules: {
+    validate: {
       title: (value: string) => value.length > 0,
     },
-    errorMessages: {
+    initialErrors: {
       title: "Please, enter a title",
     },
   });
