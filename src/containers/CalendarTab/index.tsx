@@ -79,6 +79,8 @@ export const CalendarTab = ({
               width: "100%",
               borderRight: "1px solid gray",
               padding: "20px",
+              overflowY: "auto",
+              overflowX: "hidden",
             }}
           >
             <CurrentCalendarView

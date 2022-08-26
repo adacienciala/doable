@@ -253,6 +253,7 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
         <Box
           sx={(theme) => ({
             gridArea: "content",
+            overflow: "auto",
           })}
         >
           {children}
