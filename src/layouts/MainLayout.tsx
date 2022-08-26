@@ -134,9 +134,9 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
   };
 
   const NavbarProfile = () => {
-    const xp = user?.statistics?.xp || 0;
-    const minXp = user?.statistics?.minXp || 0;
-    const maxXp = user?.statistics?.maxXp || 100;
+    const xp = user?.statistics?.xp ?? 0;
+    const minXp = user?.statistics?.minXp ?? 0;
+    const maxXp = user?.statistics?.maxXp ?? 100;
 
     const getCurrentProgress = useCallback(
       () => ((xp - minXp) / (maxXp - minXp)) * 100,
