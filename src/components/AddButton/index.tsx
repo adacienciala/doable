@@ -1,18 +1,19 @@
 import { ActionIcon } from "@mantine/core";
+import { MouseEventHandler } from "react";
 import { RiAddFill } from "react-icons/ri";
 
 export const AddButton = ({
   onClick,
   ...props
 }: {
-  onClick: Function;
+  onClick: MouseEventHandler<HTMLButtonElement>;
   [x: string]: any;
 }) => (
   <ActionIcon
     color="yellow.6"
     radius="xl"
     variant="outline"
-    onClick={() => onClick()}
+    onClick={onClick}
     size="sm"
     {...props}
   >

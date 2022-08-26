@@ -18,7 +18,7 @@ export const CalendarNoDate = ({
         })}
       >
         <Text weight={"bold"}>Not scheduled</Text>
-        <AddButton onClick={onAddTask} />
+        <AddButton onClick={(e) => onAddTask()} />
       </Group>
       <Box>
         <TaskList
