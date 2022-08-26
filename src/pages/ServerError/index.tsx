@@ -1,4 +1,4 @@
-import { Button, Group, Image } from "@mantine/core";
+import { Button, Image, Stack } from "@mantine/core";
 import { Link, useLocation } from "react-router-dom";
 import serverError from "./500.svg";
 
@@ -7,8 +7,7 @@ export default function ServerError() {
   const from = location.state?.from?.pathname || "/";
 
   return (
-    <Group
-      direction="column"
+    <Stack
       sx={() => ({
         justifyContent: "center",
       })}
@@ -27,6 +26,6 @@ export default function ServerError() {
       <Button variant={"subtle"} component={Link} to="/">
         Go Home
       </Button>
-    </Group>
+    </Stack>
   );
 }

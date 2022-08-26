@@ -1,11 +1,10 @@
-import { Button, Group, Image } from "@mantine/core";
+import { Button, Image, Stack } from "@mantine/core";
 import { Link } from "react-router-dom";
 import notFound from "./404.svg";
 
 export default function NotFound() {
   return (
-    <Group
-      direction="column"
+    <Stack
       sx={() => ({
         justifyContent: "center",
       })}
@@ -21,6 +20,6 @@ export default function NotFound() {
       <Button component={Link} to="/">
         Go Home
       </Button>
-    </Group>
+    </Stack>
   );
 }
