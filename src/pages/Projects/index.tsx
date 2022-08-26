@@ -1,9 +1,9 @@
 import {
   Button,
-  Group,
   LoadingOverlay,
   Modal,
   SimpleGrid,
+  Stack,
 } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback } from "react";
@@ -63,7 +63,7 @@ const Projects = () => {
         opened={isAccessError()}
         withCloseButton={false}
       >
-        <Group direction="column" align={"center"}>
+        <Stack align={"center"}>
           You no longer have access to this page.
           <Button
             variant="subtle"
@@ -74,7 +74,7 @@ const Projects = () => {
           >
             Log In
           </Button>
-        </Group>
+        </Stack>
       </Modal>
       {projects && (
         <SimpleGrid
