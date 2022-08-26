@@ -7,7 +7,7 @@ import {
   RingProgress,
   Text,
 } from "@mantine/core";
-import { useCallback } from "react";
+import { MouseEventHandler, useCallback } from "react";
 import { RiDeleteBin5Fill, RiMore2Fill, RiSettings2Fill } from "react-icons/ri";
 import { IProject } from "../../models/project";
 import { UserCluster } from "../UserCluster";
@@ -16,8 +16,12 @@ export interface ProjectData extends IProject {}
 
 export const ProjectCard = ({
   data: { name, owner, cover, historyTasksNumber, currentTasksNumber },
+  onEditProject,
+  onDeleteProject,
 }: {
   data: ProjectData;
+  onEditProject: MouseEventHandler<HTMLButtonElement>;
+  onDeleteProject: MouseEventHandler<HTMLButtonElement>;
 }) => {
   const getCurrentProgress = useCallback(
     () =>
@@ -40,7 +44,7 @@ export const ProjectCard = ({
 
   const getCoverImage = useCallback(() => {
     if (cover) {
-      return <Image height="150px" src={cover} />;
+      return <Image withPlaceholder height="150px" src={cover} />;
     }
     return (
       <RingProgress
@@ -76,8 +80,17 @@ export const ProjectCard = ({
             </Menu.Target>
 
             <Menu.Dropdown>
-              <Menu.Item icon={<RiSettings2Fill size={14} />}>Edit</Menu.Item>
-              <Menu.Item icon={<RiDeleteBin5Fill size={14} />} color="red">
+              <Menu.Item
+                onClick={onEditProject}
+                icon={<RiSettings2Fill size={14} />}
+              >
+                Edit
+              </Menu.Item>
+              <Menu.Item
+                onClick={onDeleteProject}
+                icon={<RiDeleteBin5Fill size={14} />}
+                color="red"
+              >
                 Delete
               </Menu.Item>
             </Menu.Dropdown>

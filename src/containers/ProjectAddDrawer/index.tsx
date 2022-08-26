@@ -32,7 +32,6 @@ export const ProjectAddDrawer = ({
   const form = useForm<Partial<IProject> & Pick<IProject, "name">>({
     initialValues: {
       name: "",
-      owner: undefined,
       cover: "",
     },
     validate: {
@@ -84,13 +83,6 @@ export const ProjectAddDrawer = ({
             placeholder="Cover"
             value={form.values.cover}
             {...form.getInputProps("cover")}
-          />
-          <TextInput
-            mt="md"
-            label="Owner"
-            placeholder="Owner"
-            value={form.values.owner}
-            {...form.getInputProps("owner")}
           />
           <Center style={{ height: "100px" }}>
             <Button variant="outline" color={"red"} onClick={onClose}>
