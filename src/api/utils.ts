@@ -3,7 +3,7 @@ export async function request(
   url: string,
   token: string,
   tokenSelector: string,
-  data?: any
+  body?: any
 ): Promise<Response | Error> {
   const options = {
     headers: {
@@ -11,7 +11,7 @@ export async function request(
       Authorization: `Bearer ${token}.${tokenSelector}`,
     },
     method,
-    body: JSON.stringify(data),
+    body: JSON.stringify(body),
   };
   try {
     return await fetch(url, options);

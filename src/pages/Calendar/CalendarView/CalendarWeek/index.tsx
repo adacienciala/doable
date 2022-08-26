@@ -2,12 +2,18 @@ import { Box, Grid, Group, Text } from "@mantine/core";
 import { addDays, format, isSameDay, startOfWeek } from "date-fns";
 import { endOfWeek } from "date-fns/esm";
 import { useCallback } from "react";
-import { TaskData } from "../../../components/TaskPill";
-import { TaskList } from "../../../containers/TaskList";
+import { CalendarViewProps } from "..";
+import { AddButton } from "../../../../components/AddButton";
+import { TaskList } from "../../../../containers/TaskList";
 
 const firstDayOfWeek = startOfWeek(Date.now(), { weekStartsOn: 1 });
 
-export const CalendarWeek = ({ tasks }: { tasks: TaskData[] }) => {
+export const CalendarWeek = ({
+  tasks,
+  onTaskDone,
+  onTaskClick,
+  onAddTask,
+}: CalendarViewProps) => {
   const WeekDates = useCallback(() => {
     const weekDates = [];
     for (let dayIdx = 0; dayIdx < 7; dayIdx++) {
@@ -19,12 +25,24 @@ export const CalendarWeek = ({ tasks }: { tasks: TaskData[] }) => {
   const DayOfWeek = (date: Date) => {
     return (
       <>
-        <Text style={{ marginBottom: "20px" }}>
-          {format(date, "EEEE, do MMM")}
-        </Text>
+        <Group
+          sx={(theme) => ({
+            justifyContent: "space-between",
+            marginBottom: "20px",
+            flexWrap: "nowrap",
+          })}
+        >
+          <Text>{format(date, "EEEE, do MMM")}</Text>
+          <AddButton onClick={() => onAddTask(date)} />
+        </Group>
+
         <TaskList
-          tasks={tasks.filter((t) => isSameDay(t.date, date))}
+          tasks={tasks.filter((t) =>
+            t.date ? isSameDay(t.date, date) : false
+          )}
           view="week"
+          onTaskDone={onTaskDone}
+          onTaskClick={onTaskClick}
         />
       </>
     );

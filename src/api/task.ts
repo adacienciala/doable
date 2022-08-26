@@ -7,6 +7,8 @@ export enum Method {
   DELETE = "DELETE",
 }
 
+// TODO: make it a singleton
+
 export class APIClient {
   private token: string = "";
   private tokenSelector: string = "";
@@ -16,17 +18,66 @@ export class APIClient {
     this.tokenSelector = localStorage.getItem("tokenSelector") ?? "";
   }
 
-  async tasks(method: Method, options?: any): Promise<any> {
-    const tasksEndpoint = "/tasks";
-    const url = process.env.REACT_APP_DOABLE_API + tasksEndpoint;
-    const res = await request(method, url, this.token, this.tokenSelector);
+  private async handleRes(res: Response | Error): Promise<any> {
     if (res instanceof Error) {
-      throw new Error("Server error occured");
+      throw new Error(
+        JSON.stringify({ code: 500, msg: "Server error occured" })
+      );
+    }
+    if (res.status === 204) {
+      return;
     }
     const json = await res.json();
     if (!res.ok) {
       throw new Error(JSON.stringify({ code: res.status, msg: json.msg }));
     }
     return json;
+  }
+
+  async singleUser(
+    method: Method,
+    userId: string,
+    options?: any
+  ): Promise<any> {
+    const usersEndpoint = `/users/${userId}`;
+    const url = process.env.REACT_APP_DOABLE_API + usersEndpoint;
+    const res = await request(
+      method,
+      url,
+      this.token,
+      this.tokenSelector,
+      options?.body
+    );
+    return await this.handleRes(res);
+  }
+
+  async tasks(method: Method, options?: any): Promise<any> {
+    const tasksEndpoint = "/tasks";
+    const url = process.env.REACT_APP_DOABLE_API + tasksEndpoint;
+    const res = await request(
+      method,
+      url,
+      this.token,
+      this.tokenSelector,
+      options?.body
+    );
+    return await this.handleRes(res);
+  }
+
+  async singleTask(
+    method: Method,
+    taskId: string,
+    options?: any
+  ): Promise<any> {
+    const tasksEndpoint = `/tasks/${taskId}`;
+    const url = process.env.REACT_APP_DOABLE_API + tasksEndpoint;
+    const res = await request(
+      method,
+      url,
+      this.token,
+      this.tokenSelector,
+      options?.body
+    );
+    return await this.handleRes(res);
   }
 }

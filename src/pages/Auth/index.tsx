@@ -92,7 +92,7 @@ export default function Auth() {
       }
       localStorage.setItem("token", token);
       localStorage.setItem("tokenSelector", tokenSelector);
-      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("doableId", user.doableId);
       navigate(from, { replace: true });
     }, 250);
   }

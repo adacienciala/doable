@@ -1,21 +1,23 @@
 import { Checkbox, Group, Text } from "@mantine/core";
-import { CalendarView } from "../../pages/Calendar";
+import { CalendarView } from "../../pages/Calendar/CalendarView";
 
 export interface TaskData {
   title: string;
   description: string;
-  date: Date;
-  id: number;
+  date?: Date;
+  taskId: string;
 }
 
 interface TaskPillProps {
   data: TaskData;
   view: CalendarView;
+  onTaskDone: (taskId: string) => void;
 }
 
 export const TaskPill = ({
-  data: { title, description, date },
+  data: { title, description, date, taskId },
   view,
+  onTaskDone,
 }: TaskPillProps) => {
   return (
     <Group
@@ -30,7 +32,10 @@ export const TaskPill = ({
         cursor: "grab",
       })}
     >
-      <Checkbox radius="xl" />
+      <Checkbox
+        radius="xl"
+        onChange={(event) => event.currentTarget.checked && onTaskDone(taskId)}
+      />
       <Text weight={500}>{title}</Text>
       {view === "today" && <Text weight={300}>{description}</Text>}
       {view === "no-date" && <Text weight={300}>{description}</Text>}

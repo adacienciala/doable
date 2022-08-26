@@ -1,22 +1,26 @@
-import { Button, Group, LoadingOverlay, Modal, Text } from "@mantine/core";
+import { Button, Group, LoadingOverlay, Modal } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import { endOfWeek, format, startOfWeek } from "date-fns";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { useCallback, useState } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { ApiError } from "../../api/errors";
 import { APIClient, Method } from "../../api/task";
 import { TaskData } from "../../components/TaskPill";
-import { CalendarNoDate } from "./CalendarNoDate";
-import { CalendarToday } from "./CalendarToday";
-import { CalendarWeek } from "./CalendarWeek";
-
-export type CalendarView = "today" | "week" | "no-date";
+import { CalendarTab } from "../../containers/CalendarTab";
+import { TaskAddDrawer } from "../../containers/TaskAddDrawer";
+import { TaskEditDrawer } from "../../containers/TaskEditDrawer";
+import { CalendarView } from "./CalendarView";
 
 const Calendar = () => {
   const [view, setView] = useState<CalendarView>("today");
   const location = useLocation() as any;
   const navigate = useNavigate();
+  const client = new APIClient();
+  const [editTaskDrawerOpened, setEditTaskDrawerOpened] = useState(false);
+  const [taskEdited, setTaskEdited] = useState("");
+  const [addTaskDrawerOpened, setAddTaskDrawerOpened] = useState(false);
+  const [addTaskData, setAddTaskData] = useState<Partial<TaskData>>({});
 
   const {
     isLoading,
@@ -24,112 +28,70 @@ const Calendar = () => {
     error,
     data: tasks,
   } = useQuery(["tasks"], () => {
-    const client = new APIClient();
     return client.tasks(Method.GET);
   });
+
+  const handleEditTaskDrawerOpen = useCallback((taskId: string) => {
+    setTaskEdited(taskId ?? "");
+    setEditTaskDrawerOpened(true);
+  }, []);
+
+  const handleEditTaskDrawerClosed = useCallback(() => {
+    setTaskEdited("");
+    setEditTaskDrawerOpened(false);
+  }, []);
+
+  const handleAddTaskDrawerOpen = useCallback((date?: Date) => {
+    setAddTaskData({ date });
+    setAddTaskDrawerOpened(true);
+  }, []);
+
+  const handleAddTaskDrawerClosed = useCallback(() => {
+    setAddTaskData({});
+    setAddTaskDrawerOpened(false);
+  }, []);
 
   const isAccessError = useCallback(
     () => (error ? new ApiError(error).code === 403 : false),
     [error]
   );
 
+  const MotionGroup = motion(Group);
+
+  const calendarTabsOptions: {
+    title: string;
+    view: CalendarView;
+    range?: string;
+  }[] = [
+    { title: "Today", view: "today", range: format(Date.now(), "dd/MM/yyyy") },
+    {
+      title: "Week",
+      view: "week",
+      range: `${format(
+        startOfWeek(Date.now(), { weekStartsOn: 1 }),
+        "dd/MM/yyyy"
+      )} - ${format(endOfWeek(Date.now(), { weekStartsOn: 1 }), "dd/MM/yyyy")}`,
+    },
+    { title: "Not scheduled", view: "no-date" },
+  ];
+
   if (isSuccess) {
-    tasks.forEach((task: TaskData) => (task.date = new Date(task.date)));
+    tasks.forEach((task: TaskData) => {
+      if (task.date) {
+        task.date = new Date(task.date);
+      }
+    });
   }
 
   if (error) {
     const errObj = new ApiError(error);
     if (errObj.code === 404) {
+      return <Navigate to="/404" state={{ from: location, errorMsg: error }} />;
+    }
+    if (errObj.code === 500) {
       return <Navigate to="/500" state={{ from: location, errorMsg: error }} />;
     }
   }
-
-  interface VerticalTabProps {
-    title: string;
-    range?: string;
-    view: CalendarView;
-  }
-
-  const VerticalTab = ({ title, range, view }: VerticalTabProps) => {
-    return (
-      <Group
-        sx={() => ({
-          padding: "10px 40px",
-          width: "80px",
-          flexDirection: "row",
-          gap: "20px",
-          borderRight: "1px solid gray",
-          whiteSpace: "nowrap",
-          alignItems: "flex-start",
-          overflow: "visible",
-          ":hover": {
-            cursor: "pointer",
-            backgroundColor: "gray",
-          },
-        })}
-        onClick={() => setView(view)}
-      >
-        <Group
-          style={{
-            transformOrigin: "left center",
-            flexWrap: "nowrap",
-            transform: "rotate(90deg)",
-            fontWeight: "bold",
-          }}
-        >
-          <Text>{title}</Text>
-          {range && <Text>{range}</Text>}
-        </Group>
-      </Group>
-    );
-  };
-
-  interface CalendarTabProps {
-    title: string;
-    range?: string;
-    tabView: CalendarView;
-  }
-
-  const CalendarTab = ({ title, range, tabView }: CalendarTabProps) => {
-    const open = view === tabView;
-
-    const MotionGroup = motion(Group);
-
-    return (
-      <MotionGroup
-        direction="row"
-        style={{
-          alignItems: "stretch",
-          flexGrow: open ? 1 : 0,
-          flexWrap: "nowrap",
-        }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{
-          ease: "easeOut",
-          duration: 1,
-        }}
-      >
-        <VerticalTab title={title} range={range} view={tabView} />
-        <AnimatePresence>
-          {open && (
-            <div
-              style={{
-                width: "100%",
-                borderRight: "1px solid gray",
-                padding: "20px",
-              }}
-            >
-              {view === "today" && <CalendarToday tasks={tasks} />}
-              {view === "week" && <CalendarWeek tasks={tasks} />}
-              {view === "no-date" && <CalendarNoDate tasks={tasks} />}
-            </div>
-          )}
-        </AnimatePresence>
-      </MotionGroup>
-    );
-  };
 
   return (
     <>
@@ -148,6 +110,7 @@ const Calendar = () => {
         transition="fade"
         transitionDuration={600}
         onClose={() => {
+          localStorage.clear();
           navigate("/auth", { state: { from: location }, replace: false });
         }}
         opened={isAccessError()}
@@ -166,6 +129,16 @@ const Calendar = () => {
           </Button>
         </Group>
       </Modal>
+      <TaskEditDrawer
+        taskId={taskEdited}
+        opened={editTaskDrawerOpened}
+        onClose={handleEditTaskDrawerClosed}
+      />
+      <TaskAddDrawer
+        data={addTaskData}
+        opened={addTaskDrawerOpened}
+        onClose={handleAddTaskDrawerClosed}
+      />
       {tasks && (
         <Group
           direction="row"
@@ -176,23 +149,35 @@ const Calendar = () => {
           }}
           noWrap
         >
-          <CalendarTab
-            title="Today"
-            range={format(Date.now(), "dd/MM/yyyy")}
-            tabView="today"
-          />
-          <CalendarTab
-            title="Week"
-            range={`${format(
-              startOfWeek(Date.now(), { weekStartsOn: 1 }),
-              "dd/MM/yyyy"
-            )} - ${format(
-              endOfWeek(Date.now(), { weekStartsOn: 1 }),
-              "dd/MM/yyyy"
-            )}`}
-            tabView="week"
-          />
-          <CalendarTab title="Not scheduled" tabView="no-date" />
+          {calendarTabsOptions.map((options) => (
+            <MotionGroup
+              key={options.view}
+              direction="row"
+              style={{
+                alignItems: "stretch",
+                flexGrow: view === options.view ? 1 : 0,
+                flexWrap: "nowrap",
+              }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{
+                ease: "easeOut",
+                duration: 1,
+              }}
+            >
+              <CalendarTab
+                title={options.title}
+                range={options.range}
+                view={view}
+                tasks={tasks}
+                changeViewHandler={() => setView(options.view)}
+                open={view === options.view}
+                onTaskClick={handleEditTaskDrawerOpen}
+                onAddTask={handleAddTaskDrawerOpen}
+              />
+            </MotionGroup>
+          ))}
         </Group>
       )}
     </>

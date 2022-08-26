@@ -10,8 +10,9 @@ import {
   RingProgress,
   Text,
 } from "@mantine/core";
+import { useQuery } from "@tanstack/react-query";
 import avatar from "animal-avatar-generator";
-import { useEffect, useState } from "react";
+import { useCallback } from "react";
 import { AiOutlineProject } from "react-icons/ai";
 import { FiCalendar } from "react-icons/fi";
 import {
@@ -22,13 +23,22 @@ import {
   RiSettings2Line,
 } from "react-icons/ri";
 import { Link } from "react-router-dom";
+import { APIClient, Method } from "../api/task";
 
 type Props = {
   page: string;
 };
 
 const MainLayout: React.FC<Props> = ({ page, children }) => {
-  const user = JSON.parse(localStorage.getItem("user")!); // TODO: state in the future
+  const client = new APIClient();
+
+  const { data: user } = useQuery(
+    ["user", localStorage.getItem("doableId")!],
+    () => {
+      const doableId = localStorage.getItem("doableId")!;
+      return client.singleUser(Method.GET, doableId);
+    }
+  );
 
   function logOut() {
     localStorage.clear();
@@ -101,7 +111,7 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
   };
 
   function getUserSeed() {
-    return user.settings?.avatarSeed || user.email || "default";
+    return user?.settings?.avatarSeed || user?.email || "default";
   }
 
   const NavbarFooter = () => {
@@ -124,13 +134,14 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
   };
 
   const NavbarProfile = () => {
-    const [xp, setXp] = useState(user?.statistics?.xp || 0);
-    const [maxXp, setMaxXp] = useState(user?.statistics?.maxXp || 100);
+    const xp = user?.statistics?.xp ?? 0;
+    const minXp = user?.statistics?.minXp ?? 0;
+    const maxXp = user?.statistics?.maxXp ?? 100;
 
-    useEffect(() => {
-      setXp(user?.statistics?.xp || 0);
-      setMaxXp(user?.statistics?.maxXp || 100);
-    }, []);
+    const getCurrentProgress = useCallback(
+      () => ((xp - minXp) / (maxXp - minXp)) * 100,
+      [xp, minXp, maxXp]
+    );
 
     return (
       <>
@@ -138,7 +149,7 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
           transition="skew-up"
           transitionDuration={100}
           openDelay={500}
-          label={`${xp}/${maxXp}`}
+          label={`${xp}XP`}
         >
           <RingProgress
             size={200}
@@ -146,7 +157,7 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
             roundCaps
             sections={[
               {
-                value: (xp / maxXp) * 100,
+                value: getCurrentProgress(),
                 color: "yellow",
               },
             ]}
@@ -169,7 +180,7 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
         </FloatingTooltip>
 
         <Text size="xl" weight={"bold"}>
-          {user.name} {user.surname}
+          {user?.name} {user?.surname}
         </Text>
 
         <Button
@@ -179,7 +190,7 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
             padding: [10, 20],
           })}
         >
-          {user.statistics.rank}
+          {user?.statistics.rank}
         </Button>
       </>
     );
@@ -236,7 +247,7 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
             color: theme.colors.gray[9],
           })}
         >
-          <Text>You're doing great, {user.name}!</Text>
+          <Text>You're doing great, {user?.name}!</Text>
         </Group>
         <Box
           sx={(theme) => ({
