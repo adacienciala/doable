@@ -10,6 +10,7 @@ import { TaskData } from "../../components/TaskPill";
 import { CalendarTab } from "../../containers/CalendarTab";
 import { TaskAddDrawer } from "../../containers/TaskAddDrawer";
 import { TaskEditDrawer } from "../../containers/TaskEditDrawer";
+import { ITask } from "../../models/task";
 import { CalendarView } from "./CalendarView";
 
 const Calendar = () => {
@@ -27,7 +28,7 @@ const Calendar = () => {
     isSuccess,
     error,
     data: tasks,
-  } = useQuery(["tasks"], () => {
+  } = useQuery<ITask[]>(["tasks"], () => {
     return client.tasks(Method.GET);
   });
 

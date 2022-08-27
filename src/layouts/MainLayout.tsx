@@ -24,6 +24,7 @@ import {
 } from "react-icons/ri";
 import { Link } from "react-router-dom";
 import { APIClient, Method } from "../api/task";
+import { IUser } from "../models/user";
 
 type Props = {
   page: string;
@@ -32,7 +33,7 @@ type Props = {
 const MainLayout: React.FC<Props> = ({ page, children }) => {
   const client = new APIClient();
 
-  const { data: user } = useQuery(
+  const { data: user } = useQuery<IUser>(
     ["user", localStorage.getItem("doableId")!],
     () => {
       const doableId = localStorage.getItem("doableId")!;
