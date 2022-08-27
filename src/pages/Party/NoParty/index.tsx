@@ -10,7 +10,7 @@ import {
   Stack,
   Text,
 } from "@mantine/core";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   ComponentPropsWithoutRef,
   forwardRef,
@@ -60,6 +60,7 @@ export default function NoParty({ onJoinParty }: { onJoinParty: any }) {
   const location = useLocation() as any;
   const navigate = useNavigate();
   const client = new APIClient();
+  const queryClient = useQueryClient();
 
   const [chosenParty, setChosenParty] = useState<string | null>(null);
   const [data, setData] = useState<PartyItemProps[]>([]);
@@ -71,6 +72,20 @@ export default function NoParty({ onJoinParty }: { onJoinParty: any }) {
   } = useQuery<IParty[]>(
     ["parties"],
     async () => await client.parties(Method.GET)
+  );
+
+  const addPartyMutation = useMutation(
+    (data: Partial<IParty>) =>
+      client.parties(Method.POST, {
+        body: data,
+      }),
+    {
+      onSuccess: (data) => {
+        queryClient.invalidateQueries(["parties"]);
+        queryClient.invalidateQueries(["user"]);
+        onJoinParty(data.partyId);
+      },
+    }
   );
 
   useEffect(() => {
@@ -168,9 +183,8 @@ export default function NoParty({ onJoinParty }: { onJoinParty: any }) {
           clearable
           getCreateLabel={(query) => `+ Create ${query}`}
           onCreate={(query) => {
-            console.log("new stuff");
             const item = { value: query, label: query };
-            // setData((current) => [...current, item]);
+            addPartyMutation.mutate({ name: query });
             return item;
           }}
           filter={(value, item) =>

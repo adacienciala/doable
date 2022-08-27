@@ -41,9 +41,7 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
     }
   );
 
-  useEffect(() => {
-    if (user?.partyId) localStorage.setItem("partyId", user?.partyId);
-  }, [user]);
+  useEffect(() => localStorage.setItem("partyId", user?.partyId ?? ""), [user]);
 
   function logOut() {
     localStorage.clear();
