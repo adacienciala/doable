@@ -11,6 +11,7 @@ import Calendar from "./pages/Calendar";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import Projects from "./pages/Projects";
+import ProjectPage from "./pages/Projects/ProjectPage";
 import ServerError from "./pages/ServerError";
 
 function App() {
@@ -34,6 +35,17 @@ function App() {
             <RequireAuth>
               <MainLayout page="projects">
                 <Projects />
+              </MainLayout>
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/projects/:projectId"
+          element={
+            <RequireAuth>
+              <MainLayout page="projects">
+                <ProjectPage />
+                {/* <p>asd</p> */}
               </MainLayout>
             </RequireAuth>
           }

@@ -185,6 +185,9 @@ const Projects = () => {
               onDeleteProject={() =>
                 handleDeleteProjectModalOpen(project.projectId)
               }
+              onOpenProject={() =>
+                navigate(`/projects/${project.projectId}`, { replace: false })
+              }
               key={project.projectId}
               data={project}
             />

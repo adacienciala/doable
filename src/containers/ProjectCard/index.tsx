@@ -16,10 +16,12 @@ export interface ProjectData extends IProject {}
 
 export const ProjectCard = ({
   data: { name, owner, cover, historyTasksNumber, currentTasksNumber },
+  onOpenProject,
   onEditProject,
   onDeleteProject,
 }: {
   data: ProjectData;
+  onOpenProject: MouseEventHandler<HTMLDivElement>;
   onEditProject: MouseEventHandler<HTMLButtonElement>;
   onDeleteProject: MouseEventHandler<HTMLButtonElement>;
 }) => {
@@ -97,7 +99,9 @@ export const ProjectCard = ({
           </Menu>
         </Group>
 
-        <Card.Section mt="sm">{getCoverImage()}</Card.Section>
+        <Card.Section onClick={onOpenProject} mt="sm">
+          {getCoverImage()}
+        </Card.Section>
 
         <Card.Section inheritPadding mt="sm" pb="md">
           <UserCluster users={owner} />
