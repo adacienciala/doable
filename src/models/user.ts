@@ -21,6 +21,7 @@ export interface IUserSettings {
 
 export interface IUserStatistics {
   xp: number;
+  minXp: number;
   maxXp: number;
   rank: string;
 }
