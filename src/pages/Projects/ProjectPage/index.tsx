@@ -33,7 +33,7 @@ const ProjectPage = () => {
     isLoading,
     error,
     data: project,
-  } = useQuery(["project"], () => {
+  } = useQuery(["project", projectId], () => {
     return client.singleProject(Method.GET, projectId!);
   });
 
