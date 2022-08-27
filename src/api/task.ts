@@ -51,6 +51,23 @@ export class APIClient {
     return await this.handleRes(res);
   }
 
+  async singleParty(
+    method: Method,
+    partyId: string,
+    options?: any
+  ): Promise<any> {
+    const usersEndpoint = `/parties/${partyId}`;
+    const url = process.env.REACT_APP_DOABLE_API + usersEndpoint;
+    const res = await request(
+      method,
+      url,
+      this.token,
+      this.tokenSelector,
+      options?.body
+    );
+    return await this.handleRes(res);
+  }
+
   async tasks(method: Method, options?: any): Promise<any> {
     const tasksEndpoint = "/tasks";
     const url = process.env.REACT_APP_DOABLE_API + tasksEndpoint;
