@@ -4,6 +4,7 @@ export interface IUser {
   email: string;
   password: string;
   surname: string;
+  partyId: string;
   sessions: IUserSession[];
   settings: IUserSettings;
   statistics: IUserStatistics;

@@ -1,24 +1,31 @@
 import { Button, Group, LoadingOverlay, Modal, Stack } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { APIClient, Method } from "../../api/client";
 import { ApiError } from "../../api/errors";
-import { APIClient, Method } from "../../api/task";
+import NoParty from "./NoParty";
 
 const Party = () => {
   const location = useLocation() as any;
   const navigate = useNavigate();
   const client = new APIClient();
+  const [partyId, setPartyId] = useState(localStorage.getItem("partyId") ?? "");
 
   const {
     isLoading,
     isSuccess,
     error,
     data: party,
-  } = useQuery(["party", localStorage.getItem("partyId")!], () => {
-    const partyId = localStorage.getItem("partyId")!;
-    return client.singleParty(Method.GET, partyId);
-  });
+  } = useQuery(
+    ["party", partyId],
+    () => {
+      return client.singleParty(Method.GET, partyId);
+    },
+    {
+      enabled: partyId !== "",
+    }
+  );
 
   const isAccessError = useCallback(
     () => (error ? new ApiError(error).code === 403 : false),
@@ -33,6 +40,10 @@ const Party = () => {
     if (errObj.code === 500) {
       return <Navigate to="/500" state={{ from: location, errorMsg: error }} />;
     }
+  }
+
+  if (!partyId) {
+    return <NoParty onJoinParty={setPartyId} />;
   }
 
   return (
