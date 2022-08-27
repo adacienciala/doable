@@ -177,7 +177,7 @@ export const ProjectEditDrawer = ({
           </Button>
           <Space w="md" />
           <Button variant="outline" color={"red"} onClick={handleDelete}>
-            Delete task
+            Delete project
           </Button>
         </Center>
       </Modal>

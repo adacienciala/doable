@@ -150,7 +150,7 @@ const Projects = () => {
           </Button>
           <Space w="md" />
           <Button variant="outline" color={"red"} onClick={handleDeleteProject}>
-            Delete task
+            Delete project
           </Button>
         </Center>
       </Modal>
