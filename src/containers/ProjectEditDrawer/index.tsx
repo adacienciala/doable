@@ -72,7 +72,7 @@ export const ProjectEditDrawer = ({
       name: (value: string) => value.length > 0,
     },
     initialErrors: {
-      title: "Please, enter a name",
+      title: "Enter a name",
     },
   });
 
