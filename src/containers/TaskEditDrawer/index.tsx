@@ -72,6 +72,7 @@ export const TaskEditDrawer = ({
       description: "",
       xp: 5,
       date: undefined,
+      projectId: "",
       repeat: "",
     },
     validate: {
@@ -90,6 +91,7 @@ export const TaskEditDrawer = ({
         description: task.description || "",
         xp: task.xp || 5,
         date: isValidDate(task.date) ? task.date : undefined,
+        projectId: task.projectId || "",
         repeat: task.repeat || "",
       });
     }
@@ -161,6 +163,13 @@ export const TaskEditDrawer = ({
             placeholder="Date"
             value={form.values.date}
             {...form.getInputProps("date")}
+          />
+          <TextInput
+            mt="md"
+            label="ProjectId"
+            placeholder="ProjectId"
+            value={form.values.projectId}
+            {...form.getInputProps("projectId")}
           />
           <TextInput
             mt="md"

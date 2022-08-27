@@ -46,6 +46,7 @@ export const TaskAddDrawer = ({
       description: "",
       xp: 5,
       date: undefined,
+      projectId: "",
       repeat: "",
     },
     validate: {
@@ -120,6 +121,13 @@ export const TaskAddDrawer = ({
             placeholder="Date"
             value={form.values.date}
             {...form.getInputProps("date")}
+          />
+          <TextInput
+            mt="md"
+            label="ProjectId"
+            placeholder="ProjectId"
+            value={form.values.projectId}
+            {...form.getInputProps("projectId")}
           />
           <TextInput
             mt="md"
