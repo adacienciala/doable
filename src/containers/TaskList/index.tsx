@@ -42,7 +42,7 @@ export const TaskList = ({
           listStyle: "none",
           padding: 0,
           margin: 0,
-          maxHeight: "70%",
+          height: view === "week" ? "70%" : "90%",
           overflowY: "auto",
           overflowX: "hidden",
         }}
