@@ -23,7 +23,7 @@ import {
   RiSettings2Line,
 } from "react-icons/ri";
 import { Link } from "react-router-dom";
-import { APIClient, Method } from "../api/task";
+import { APIClient, Method } from "../api/client";
 import { IUser } from "../models/user";
 
 type Props = {
@@ -254,6 +254,7 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
         <Box
           sx={(theme) => ({
             gridArea: "content",
+            overflow: "auto",
           })}
         >
           {children}

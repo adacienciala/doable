@@ -3,30 +3,27 @@ import {
   Center,
   Drawer,
   Modal,
-  NumberInput,
   Space,
   Text,
   TextInput,
 } from "@mantine/core";
-import { DatePicker } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { FormEvent, MouseEvent, useEffect, useState } from "react";
 import { APIClient, Method } from "../../api/client";
-import { ITask } from "../../models/task";
-import { isValidDate } from "../../utils/utils";
+import { IProject } from "../../models/project";
 
-interface TaskEditDrawerProps {
-  taskId: string;
+interface ProjectEditDrawerProps {
+  projectId: string;
   opened: boolean;
   onClose: () => void;
 }
 
-export const TaskEditDrawer = ({
-  taskId,
+export const ProjectEditDrawer = ({
+  projectId,
   opened,
   onClose,
-}: TaskEditDrawerProps) => {
+}: ProjectEditDrawerProps) => {
   const client = new APIClient();
   const queryClient = useQueryClient();
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
@@ -34,69 +31,61 @@ export const TaskEditDrawer = ({
   const {
     isSuccess,
     error,
-    data: task,
-  } = useQuery<ITask>(
-    ["task", taskId],
-    () => client.singleTask(Method.GET, taskId),
+    data: project,
+  } = useQuery<IProject>(
+    ["project", projectId],
+    () => client.singleProject(Method.GET, projectId),
     {
-      enabled: taskId !== "",
+      enabled: projectId !== "",
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
     }
   );
 
-  const editTaskMutation = useMutation(
-    (data: Partial<ITask>) =>
-      client.singleTask(Method.PUT, taskId, {
+  const editProjectMutation = useMutation(
+    (data: Partial<IProject>) =>
+      client.singleProject(Method.PUT, projectId, {
         body: data,
       }),
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(["tasks"]);
+        queryClient.invalidateQueries(["projects"]);
       },
     }
   );
 
-  const deleteTaskMutation = useMutation(
-    () => client.singleTask(Method.DELETE, taskId),
+  const deleteProjectMutation = useMutation(
+    () => client.singleProject(Method.DELETE, projectId),
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(["tasks"]);
+        queryClient.invalidateQueries(["projects"]);
       },
     }
   );
 
-  const form = useForm<Partial<ITask> & Pick<ITask, "title">>({
+  const form = useForm<Partial<IProject> & Pick<IProject, "name">>({
     initialValues: {
-      title: "",
-      description: "",
-      xp: 5,
-      date: undefined,
-      projectId: "",
-      repeat: "",
+      name: "",
+      cover: "",
     },
     validate: {
-      title: (value: string) => value.length > 0,
+      name: (value: string) => value.length > 0,
     },
     initialErrors: {
-      title: "Enter a title",
+      title: "Enter a name",
     },
   });
 
   useEffect(() => {
     if (isSuccess) {
-      task.date = new Date(task.date);
       form.setValues({
-        title: task.title,
-        description: task.description || "",
-        xp: task.xp || 5,
-        date: isValidDate(task.date) ? task.date : undefined,
-        projectId: task.projectId || "",
-        repeat: task.repeat || "",
+        name: project.name,
+        cover: project.cover,
+        owner: project.owner,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSuccess, task]);
+  }, [isSuccess, project]);
 
   const handleClose = () => {
     form.reset();
@@ -108,13 +97,13 @@ export const TaskEditDrawer = ({
     if (!form.validate()) {
       return;
     }
-    editTaskMutation.mutate(form.values);
+    editProjectMutation.mutate(form.values);
     form.reset();
     onClose();
   }
 
   function handleDelete(event: MouseEvent<HTMLElement>) {
-    deleteTaskMutation.mutate();
+    deleteProjectMutation.mutate();
     setOpenDeleteModal(false);
     form.reset();
     onClose();
@@ -125,7 +114,7 @@ export const TaskEditDrawer = ({
       <Drawer
         opened={opened}
         onClose={handleClose}
-        title="Edit Task"
+        title="Edit Project"
         padding="xl"
         size="50%"
       >
@@ -135,48 +124,18 @@ export const TaskEditDrawer = ({
             data-autofocus
             mt="md"
             required
-            label="Title"
-            placeholder="Title"
-            value={form.values.title}
-            onBlur={() =>
-              form.values.title !== "" && form.validateField("title")
-            }
-            {...form.getInputProps("title")}
+            label="Name"
+            placeholder="Name"
+            value={form.values.name}
+            onBlur={() => form.values.name !== "" && form.validateField("name")}
+            {...form.getInputProps("name")}
           />
           <TextInput
             mt="md"
-            label="Description"
-            placeholder="Description"
-            value={form.values.description}
-            {...form.getInputProps("description")}
-          />
-          <NumberInput
-            mt="md"
-            label="XP"
-            placeholder="XP"
-            value={form.values.xp}
-            {...form.getInputProps("xp")}
-          />
-          <DatePicker
-            mt="md"
-            label="Date"
-            placeholder="Date"
-            value={form.values.date}
-            {...form.getInputProps("date")}
-          />
-          <TextInput
-            mt="md"
-            label="ProjectId"
-            placeholder="ProjectId"
-            value={form.values.projectId}
-            {...form.getInputProps("projectId")}
-          />
-          <TextInput
-            mt="md"
-            label="Repeat"
-            placeholder="Repeat"
-            value={form.values.repeat}
-            {...form.getInputProps("repeat")}
+            label="Cover (link)"
+            placeholder="Cover (link)"
+            value={form.values.cover}
+            {...form.getInputProps("cover")}
           />
           <Center style={{ height: "100px" }}>
             <Button
@@ -202,11 +161,11 @@ export const TaskEditDrawer = ({
         centered
         opened={openDeleteModal}
         onClose={() => setOpenDeleteModal(false)}
-        title="Delete task"
+        title="Delete project"
       >
         <Text size="sm">
-          Are you sure you want to delete this task? This action is
-          irreversible.
+          Are you sure you want to delete this project? All linked tasks will be
+          deleted. This action is irreversible.
         </Text>
         <Center style={{ height: "70px" }}>
           <Button
@@ -218,7 +177,7 @@ export const TaskEditDrawer = ({
           </Button>
           <Space w="md" />
           <Button variant="outline" color={"red"} onClick={handleDelete}>
-            Delete task
+            Delete project
           </Button>
         </Center>
       </Modal>

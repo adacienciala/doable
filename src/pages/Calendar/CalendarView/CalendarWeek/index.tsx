@@ -96,6 +96,7 @@ export const CalendarWeek = ({
             span={1}
             sx={() => ({
               order: idx < 3 ? idx : idx + 1,
+              height: "50%",
             })}
           >
             {DayOfWeek(date)}

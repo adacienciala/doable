@@ -97,4 +97,34 @@ export class APIClient {
     );
     return await this.handleRes(res);
   }
+
+  async projects(method: Method, options?: any): Promise<any> {
+    const projectsEndpoint = "/projects";
+    const url = process.env.REACT_APP_DOABLE_API + projectsEndpoint;
+    const res = await request(
+      method,
+      url,
+      this.token,
+      this.tokenSelector,
+      options?.body
+    );
+    return await this.handleRes(res);
+  }
+
+  async singleProject(
+    method: Method,
+    projectId: string,
+    options?: any
+  ): Promise<any> {
+    const projectsEndpoint = `/projects/${projectId}`;
+    const url = process.env.REACT_APP_DOABLE_API + projectsEndpoint;
+    const res = await request(
+      method,
+      url,
+      this.token,
+      this.tokenSelector,
+      options?.body
+    );
+    return await this.handleRes(res);
+  }
 }
