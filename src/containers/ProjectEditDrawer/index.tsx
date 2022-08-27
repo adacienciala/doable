@@ -132,8 +132,8 @@ export const ProjectEditDrawer = ({
           />
           <TextInput
             mt="md"
-            label="Cover"
-            placeholder="Cover"
+            label="Cover (link)"
+            placeholder="Cover (link)"
             value={form.values.cover}
             {...form.getInputProps("cover")}
           />
