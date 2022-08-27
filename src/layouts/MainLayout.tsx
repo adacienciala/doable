@@ -12,7 +12,7 @@ import {
 } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import avatar from "animal-avatar-generator";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { AiOutlineProject } from "react-icons/ai";
 import { FiCalendar } from "react-icons/fi";
 import {
@@ -40,6 +40,10 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
       return client.singleUser(Method.GET, doableId);
     }
   );
+
+  useEffect(() => {
+    if (user?.partyId) localStorage.setItem("partyId", user?.partyId);
+  }, [user]);
 
   function logOut() {
     localStorage.clear();
