@@ -10,7 +10,7 @@ import { DatePicker } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FormEvent, useEffect } from "react";
-import { APIClient, Method } from "../../api/task";
+import { APIClient, Method } from "../../api/client";
 import { TaskData } from "../../components/TaskPill";
 import { ITask } from "../../models/task";
 
@@ -46,13 +46,14 @@ export const TaskAddDrawer = ({
       description: "",
       xp: 5,
       date: undefined,
+      projectId: "",
       repeat: "",
     },
     validate: {
       title: (value: string) => value.length > 0,
     },
     initialErrors: {
-      title: "Please, enter a title",
+      title: "Enter a title",
     },
   });
 
@@ -120,6 +121,13 @@ export const TaskAddDrawer = ({
             placeholder="Date"
             value={form.values.date}
             {...form.getInputProps("date")}
+          />
+          <TextInput
+            mt="md"
+            label="ProjectId"
+            placeholder="ProjectId"
+            value={form.values.projectId}
+            {...form.getInputProps("projectId")}
           />
           <TextInput
             mt="md"

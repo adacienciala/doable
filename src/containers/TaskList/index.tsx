@@ -38,7 +38,14 @@ export const TaskList = ({
         axis="y"
         values={items}
         onReorder={setItems}
-        style={{ listStyle: "none", padding: 0, margin: 0 }}
+        style={{
+          listStyle: "none",
+          padding: 0,
+          margin: 0,
+          height: view === "week" ? "70%" : "90%",
+          overflowY: "auto",
+          overflowX: "hidden",
+        }}
       >
         {items.map((item) => (
           <Reorder.Item

@@ -1,4 +1,4 @@
-import { Box, Group, Text } from "@mantine/core";
+import { Group, Text } from "@mantine/core";
 import { CalendarViewProps } from "..";
 import { AddButton } from "../../../../components/AddButton";
 import { TaskList } from "../../../../containers/TaskList";
@@ -20,14 +20,12 @@ export const CalendarNoDate = ({
         <Text weight={"bold"}>Not scheduled</Text>
         <AddButton onClick={(e) => onAddTask()} />
       </Group>
-      <Box>
-        <TaskList
-          tasks={tasks.filter((t) => !t.date)}
-          view="no-date"
-          onTaskDone={onTaskDone}
-          onTaskClick={onTaskClick}
-        />
-      </Box>
+      <TaskList
+        tasks={tasks.filter((t) => !t.date)}
+        view="no-date"
+        onTaskDone={onTaskDone}
+        onTaskClick={onTaskClick}
+      />
     </>
   );
 };
