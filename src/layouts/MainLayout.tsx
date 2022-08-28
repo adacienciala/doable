@@ -1,18 +1,6 @@
-import {
-  ActionIcon,
-  Anchor,
-  Avatar,
-  Box,
-  Button,
-  Center,
-  Group,
-  RingProgress,
-  Text,
-  Tooltip,
-} from "@mantine/core";
+import { ActionIcon, Anchor, Box, Group, Stack, Text } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
-import avatar from "animal-avatar-generator";
-import { useCallback, useEffect } from "react";
+import { useEffect } from "react";
 import { AiOutlineProject } from "react-icons/ai";
 import { FiCalendar } from "react-icons/fi";
 import {
@@ -24,6 +12,7 @@ import {
 } from "react-icons/ri";
 import { Link } from "react-router-dom";
 import { APIClient, Method } from "../api/client";
+import { Profile } from "../components/Profile";
 import { IUser } from "../models/user";
 
 type Props = {
@@ -113,10 +102,6 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
     );
   };
 
-  function getUserSeed() {
-    return user?.settings?.avatarSeed || user?.email || "default";
-  }
-
   const NavbarFooter = () => {
     return (
       <Group
@@ -133,70 +118,6 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
           <RiSettings2Line size={30} />
         </ActionIcon>
       </Group>
-    );
-  };
-
-  const NavbarProfile = () => {
-    const xp = user?.statistics?.xp ?? 0;
-    const minXp = user?.statistics?.minXp ?? 0;
-    const maxXp = user?.statistics?.maxXp ?? 100;
-
-    const getCurrentProgress = useCallback(
-      () => ((xp - minXp) / (maxXp - minXp)) * 100,
-      [xp, minXp, maxXp]
-    );
-
-    return (
-      <>
-        <Tooltip.Floating
-          // ! new version of mantine should support that but doesn't
-          // transition="skew-up"
-          // transitionDuration={100}
-          // openDelay={500}
-          label={`${xp}XP`}
-        >
-          <RingProgress
-            size={200}
-            thickness={12}
-            roundCaps
-            sections={[
-              {
-                value: getCurrentProgress(),
-                color: "yellow",
-              },
-            ]}
-            sx={(theme) => ({
-              "circle:first-of-type": {
-                stroke: theme.colors.gray[7],
-              },
-            })}
-            label={
-              <Center>
-                <Avatar
-                  size={120}
-                  src={`data:image/svg+xml;UTF-8,${encodeURIComponent(
-                    avatar(getUserSeed())
-                  )}`}
-                ></Avatar>
-              </Center>
-            }
-          />
-        </Tooltip.Floating>
-
-        <Text size="xl" weight={"bold"}>
-          {user?.name} {user?.surname}
-        </Text>
-
-        <Button
-          variant="light"
-          sx={() => ({
-            borderRadius: 40,
-            padding: [10, 20],
-          })}
-        >
-          {user?.statistics.rank}
-        </Button>
-      </>
     );
   };
 
@@ -228,17 +149,16 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
             width: "100%",
           })}
         >
-          <Group
+          <Stack
             sx={(theme) => ({
               flexGrow: 3,
               gap: 10,
               alignItems: "center",
-              flexDirection: "column",
             })}
           >
-            <NavbarProfile />
+            <Profile user={user} />
             <NavbarLinks />
-          </Group>
+          </Stack>
           <NavbarFooter />
         </Group>
         <Group
