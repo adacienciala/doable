@@ -88,6 +88,20 @@ export default function NoParty({ onJoinParty }: { onJoinParty: any }) {
     }
   );
 
+  const editPartyMutation = useMutation(
+    (data: Partial<IParty>) =>
+      client.singleParty(Method.PUT, chosenParty!, {
+        body: data,
+      }),
+    {
+      onSuccess: (data) => {
+        queryClient.invalidateQueries(["parties"]);
+        queryClient.invalidateQueries(["user"]);
+        onJoinParty(data.party.partyId);
+      },
+    }
+  );
+
   useEffect(() => {
     if (!parties || parties.length < 1) return;
     const mappedData = parties.map((party: IParty) => {
@@ -195,7 +209,14 @@ export default function NoParty({ onJoinParty }: { onJoinParty: any }) {
         <Button
           disabled={!chosenParty}
           variant="filled"
-          onClick={() => onJoinParty(chosenParty)}
+          onClick={() =>
+            editPartyMutation.mutate({
+              members: (
+                data.find((party) => party.partyId === chosenParty)?.members ??
+                []
+              ).concat(localStorage.getItem("doableId")!),
+            })
+          }
         >
           Join
         </Button>
