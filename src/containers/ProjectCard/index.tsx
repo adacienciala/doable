@@ -9,22 +9,29 @@ import {
 } from "@mantine/core";
 import { MouseEventHandler, useCallback } from "react";
 import { RiDeleteBin5Fill, RiMore2Fill, RiSettings2Fill } from "react-icons/ri";
+import { useNavigate } from "react-router-dom";
 import { IProject } from "../../models/project";
 import { UserCluster } from "../UserCluster";
 
 export interface ProjectData extends IProject {}
 
 export const ProjectCard = ({
-  data: { name, owner, cover, historyTasksNumber, currentTasksNumber },
-  onOpenProject,
+  data: {
+    projectId,
+    name,
+    owner,
+    cover,
+    historyTasksNumber,
+    currentTasksNumber,
+  },
   onEditProject,
   onDeleteProject,
 }: {
   data: ProjectData;
-  onOpenProject: MouseEventHandler<HTMLDivElement>;
   onEditProject: MouseEventHandler<HTMLButtonElement>;
   onDeleteProject: MouseEventHandler<HTMLButtonElement>;
 }) => {
+  const navigate = useNavigate();
   const getCurrentProgress = useCallback(
     () =>
       historyTasksNumber !== 0
@@ -99,7 +106,10 @@ export const ProjectCard = ({
           </Menu>
         </Group>
 
-        <Card.Section onClick={onOpenProject} mt="sm">
+        <Card.Section
+          onClick={() => navigate(`/projects/${projectId}`, { replace: false })}
+          mt="sm"
+        >
           {getCoverImage()}
         </Card.Section>
 
