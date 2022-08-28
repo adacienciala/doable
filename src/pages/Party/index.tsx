@@ -1,10 +1,20 @@
-import { Button, Group, LoadingOverlay, Modal, Stack } from "@mantine/core";
+import {
+  Button,
+  Group,
+  LoadingOverlay,
+  Modal,
+  Stack,
+  Text,
+} from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useState } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { APIClient, Method } from "../../api/client";
 import { ApiError } from "../../api/errors";
+import { Chat } from "../../containers/Chat";
+import { IUser } from "../../models/user";
 import NoParty from "./NoParty";
+import { PartyMemberProfile } from "./PartyMemberProfile";
 
 const Party = () => {
   const location = useLocation() as any;
@@ -83,16 +93,33 @@ const Party = () => {
         </Stack>
       </Modal>
       {isSuccess && (
-        <Group
-          align={"stretch"}
+        <Stack
           style={{
-            height: "100%",
-            gap: 0,
+            margin: "20px",
           }}
-          noWrap
         >
-          {party.name}
-        </Group>
+          <Text size="xl" weight="bold">
+            Members
+          </Text>
+          <Group>
+            {party.members.map((member: IUser, idx: number) => (
+              <PartyMemberProfile key={idx} user={member} />
+            ))}
+          </Group>
+
+          <Group>
+            <Stack>
+              <Text size="xl" weight="bold">
+                Quests
+              </Text>
+              {party.quests &&
+                party.quests.map((q: string, idx: number) => (
+                  <Text key={idx}>{q}</Text>
+                ))}
+            </Stack>
+            <Chat users={party.members} />
+          </Group>
+        </Stack>
       )}
     </>
   );

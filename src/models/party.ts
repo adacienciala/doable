@@ -4,4 +4,5 @@ export interface IParty {
   description: string;
   cover: string;
   members: string[];
+  quests: string[];
 }
