@@ -13,8 +13,8 @@ import { IUser } from "../../models/user";
 
 const sizeOptions = {
   lg: {
-    ring: { size: 150, thickness: 9 },
-    avatar: 90,
+    ring: { size: 125, thickness: 7.5 },
+    avatar: 75,
   },
   xl: {
     ring: { size: 200, thickness: 12 },

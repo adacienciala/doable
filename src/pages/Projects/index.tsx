@@ -1,21 +1,22 @@
 import {
   Button,
+  Card,
   Center,
+  Group,
   LoadingOverlay,
   Modal,
-  SimpleGrid,
   Space,
   Stack,
   Text,
 } from "@mantine/core";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { MouseEvent, useCallback, useState } from "react";
+import { RiAddFill } from "react-icons/ri";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
-import { APIClient, Method } from "../../api/client";
+import { APIClient, Method, ProjectExtended } from "../../api/client";
 import { ApiError } from "../../api/errors";
-import { AddButton } from "../../components/AddButton";
 import { ProjectAddDrawer } from "../../containers/ProjectAddDrawer";
-import { ProjectCard, ProjectData } from "../../containers/ProjectCard";
+import { ProjectCard, projectCardStyles } from "../../containers/ProjectCard";
 import { ProjectEditDrawer } from "../../containers/ProjectEditDrawer";
 
 const Projects = () => {
@@ -27,12 +28,13 @@ const Projects = () => {
   const [addProjectDrawerOpened, setAddProjectDrawerOpened] = useState(false);
   const [editProjectDrawerOpened, setEditProjectDrawerOpened] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const { classes } = projectCardStyles();
 
   const {
     isLoading,
     error,
     data: projects,
-  } = useQuery(["projects"], () => {
+  } = useQuery<ProjectExtended[]>(["projects"], () => {
     return client.projects(Method.GET);
   });
 
@@ -164,20 +166,25 @@ const Projects = () => {
         onClose={handleEditProjectDrawerClosed}
       />
       {projects && (
-        <SimpleGrid
-          cols={3}
+        <Group
+          align="stretch"
           style={{
             margin: "20px",
           }}
         >
-          <AddButton
-            sx={() => ({
-              placeSelf: "center",
-            })}
-            size="xl"
-            onClick={(e) => handleAddProjectDrawerOpen()}
-          />
-          {projects.map((project: ProjectData) => (
+          <Card
+            component="button"
+            onClick={() => handleAddProjectDrawerOpen()}
+            withBorder
+            shadow="sm"
+            radius="md"
+            sx={() => ({ height: "280px" })}
+            className={classes.card}
+          >
+            <RiAddFill size={50} />
+          </Card>
+
+          {projects.map((project: ProjectExtended) => (
             <ProjectCard
               onEditProject={() =>
                 handleEditProjectDrawerOpen(project.projectId)
@@ -189,7 +196,7 @@ const Projects = () => {
               data={project}
             />
           ))}
-        </SimpleGrid>
+        </Group>
       )}
     </>
   );

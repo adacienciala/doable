@@ -8,8 +8,7 @@ export const PartyMemberProfile = ({ user }: { user?: IUser }) => {
       <Group noWrap align="stretch">
         <Stack
           sx={(theme) => ({
-            flexGrow: 3,
-            gap: 10,
+            gap: 0,
             alignItems: "center",
           })}
         >

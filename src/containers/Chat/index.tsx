@@ -1,4 +1,4 @@
-import { Avatar, Group, Stack, Text } from "@mantine/core";
+import { Avatar, Group, Stack, Sx, Text } from "@mantine/core";
 import avatar from "animal-avatar-generator";
 import { format } from "date-fns";
 import { useState } from "react";
@@ -36,20 +36,22 @@ const chatMessages = [
   },
 ];
 
-export const Chat = ({ users }: { users: IUser[] }) => {
+export const Chat = ({ users, sx }: { users: IUser[]; sx?: Sx }) => {
   const [loaded, setLoaded] = useState(true);
   if (users.length > chatMessages.length) setLoaded(false);
 
   return (
     <Stack
-      sx={(theme) => ({
-        borderRadius: "10px",
-        padding: "20px",
-        borderStyle: "solid",
-        borderColor: theme.colors.yellow[6],
-        borderWidth: "1px",
-        justifyContent: "center",
-      })}
+      sx={[
+        (theme) => ({
+          borderRadius: "10px",
+          padding: "20px",
+          borderStyle: "solid",
+          borderColor: theme.colors.yellow[6],
+          borderWidth: "1px",
+        }),
+        sx,
+      ]}
     >
       {loaded ? (
         users.map((user, idx) => (

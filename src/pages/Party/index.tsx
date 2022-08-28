@@ -1,5 +1,7 @@
 import {
+  ActionIcon,
   Button,
+  Card,
   Center,
   Group,
   LoadingOverlay,
@@ -11,13 +13,14 @@ import {
 } from "@mantine/core";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { MouseEvent, useCallback, useState } from "react";
+import { RiAddFill, RiSettings2Line } from "react-icons/ri";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
-import { APIClient, Method } from "../../api/client";
+import { APIClient, Method, PartyExtended } from "../../api/client";
 import { ApiError } from "../../api/errors";
 import { Chat } from "../../containers/Chat";
-import { ProjectCard } from "../../containers/ProjectCard";
+import { ProjectAddDrawer } from "../../containers/ProjectAddDrawer";
+import { ProjectCard, projectCardStyles } from "../../containers/ProjectCard";
 import { ProjectEditDrawer } from "../../containers/ProjectEditDrawer";
-import { IProject } from "../../models/project";
 import { IUser } from "../../models/user";
 import NoParty from "./NoParty";
 import { PartyMemberProfile } from "./PartyMemberProfile";
@@ -28,16 +31,18 @@ const Party = () => {
   const client = new APIClient();
   const [partyId, setPartyId] = useState(localStorage.getItem("partyId") ?? "");
   const [projectMutated, setProjectMutated] = useState("");
+  const [addProjectDrawerOpened, setAddProjectDrawerOpened] = useState(false);
   const [editProjectDrawerOpened, setEditProjectDrawerOpened] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const queryClient = useQueryClient();
+  const { classes } = projectCardStyles();
 
   const {
     isLoading,
     isSuccess,
     error,
     data: party,
-  } = useQuery(
+  } = useQuery<PartyExtended>(
     ["party", partyId],
     () => {
       return client.singleParty(Method.GET, partyId);
@@ -60,6 +65,14 @@ const Party = () => {
     () => (error ? new ApiError(error).code === 403 : false),
     [error]
   );
+
+  const handleAddProjectDrawerOpen = useCallback(() => {
+    setAddProjectDrawerOpened(true);
+  }, []);
+
+  const handleAddProjectDrawerClosed = useCallback(() => {
+    setAddProjectDrawerOpened(false);
+  }, []);
 
   const handleEditProjectDrawerOpen = useCallback((projectId: string) => {
     setProjectMutated(projectId ?? "");
@@ -166,6 +179,11 @@ const Party = () => {
         opened={editProjectDrawerOpened}
         onClose={handleEditProjectDrawerClosed}
       />
+      <ProjectAddDrawer
+        data={{ party: [partyId] }}
+        opened={addProjectDrawerOpened}
+        onClose={handleAddProjectDrawerClosed}
+      />
       {isSuccess && (
         <Stack
           style={{
@@ -175,9 +193,22 @@ const Party = () => {
           spacing={20}
         >
           <Stack>
-            <Text size="xl" weight="bold">
-              Members
-            </Text>
+            <Group>
+              <Text size="xl" weight="bold">
+                Members
+              </Text>
+              <ActionIcon
+                variant="transparent"
+                onClick={() => console.log("ha")}
+                size="sm"
+                sx={() => ({
+                  marginLeft: "auto",
+                })}
+              >
+                <RiSettings2Line size={25} />
+              </ActionIcon>
+            </Group>
+
             <ScrollArea>
               <Group noWrap style={{ marginBottom: "40px" }}>
                 {party.members.map((member: IUser, idx: number) => (
@@ -187,26 +218,51 @@ const Party = () => {
             </ScrollArea>
           </Stack>
 
-          <Group align="flex-start" position="apart" noWrap>
+          <Group
+            align="stretch"
+            position="apart"
+            noWrap
+            style={{ maxHeight: "calc(100% - 300px)" }}
+          >
             <Stack>
               <Text size="xl" weight="bold">
                 Quests
               </Text>
-              {party.quests &&
-                party.quests.map((project: IProject) => (
-                  <ProjectCard
-                    onEditProject={() =>
-                      handleEditProjectDrawerOpen(project.projectId)
-                    }
-                    onDeleteProject={() =>
-                      handleDeleteProjectModalOpen(project.projectId)
-                    }
-                    key={project.projectId}
-                    data={project}
-                  />
-                ))}
+
+              <ScrollArea>
+                <Group align="stretch">
+                  <Card
+                    component="button"
+                    onClick={() => handleAddProjectDrawerOpen()}
+                    withBorder
+                    shadow="sm"
+                    radius="md"
+                    sx={() => ({ height: "220px" })}
+                    className={classes.card}
+                  >
+                    <RiAddFill size={50} />
+                  </Card>
+                  {party.quests &&
+                    party.quests.map((project) => (
+                      <ProjectCard
+                        size="lg"
+                        onEditProject={() =>
+                          handleEditProjectDrawerOpen(project.projectId)
+                        }
+                        onDeleteProject={() =>
+                          handleDeleteProjectModalOpen(project.projectId)
+                        }
+                        key={project.projectId}
+                        data={project}
+                      />
+                    ))}
+                </Group>
+              </ScrollArea>
             </Stack>
-            <Chat users={party.members} />
+            <Chat
+              sx={{ minWidth: "400px", width: "400px" }}
+              users={party.members}
+            />
           </Group>
         </Stack>
       )}
