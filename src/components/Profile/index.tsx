@@ -84,7 +84,11 @@ export const Profile = ({
         />
       </Tooltip.Floating>
 
-      <Text size={size} weight={"bold"}>
+      <Text
+        style={{ whiteSpace: size === "lg" ? "nowrap" : "normal" }}
+        size={size}
+        weight={"bold"}
+      >
         {user?.name} {user?.surname}
       </Text>
 

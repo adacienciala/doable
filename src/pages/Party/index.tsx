@@ -3,6 +3,7 @@ import {
   Group,
   LoadingOverlay,
   Modal,
+  ScrollArea,
   Stack,
   Text,
 } from "@mantine/core";
@@ -101,11 +102,13 @@ const Party = () => {
           <Text size="xl" weight="bold">
             Members
           </Text>
-          <Group>
-            {party.members.map((member: IUser, idx: number) => (
-              <PartyMemberProfile key={idx} user={member} />
-            ))}
-          </Group>
+          <ScrollArea>
+            <Group noWrap style={{ marginBottom: "20px" }}>
+              {party.members.map((member: IUser, idx: number) => (
+                <PartyMemberProfile key={idx} user={member} />
+              ))}
+            </Group>
+          </ScrollArea>
 
           <Group>
             <Stack>

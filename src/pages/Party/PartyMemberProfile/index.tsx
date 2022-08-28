@@ -5,7 +5,7 @@ import { IUser } from "../../../models/user";
 export const PartyMemberProfile = ({ user }: { user?: IUser }) => {
   return (
     <>
-      <Group align="stretch">
+      <Group noWrap align="stretch">
         <Stack
           sx={(theme) => ({
             flexGrow: 3,
