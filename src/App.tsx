@@ -10,6 +10,7 @@ import Auth from "./pages/Auth";
 import Calendar from "./pages/Calendar";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
+import Party from "./pages/Party";
 import Projects from "./pages/Projects";
 import ProjectPage from "./pages/Projects/ProjectPage";
 import ServerError from "./pages/ServerError";
@@ -64,7 +65,9 @@ function App() {
           path="/party"
           element={
             <RequireAuth>
-              <MainLayout page="party"></MainLayout>
+              <MainLayout page="party">
+                <Party />
+              </MainLayout>
             </RequireAuth>
           }
         />

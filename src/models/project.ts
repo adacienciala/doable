@@ -3,6 +3,7 @@ export interface IProject {
   name: string;
   cover: string;
   owner: string[];
+  party: string[];
   historyTasksNumber: number;
   currentTasksNumber: number;
 }

@@ -50,6 +50,7 @@ export const ProjectEditDrawer = ({
     {
       onSuccess: () => {
         queryClient.invalidateQueries(["projects"]);
+        queryClient.invalidateQueries(["party"]);
       },
     }
   );

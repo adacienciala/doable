@@ -1,3 +1,6 @@
+import { IParty } from "../models/party";
+import { IProject } from "../models/project";
+import { IUser } from "../models/user";
 import { request } from "./utils";
 
 export enum Method {
@@ -7,8 +10,17 @@ export enum Method {
   DELETE = "DELETE",
 }
 
-// TODO: make it a singleton
+export interface ProjectExtended extends Omit<IProject, "owner" | "party"> {
+  owner: IUser[];
+  party: IParty[];
+}
 
+export interface PartyExtended extends Omit<IParty, "members" | "quests"> {
+  members: IUser[];
+  quests: ProjectExtended[];
+}
+
+// TODO: make it a singleton
 export class APIClient {
   private token: string = "";
   private tokenSelector: string = "";
@@ -41,6 +53,36 @@ export class APIClient {
   ): Promise<any> {
     const usersEndpoint = `/users/${userId}`;
     const url = process.env.REACT_APP_DOABLE_API + usersEndpoint;
+    const res = await request(
+      method,
+      url,
+      this.token,
+      this.tokenSelector,
+      options?.body
+    );
+    return await this.handleRes(res);
+  }
+
+  async singleParty(
+    method: Method,
+    partyId: string,
+    options?: any
+  ): Promise<any> {
+    const partiesEndpoint = `/parties/${partyId}`;
+    const url = process.env.REACT_APP_DOABLE_API + partiesEndpoint;
+    const res = await request(
+      method,
+      url,
+      this.token,
+      this.tokenSelector,
+      options?.body
+    );
+    return await this.handleRes(res);
+  }
+
+  async parties(method: Method, options?: any): Promise<any> {
+    const partiesEndpoint = "/parties";
+    const url = process.env.REACT_APP_DOABLE_API + partiesEndpoint;
     const res = await request(
       method,
       url,

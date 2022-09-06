@@ -6,11 +6,13 @@ import { APIClient, Method } from "../../api/client";
 import { IProject } from "../../models/project";
 
 interface ProjectAddDrawerProps {
+  data?: Partial<IProject>;
   opened: boolean;
   onClose: () => void;
 }
 
 export const ProjectAddDrawer = ({
+  data,
   opened,
   onClose,
 }: ProjectAddDrawerProps) => {
@@ -25,6 +27,7 @@ export const ProjectAddDrawer = ({
     {
       onSuccess: () => {
         queryClient.invalidateQueries(["projects"]);
+        queryClient.invalidateQueries(["party"]);
       },
     }
   );
@@ -52,7 +55,8 @@ export const ProjectAddDrawer = ({
     if (!form.validate()) {
       return;
     }
-    addProjectMutation.mutate(form.values);
+    const newData = { ...form.values, party: data?.party ? data.party : [] };
+    addProjectMutation.mutate(newData);
     form.reset();
     onClose();
   }

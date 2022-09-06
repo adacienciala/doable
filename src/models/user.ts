@@ -4,6 +4,7 @@ export interface IUser {
   email: string;
   password: string;
   surname: string;
+  partyId: string;
   sessions: IUserSession[];
   settings: IUserSettings;
   statistics: IUserStatistics;
@@ -21,6 +22,7 @@ export interface IUserSettings {
 
 export interface IUserStatistics {
   xp: number;
+  minXp: number;
   maxXp: number;
   rank: string;
 }

@@ -1,48 +1,62 @@
 import {
+  ActionIcon,
   Button,
   Card,
   Center,
   Group,
   LoadingOverlay,
   Modal,
+  ScrollArea,
   Space,
   Stack,
   Text,
 } from "@mantine/core";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { MouseEvent, useCallback, useState } from "react";
-import { RiAddFill } from "react-icons/ri";
+import { RiAddFill, RiSettings2Line } from "react-icons/ri";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
-import { APIClient, Method, ProjectExtended } from "../../api/client";
+import { APIClient, Method, PartyExtended } from "../../api/client";
 import { ApiError } from "../../api/errors";
+import { Chat } from "../../containers/Chat";
 import { ProjectAddDrawer } from "../../containers/ProjectAddDrawer";
 import { ProjectCard, projectCardStyles } from "../../containers/ProjectCard";
 import { ProjectEditDrawer } from "../../containers/ProjectEditDrawer";
+import { IUser } from "../../models/user";
+import NoParty from "./NoParty";
+import { PartyMemberProfile } from "./PartyMemberProfile";
 
-const Projects = () => {
+const Party = () => {
   const location = useLocation() as any;
   const navigate = useNavigate();
   const client = new APIClient();
-  const queryClient = useQueryClient();
+  const [partyId, setPartyId] = useState(localStorage.getItem("partyId") ?? "");
   const [projectMutated, setProjectMutated] = useState("");
   const [addProjectDrawerOpened, setAddProjectDrawerOpened] = useState(false);
   const [editProjectDrawerOpened, setEditProjectDrawerOpened] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const queryClient = useQueryClient();
   const { classes } = projectCardStyles();
 
   const {
     isLoading,
+    isSuccess,
     error,
-    data: projects,
-  } = useQuery<ProjectExtended[]>(["projects"], () => {
-    return client.projects(Method.GET);
-  });
+    data: party,
+  } = useQuery<PartyExtended>(
+    ["party", partyId],
+    () => {
+      return client.singleParty(Method.GET, partyId);
+    },
+    {
+      enabled: partyId !== "",
+    }
+  );
 
   const deleteProjectMutation = useMutation(
     () => client.singleProject(Method.DELETE, projectMutated),
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(["projects"]);
+        queryClient.invalidateQueries(["party"]);
       },
     }
   );
@@ -94,6 +108,10 @@ const Projects = () => {
     if (errObj.code === 500) {
       return <Navigate to="/500" state={{ from: location, errorMsg: error }} />;
     }
+  }
+
+  if (!partyId) {
+    return <NoParty onJoinParty={setPartyId} />;
   }
 
   return (
@@ -156,50 +174,100 @@ const Projects = () => {
           </Button>
         </Center>
       </Modal>
-      <ProjectAddDrawer
-        opened={addProjectDrawerOpened}
-        onClose={handleAddProjectDrawerClosed}
-      />
       <ProjectEditDrawer
         projectId={projectMutated}
         opened={editProjectDrawerOpened}
         onClose={handleEditProjectDrawerClosed}
       />
-      {projects && (
-        <Group
-          align="stretch"
+      <ProjectAddDrawer
+        data={{ party: [partyId] }}
+        opened={addProjectDrawerOpened}
+        onClose={handleAddProjectDrawerClosed}
+      />
+      {isSuccess && (
+        <Stack
           style={{
-            margin: "20px",
+            padding: "20px",
+            height: "calc(100% - 40px)",
           }}
+          spacing={20}
         >
-          <Card
-            component="button"
-            onClick={() => handleAddProjectDrawerOpen()}
-            withBorder
-            shadow="sm"
-            radius="md"
-            sx={() => ({ height: "280px" })}
-            className={classes.card}
-          >
-            <RiAddFill size={50} />
-          </Card>
+          <Stack>
+            <Group>
+              <Text size="xl" weight="bold">
+                Members
+              </Text>
+              <ActionIcon
+                variant="transparent"
+                onClick={() => console.log("ha")}
+                size="sm"
+                sx={() => ({
+                  marginLeft: "auto",
+                })}
+              >
+                <RiSettings2Line size={25} />
+              </ActionIcon>
+            </Group>
 
-          {projects.map((project: ProjectExtended) => (
-            <ProjectCard
-              onEditProject={() =>
-                handleEditProjectDrawerOpen(project.projectId)
-              }
-              onDeleteProject={() =>
-                handleDeleteProjectModalOpen(project.projectId)
-              }
-              key={project.projectId}
-              data={project}
+            <ScrollArea>
+              <Group noWrap style={{ marginBottom: "40px" }}>
+                {party.members.map((member: IUser, idx: number) => (
+                  <PartyMemberProfile key={idx} user={member} />
+                ))}
+              </Group>
+            </ScrollArea>
+          </Stack>
+
+          <Group
+            align="stretch"
+            position="apart"
+            noWrap
+            style={{ maxHeight: "calc(100% - 300px)" }}
+          >
+            <Stack>
+              <Text size="xl" weight="bold">
+                Quests
+              </Text>
+
+              <ScrollArea>
+                <Group align="stretch">
+                  <Card
+                    component="button"
+                    onClick={() => handleAddProjectDrawerOpen()}
+                    withBorder
+                    shadow="sm"
+                    radius="md"
+                    sx={() => ({ height: "220px" })}
+                    className={classes.card}
+                  >
+                    <RiAddFill size={50} />
+                  </Card>
+                  {party.quests &&
+                    party.quests.map((project) => (
+                      <ProjectCard
+                        size="lg"
+                        onEditProject={() =>
+                          handleEditProjectDrawerOpen(project.projectId)
+                        }
+                        onDeleteProject={() =>
+                          handleDeleteProjectModalOpen(project.projectId)
+                        }
+                        key={project.projectId}
+                        data={project}
+                      />
+                    ))}
+                </Group>
+              </ScrollArea>
+            </Stack>
+            <Chat
+              sx={{ minWidth: "400px", width: "400px" }}
+              users={party.members}
             />
-          ))}
-        </Group>
+          </Group>
+        </Stack>
       )}
     </>
   );
 };
 
-export default Projects;
+export default Party;

@@ -1,6 +1,7 @@
 import {
   ActionIcon,
   Card,
+  createStyles,
   Group,
   Image,
   Menu,
@@ -9,22 +10,58 @@ import {
 } from "@mantine/core";
 import { MouseEventHandler, useCallback } from "react";
 import { RiDeleteBin5Fill, RiMore2Fill, RiSettings2Fill } from "react-icons/ri";
+import { useNavigate } from "react-router-dom";
+import { ProjectExtended } from "../../api/client";
 import { IProject } from "../../models/project";
 import { UserCluster } from "../UserCluster";
+
+export const projectCardStyles = createStyles((theme) => ({
+  card: {
+    minWidth: "230px",
+    backgroundColor: theme.colors.gray[0],
+    color: theme.colors.gray[9],
+    ":hover": {
+      backgroundColor: theme.colors.gray[1],
+      cursor: "pointer",
+    },
+  },
+}));
+
+const sizeOptions = {
+  lg: {
+    ring: { size: 100, thickness: 8 },
+    card: { height: "220px" },
+  },
+  xl: {
+    ring: { size: 150, thickness: 12 },
+    card: { height: "280px" },
+  },
+};
 
 export interface ProjectData extends IProject {}
 
 export const ProjectCard = ({
-  data: { name, owner, cover, historyTasksNumber, currentTasksNumber },
-  onOpenProject,
+  data: {
+    projectId,
+    name,
+    owner,
+    party,
+    cover,
+    historyTasksNumber,
+    currentTasksNumber,
+  },
   onEditProject,
   onDeleteProject,
+  size = "xl",
 }: {
-  data: ProjectData;
-  onOpenProject: MouseEventHandler<HTMLDivElement>;
+  data: ProjectExtended;
   onEditProject: MouseEventHandler<HTMLButtonElement>;
   onDeleteProject: MouseEventHandler<HTMLButtonElement>;
+  size?: "lg" | "xl";
 }) => {
+  const navigate = useNavigate();
+  const { classes } = projectCardStyles();
+
   const getCurrentProgress = useCallback(
     () =>
       historyTasksNumber !== 0
@@ -50,33 +87,44 @@ export const ProjectCard = ({
     }
     return (
       <RingProgress
-        size={150}
-        thickness={12}
+        size={sizeOptions[size].ring.size}
+        thickness={sizeOptions[size].ring.thickness}
         roundCaps
         sections={[{ value: getCurrentProgress(), color: getCurrentColor() }]}
         sx={(theme) => ({
           "circle:first-of-type": {
-            stroke: theme.colors.gray[7],
+            stroke: theme.colors.gray[4],
           },
           margin: "auto",
         })}
         label={
-          <Text color={getCurrentColor()} weight={700} align="center" size="xl">
+          <Text
+            color={getCurrentColor()}
+            weight={700}
+            align="center"
+            size={size}
+          >
             {`${getCurrentProgress()}%`}
           </Text>
         }
       />
     );
-  }, [getCurrentProgress, getCurrentColor, cover]);
+  }, [getCurrentProgress, getCurrentColor, cover, size]);
 
   return (
     <>
-      <Card withBorder shadow="sm" radius="md">
+      <Card
+        withBorder
+        shadow="sm"
+        radius="md"
+        sx={() => ({ height: sizeOptions[size].card.height })}
+        className={classes.card}
+      >
         <Group position="apart">
           <Text weight={500}>{name}</Text>
           <Menu withinPortal position="bottom" shadow="sm">
             <Menu.Target>
-              <ActionIcon>
+              <ActionIcon color="gray.9">
                 <RiMore2Fill size={16} />
               </ActionIcon>
             </Menu.Target>
@@ -99,12 +147,15 @@ export const ProjectCard = ({
           </Menu>
         </Group>
 
-        <Card.Section onClick={onOpenProject} mt="sm">
+        <Card.Section
+          onClick={() => navigate(`/projects/${projectId}`, { replace: false })}
+          mt="sm"
+        >
           {getCoverImage()}
         </Card.Section>
 
         <Card.Section inheritPadding mt="sm" pb="md">
-          <UserCluster users={owner} />
+          <UserCluster users={{ owner, party }} />
         </Card.Section>
       </Card>
     </>
