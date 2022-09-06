@@ -13,6 +13,7 @@ import NotFound from "./pages/NotFound";
 import Party from "./pages/Party";
 import Projects from "./pages/Projects";
 import ProjectPage from "./pages/Projects/ProjectPage";
+import Rewards from "./pages/Rewards";
 import ServerError from "./pages/ServerError";
 
 function App() {
@@ -75,7 +76,9 @@ function App() {
           path="/rewards"
           element={
             <RequireAuth>
-              <MainLayout page="rewards"></MainLayout>
+              <MainLayout page="rewards">
+                <Rewards />
+              </MainLayout>
             </RequireAuth>
           }
         />
