@@ -76,10 +76,7 @@ export const TaskEditDrawer = ({
       repeat: "",
     },
     validate: {
-      title: (value: string) => value.length > 0,
-    },
-    initialErrors: {
-      title: "Enter a title",
+      title: (value: string) => (value.length > 0 ? null : "Enter a title"),
     },
   });
 

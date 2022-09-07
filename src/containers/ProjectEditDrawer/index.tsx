@@ -70,10 +70,7 @@ export const ProjectEditDrawer = ({
       cover: "",
     },
     validate: {
-      name: (value: string) => value.length > 0,
-    },
-    initialErrors: {
-      title: "Enter a name",
+      name: (value: string) => (value.length > 0 ? null : "Enter a name"),
     },
   });
 

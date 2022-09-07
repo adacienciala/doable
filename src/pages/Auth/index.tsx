@@ -41,15 +41,15 @@ export default function Auth() {
       surname: "",
     },
     validate: {
-      email: (value) => /^\S+@\S+$/.test(value),
-      password: (value) => /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(value),
+      email: (value) => (/^\S+@\S+$/.test(value) ? null : "Is this an email?"),
+      password: (value) =>
+        /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(value)
+          ? null
+          : "What about min. 6 characters and 1 digit?",
       confirmPassword: (val, values) =>
-        formType === "login" || val === values?.password,
-    },
-    initialErrors: {
-      email: "Is this an email?",
-      password: "What about min. 6 characters and 1 digit?",
-      confirmPassword: "Hmm, passwords don't match... Try again.",
+        formType === "login" || val === values?.password
+          ? null
+          : "Hmm, passwords don't match... Try again.",
     },
   });
 
