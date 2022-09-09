@@ -1,4 +1,6 @@
 import { Checkbox, Group, Text } from "@mantine/core";
+import { hideNotification, showNotification } from "@mantine/notifications";
+import { useState } from "react";
 import { CalendarView } from "../../pages/Calendar/CalendarView";
 
 export interface TaskData {
@@ -19,6 +21,38 @@ export const TaskPill = ({
   view,
   onTaskDone,
 }: TaskPillProps) => {
+  const [checked, setChecked] = useState(false);
+  const [clicked, setClicked] = useState(false);
+  const shortenedTitle =
+    title.length > 20 ? title.substring(0, 20) + "..." : title;
+
+  const handleTaskDone = (taskId: string) => {
+    const doneTimeout = setTimeout(() => onTaskDone(taskId), 5000);
+    showNotification({
+      id: "cancel-notification",
+      autoClose: false,
+      message: (
+        <Group>
+          {`Task "${shortenedTitle}" finished`}
+          <Text
+            span
+            color="red"
+            underline
+            onClick={() => {
+              clearTimeout(doneTimeout);
+              setClicked(false);
+              setChecked(false);
+              hideNotification("cancel-notification");
+            }}
+          >
+            Undo
+          </Text>
+        </Group>
+      ),
+      loading: true,
+    });
+  };
+
   return (
     <Group
       position="apart"
@@ -30,11 +64,19 @@ export const TaskPill = ({
         padding: "10px",
         borderRadius: "10px",
         cursor: "grab",
+        display: clicked ? "none" : "flex",
       })}
     >
       <Checkbox
         radius="xl"
-        onChange={(event) => event.currentTarget.checked && onTaskDone(taskId)}
+        checked={checked}
+        readOnly
+        onClick={(e) => {
+          setClicked(true);
+          handleTaskDone(taskId);
+        }}
+        onMouseOver={(e) => setChecked(true)}
+        onMouseOut={(e) => !clicked && setChecked(false)}
       />
       <Text weight={500}>{title}</Text>
       {view === "today" && <Text weight={300}>{description}</Text>}
