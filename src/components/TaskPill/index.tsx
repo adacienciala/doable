@@ -27,10 +27,10 @@ export const TaskPill = ({
     title.length > 20 ? title.substring(0, 20) + "..." : title;
 
   const handleTaskDone = (taskId: string) => {
-    const doneTimeout = setTimeout(() => onTaskDone(taskId), 5000);
+    const doneTimeout = setTimeout(() => onTaskDone(taskId), 3000);
     showNotification({
-      id: "cancel-notification",
-      autoClose: false,
+      id: `cancel-${taskId}`,
+      autoClose: 3000,
       message: (
         <Group>
           {`Task "${shortenedTitle}" finished`}
@@ -42,7 +42,7 @@ export const TaskPill = ({
               clearTimeout(doneTimeout);
               setClicked(false);
               setChecked(false);
-              hideNotification("cancel-notification");
+              hideNotification(`cancel-${taskId}`);
             }}
           >
             Undo
