@@ -31,10 +31,12 @@ const sizeOptions = {
   lg: {
     ring: { size: 100, thickness: 8 },
     card: { height: "220px" },
+    cover: { size: "100px" },
   },
   xl: {
     ring: { size: 150, thickness: 12 },
     card: { height: "280px" },
+    cover: { size: "150px" },
   },
 };
 
@@ -83,7 +85,13 @@ export const ProjectCard = ({
 
   const getCoverImage = useCallback(() => {
     if (cover) {
-      return <Image withPlaceholder height="150px" src={cover} />;
+      return (
+        <Image
+          withPlaceholder
+          height={sizeOptions[size].cover.size}
+          src={cover}
+        />
+      );
     }
     return (
       <RingProgress
