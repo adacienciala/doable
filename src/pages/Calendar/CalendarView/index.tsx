@@ -4,7 +4,7 @@ export interface CalendarViewProps {
   tasks: TaskData[];
   onTaskDone: (taskId: string) => void;
   onTaskClick: (taskId: string) => void;
-  onAddTask: (date?: Date) => void;
+  onAddTask: (data?: { date?: Date; projectId?: string }) => void;
 }
 
 export type CalendarView = "today" | "week" | "no-date";

@@ -33,7 +33,7 @@ export const CalendarWeek = ({
           })}
         >
           <Text>{format(date, "EEEE, do MMM")}</Text>
-          <AddButton onClick={() => onAddTask(date)} />
+          <AddButton onClick={() => onAddTask({ date })} />
         </Group>
 
         <TaskList

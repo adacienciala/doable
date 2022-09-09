@@ -1,11 +1,11 @@
 import { Reorder } from "framer-motion";
-import { MouseEvent, useCallback, useState } from "react";
+import { MouseEvent, useCallback, useEffect, useState } from "react";
 import { TaskData, TaskPill } from "../../components/TaskPill";
 import { CalendarView } from "../../pages/Calendar/CalendarView";
 import { isCheckbox } from "../../utils/utils";
 
 export const TaskList = ({
-  tasks,
+  tasks = [],
   view,
   onTaskDone,
   onTaskClick,
@@ -31,6 +31,10 @@ export const TaskList = ({
     },
     [onTaskClick, isDragged]
   );
+
+  useEffect(() => {
+    setItems(tasks);
+  }, [tasks]);
 
   return (
     <>

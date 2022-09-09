@@ -1,6 +1,5 @@
 import {
   ActionIcon,
-  Box,
   Button,
   Group,
   LoadingOverlay,
@@ -8,8 +7,8 @@ import {
   Stack,
   Text,
 } from "@mantine/core";
-import { useQuery } from "@tanstack/react-query";
-import { useCallback } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useCallback, useState } from "react";
 import { RiArrowLeftFill } from "react-icons/ri";
 import {
   Navigate,
@@ -20,6 +19,9 @@ import {
 import { APIClient, Method } from "../../../api/client";
 import { ApiError } from "../../../api/errors";
 import { AddButton } from "../../../components/AddButton";
+import { TaskData } from "../../../components/TaskPill";
+import { TaskAddDrawer } from "../../../containers/TaskAddDrawer";
+import { TaskEditDrawer } from "../../../containers/TaskEditDrawer";
 import { TaskList } from "../../../containers/TaskList";
 import { ITask } from "../../../models/task";
 
@@ -28,6 +30,11 @@ const ProjectPage = () => {
   const navigate = useNavigate();
   const { projectId } = useParams();
   const client = new APIClient();
+  const queryClient = useQueryClient();
+  const [editTaskDrawerOpened, setEditTaskDrawerOpened] = useState(false);
+  const [taskEdited, setTaskEdited] = useState("");
+  const [addTaskDrawerOpened, setAddTaskDrawerOpened] = useState(false);
+  const [addTaskData, setAddTaskData] = useState<Partial<TaskData>>({});
 
   const {
     isLoading,
@@ -37,9 +44,52 @@ const ProjectPage = () => {
     return client.singleProject(Method.GET, projectId!);
   });
 
-  const { data: tasks } = useQuery(["tasks"], () => {
-    return client.tasks(Method.GET);
+  const { data: tasks } = useQuery(["tasks"], async () => {
+    const allTasks = await client.tasks(Method.GET);
+    return allTasks.filter((t: ITask) => t.projectId === projectId);
   });
+
+  const finishTaskMutation = useMutation(
+    (taskId: string) =>
+      client.singleTask(Method.PUT, taskId, {
+        body: { isDone: true },
+      }),
+    {
+      onSettled: (data) => {
+        queryClient.invalidateQueries(["tasks"]);
+        if (data.userUpdated) {
+          queryClient.invalidateQueries(["user"]);
+        }
+      },
+    }
+  );
+
+  const handleTaskDone = (taskId: string) => {
+    finishTaskMutation.mutate(taskId);
+  };
+
+  const handleEditTaskDrawerOpen = useCallback((taskId: string) => {
+    setTaskEdited(taskId ?? "");
+    setEditTaskDrawerOpened(true);
+  }, []);
+
+  const handleEditTaskDrawerClosed = useCallback(() => {
+    setTaskEdited("");
+    setEditTaskDrawerOpened(false);
+  }, []);
+
+  const handleAddTaskDrawerOpen = useCallback(
+    (data: Partial<TaskData> = {}) => {
+      setAddTaskData(data);
+      setAddTaskDrawerOpened(true);
+    },
+    []
+  );
+
+  const handleAddTaskDrawerClosed = useCallback(() => {
+    setAddTaskData({});
+    setAddTaskDrawerOpened(false);
+  }, []);
 
   const isAccessError = useCallback(
     () => (error ? new ApiError(error).code === 403 : false),
@@ -56,7 +106,6 @@ const ProjectPage = () => {
     }
   }
 
-  // TODO: Add operations on tasks in project's view
   return (
     <>
       <LoadingOverlay
@@ -93,11 +142,21 @@ const ProjectPage = () => {
           </Button>
         </Stack>
       </Modal>
+      <TaskEditDrawer
+        taskId={taskEdited}
+        opened={editTaskDrawerOpened}
+        onClose={handleEditTaskDrawerClosed}
+      />
+      <TaskAddDrawer
+        data={addTaskData}
+        opened={addTaskDrawerOpened}
+        onClose={handleAddTaskDrawerClosed}
+      />
       {project && (
-        <Box sx={{ margin: "20px" }}>
+        <Stack sx={{ padding: "20px", height: "100%" }}>
           <Group
             sx={() => ({
-              marginBottom: "20px",
+              paddingBottom: "20px",
             })}
           >
             <ActionIcon
@@ -112,19 +171,16 @@ const ProjectPage = () => {
               sx={() => ({
                 marginLeft: "auto",
               })}
-              onClick={() => console.log("tak tak dodajemy tak")}
+              onClick={() => handleAddTaskDrawerOpen({ projectId })}
             />
           </Group>
-
-          {tasks && (
-            <TaskList
-              tasks={tasks.filter((t: ITask) => t.projectId === projectId)}
-              view="no-date"
-              onTaskDone={() => console.log("tak tak zrobilismy tak")}
-              onTaskClick={() => console.log("tak tak edytujemy tak")}
-            />
-          )}
-        </Box>
+          <TaskList
+            tasks={tasks}
+            view="no-date"
+            onTaskClick={handleEditTaskDrawerOpen}
+            onTaskDone={handleTaskDone}
+          />
+        </Stack>
       )}
     </>
   );

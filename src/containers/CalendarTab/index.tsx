@@ -19,7 +19,7 @@ interface CalendarTabProps {
   view: CalendarView;
   changeViewHandler: any;
   onTaskClick: (taskId: string) => void;
-  onAddTask: (date?: Date) => void;
+  onAddTask: (data?: { date?: Date; projectId?: string }) => void;
 }
 
 export const CalendarTab = ({

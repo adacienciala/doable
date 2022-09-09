@@ -42,10 +42,13 @@ const Calendar = () => {
     setEditTaskDrawerOpened(false);
   }, []);
 
-  const handleAddTaskDrawerOpen = useCallback((date?: Date) => {
-    setAddTaskData({ date });
-    setAddTaskDrawerOpened(true);
-  }, []);
+  const handleAddTaskDrawerOpen = useCallback(
+    (data: Partial<TaskData> = {}) => {
+      setAddTaskData(data);
+      setAddTaskDrawerOpened(true);
+    },
+    []
+  );
 
   const handleAddTaskDrawerClosed = useCallback(() => {
     setAddTaskData({});

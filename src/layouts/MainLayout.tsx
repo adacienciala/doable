@@ -134,7 +134,7 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
             "navbar content"
             "navbar content"
           `,
-          backgroundImage: "url(./background.png)",
+          backgroundImage: `url("/background.png")`,
           backgroundSize: "cover",
           backgroundPosition: "center",
         })}

@@ -24,7 +24,7 @@ export const CalendarToday = ({
           sx={() => ({
             marginLeft: "auto",
           })}
-          onClick={() => onAddTask(todayDate)}
+          onClick={() => onAddTask({ date: todayDate })}
         />
       </Group>
 

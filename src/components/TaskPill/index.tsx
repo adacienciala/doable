@@ -8,6 +8,7 @@ export interface TaskData {
   description: string;
   date?: Date;
   taskId: string;
+  projectId?: string;
 }
 
 interface TaskPillProps {
@@ -17,7 +18,7 @@ interface TaskPillProps {
 }
 
 export const TaskPill = ({
-  data: { title, description, date, taskId },
+  data: { title, description, taskId },
   view,
   onTaskDone,
 }: TaskPillProps) => {

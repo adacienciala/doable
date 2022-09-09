@@ -70,9 +70,14 @@ export const TaskAddDrawer = ({
   }
 
   useEffect(() => {
-    if (data.date) {
-      form.setFieldValue("date", data.date!);
-    }
+    form.setValues({
+      title: "",
+      description: "",
+      xp: 5,
+      date: data.date ?? undefined,
+      projectId: data.projectId ?? "",
+      repeat: "",
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
