@@ -18,6 +18,7 @@ import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { APIClient, Method, PartyExtended } from "../../api/client";
 import { ApiError } from "../../api/errors";
 import { Chat } from "../../containers/Chat";
+import { PartyEditDrawer } from "../../containers/PartyEditDrawer";
 import { ProjectAddDrawer } from "../../containers/ProjectAddDrawer";
 import { ProjectCard, projectCardStyles } from "../../containers/ProjectCard";
 import { ProjectEditDrawer } from "../../containers/ProjectEditDrawer";
@@ -33,6 +34,7 @@ const Party = () => {
   const [projectMutated, setProjectMutated] = useState("");
   const [addProjectDrawerOpened, setAddProjectDrawerOpened] = useState(false);
   const [editProjectDrawerOpened, setEditProjectDrawerOpened] = useState(false);
+  const [editPartyDrawerOpened, setEditPartyDrawerOpened] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const queryClient = useQueryClient();
   const { classes } = projectCardStyles();
@@ -44,9 +46,7 @@ const Party = () => {
     data: party,
   } = useQuery<PartyExtended>(
     ["party", partyId],
-    () => {
-      return client.singleParty(Method.GET, partyId);
-    },
+    () => client.singleParty(Method.GET, partyId),
     {
       enabled: partyId !== "",
     }
@@ -82,6 +82,19 @@ const Party = () => {
   const handleEditProjectDrawerClosed = useCallback(() => {
     setProjectMutated("");
     setEditProjectDrawerOpened(false);
+  }, []);
+
+  const handleEditPartyDrawerOpen = useCallback(() => {
+    setEditPartyDrawerOpened(true);
+  }, []);
+
+  const handleEditPartyDrawerClosed = useCallback(() => {
+    setEditPartyDrawerOpened(false);
+  }, []);
+
+  const handleLeaveParty = useCallback(() => {
+    setEditPartyDrawerOpened(false);
+    setPartyId("");
   }, []);
 
   const handleDeleteProjectModalOpen = useCallback((projectId: string) => {
@@ -184,6 +197,13 @@ const Party = () => {
         opened={addProjectDrawerOpened}
         onClose={handleAddProjectDrawerClosed}
       />
+      <PartyEditDrawer
+        party={party}
+        opened={editPartyDrawerOpened}
+        onClose={handleEditPartyDrawerClosed}
+        onLeave={handleLeaveParty}
+        onDelete={handleLeaveParty}
+      />
       {isSuccess && (
         <Stack
           style={{
@@ -199,7 +219,7 @@ const Party = () => {
               </Text>
               <ActionIcon
                 variant="transparent"
-                onClick={() => console.log("ha")}
+                onClick={handleEditPartyDrawerOpen}
                 size="sm"
                 sx={() => ({
                   marginLeft: "auto",
