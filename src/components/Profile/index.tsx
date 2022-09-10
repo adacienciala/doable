@@ -1,6 +1,6 @@
 import {
   Avatar,
-  Button,
+  Badge,
   Center,
   RingProgress,
   Sx,
@@ -10,6 +10,8 @@ import {
 import avatar from "animal-avatar-generator";
 import { useCallback } from "react";
 import { IUser } from "../../models/user";
+
+import { GiRank1, GiRank2, GiRank3 } from "react-icons/gi";
 
 const sizeOptions = {
   lg: {
@@ -42,6 +44,18 @@ export const Profile = ({
 
   function getUserSeed() {
     return user?.settings?.avatarSeed || user?.email || "default";
+  }
+
+  function getRankBadgeIcon(rank?: string) {
+    if (!rank) return "";
+    switch (rank!.toLowerCase()) {
+      case "private":
+        return <GiRank1 />;
+      case "corporal":
+        return <GiRank2 />;
+      default:
+        return <GiRank3 />;
+    }
   }
 
   return (
@@ -92,15 +106,18 @@ export const Profile = ({
         {user?.name} {user?.surname}
       </Text>
 
-      <Button
+      <Badge
         variant="light"
-        sx={() => ({
-          borderRadius: 40,
-          padding: [10, 20],
+        styles={(theme) => ({
+          leftSection: {
+            display: "flex",
+            alignItems: "center",
+          },
         })}
+        leftSection={getRankBadgeIcon(user?.statistics.rank)}
       >
         {user?.statistics.rank}
-      </Button>
+      </Badge>
     </>
   );
 };
