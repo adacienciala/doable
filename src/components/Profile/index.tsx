@@ -114,6 +114,7 @@ export const Profile = ({
             alignItems: "center",
           },
         })}
+        size={size}
         leftSection={getRankBadgeIcon(user?.statistics.rank)}
       >
         {user?.statistics.rank}
