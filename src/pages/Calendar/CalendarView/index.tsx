@@ -5,6 +5,7 @@ export interface CalendarViewProps {
   onTaskDone: (taskId: string) => void;
   onTaskClick: (taskId: string) => void;
   onAddTask: (data?: { date?: Date; projectId?: string }) => void;
+  options?: Record<string, any>;
 }
 
 export type CalendarView = "today" | "week" | "no-date";

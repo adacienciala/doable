@@ -1,5 +1,5 @@
 import { Group, Text } from "@mantine/core";
-import { format, isSameDay } from "date-fns";
+import { format, isToday } from "date-fns";
 import { CalendarViewProps } from "..";
 import { AddButton } from "../../../../components/AddButton";
 import { TaskList } from "../../../../containers/TaskList";
@@ -10,7 +10,6 @@ export const CalendarToday = ({
   onTaskClick,
   onAddTask,
 }: CalendarViewProps) => {
-  const todayDate = new Date();
   return (
     <>
       <Group
@@ -24,14 +23,12 @@ export const CalendarToday = ({
           sx={() => ({
             marginLeft: "auto",
           })}
-          onClick={() => onAddTask({ date: todayDate })}
+          onClick={() => onAddTask({ date: new Date() })}
         />
       </Group>
 
       <TaskList
-        tasks={tasks.filter((t) =>
-          t.date ? isSameDay(t.date, todayDate) : false
-        )}
+        tasks={tasks.filter((t) => (t.date ? isToday(t.date) : false))}
         view="today"
         onTaskDone={onTaskDone}
         onTaskClick={onTaskClick}

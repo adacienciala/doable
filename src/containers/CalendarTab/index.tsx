@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence } from "framer-motion";
-import { useMemo } from "react";
+import { Dispatch, SetStateAction, useMemo } from "react";
 import { APIClient, Method } from "../../api/client";
 import { VerticalTab } from "../../components/VerticalTab";
 import { ITask } from "../../models/task";
@@ -13,7 +13,7 @@ import {
 
 interface CalendarTabProps {
   title: string;
-  range?: string;
+  range?: { start: Date; end: Date; setStart?: Dispatch<SetStateAction<Date>> };
   open: boolean;
   tasks: ITask[];
   view: CalendarView;
@@ -57,13 +57,20 @@ export const CalendarTab = ({
   const CurrentCalendarView = useMemo(() => {
     switch (view) {
       case "today":
-        return CalendarToday;
+        return { ViewComponent: CalendarToday };
       case "week":
-        return CalendarWeek;
+        return {
+          ViewComponent: CalendarWeek,
+          options: {
+            start: range?.start,
+            end: range?.end,
+            setFirstDay: range?.setStart,
+          },
+        };
       case "no-date":
-        return CalendarNoDate;
+        return { ViewComponent: CalendarNoDate };
     }
-  }, [view]);
+  }, [view, range]);
 
   return (
     <>
@@ -83,11 +90,12 @@ export const CalendarTab = ({
               overflowX: "hidden",
             }}
           >
-            <CurrentCalendarView
+            <CurrentCalendarView.ViewComponent
               tasks={tasks}
               onTaskDone={handleTaskDone}
               onTaskClick={onTaskClick}
               onAddTask={onAddTask}
+              options={CurrentCalendarView.options}
             />
           </div>
         )}

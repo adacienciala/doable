@@ -1,8 +1,8 @@
 import { Button, Group, LoadingOverlay, Modal, Stack } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
-import { endOfWeek, format, startOfWeek } from "date-fns";
+import { endOfWeek, startOfWeek } from "date-fns";
 import { motion } from "framer-motion";
-import { useCallback, useState } from "react";
+import { Dispatch, SetStateAction, useCallback, useState } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { APIClient, Method } from "../../api/client";
 import { ApiError } from "../../api/errors";
@@ -15,6 +15,7 @@ import { CalendarView } from "./CalendarView";
 
 const Calendar = () => {
   const [view, setView] = useState<CalendarView>("today");
+  const [rangeStart, setRangeStart] = useState(new Date());
   const location = useLocation() as any;
   const navigate = useNavigate();
   const client = new APIClient();
@@ -65,16 +66,30 @@ const Calendar = () => {
   const calendarTabsOptions: {
     title: string;
     view: CalendarView;
-    range?: string;
+    range?: {
+      start: Date;
+      end: Date;
+      setStart?: Dispatch<SetStateAction<Date>>;
+    };
   }[] = [
-    { title: "Today", view: "today", range: format(Date.now(), "dd/MM/yyyy") },
+    {
+      title: "Today",
+      view: "today",
+      range: {
+        start: new Date(),
+        end: new Date(),
+      },
+    },
     {
       title: "Week",
       view: "week",
-      range: `${format(
-        startOfWeek(Date.now(), { weekStartsOn: 1 }),
-        "dd/MM/yyyy"
-      )} - ${format(endOfWeek(Date.now(), { weekStartsOn: 1 }), "dd/MM/yyyy")}`,
+      range: {
+        start: startOfWeek(rangeStart, { weekStartsOn: 1 }),
+        end: endOfWeek(endOfWeek(rangeStart, { weekStartsOn: 1 }), {
+          weekStartsOn: 1,
+        }),
+        setStart: setRangeStart,
+      },
     },
     { title: "Not scheduled", view: "no-date" },
   ];

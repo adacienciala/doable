@@ -1,26 +1,28 @@
-import { Box, Grid, Group, Text } from "@mantine/core";
-import { addDays, format, isSameDay, startOfWeek } from "date-fns";
-import { endOfWeek } from "date-fns/esm";
-import { useCallback } from "react";
+import { ActionIcon, Grid, Group, Text } from "@mantine/core";
+import { addDays, format, isSameDay, subDays } from "date-fns";
+import { useCallback, useMemo } from "react";
+import { RiArrowLeftSLine, RiArrowRightSLine } from "react-icons/ri";
 import { CalendarViewProps } from "..";
 import { AddButton } from "../../../../components/AddButton";
 import { TaskList } from "../../../../containers/TaskList";
-
-const firstDayOfWeek = startOfWeek(Date.now(), { weekStartsOn: 1 });
 
 export const CalendarWeek = ({
   tasks,
   onTaskDone,
   onTaskClick,
   onAddTask,
+  options,
 }: CalendarViewProps) => {
+  const firstDayOfWeek = useMemo(() => options?.start ?? new Date(), [options]);
+  const lastDayOfWeek = useMemo(() => options?.end ?? new Date(), [options]);
+
   const WeekDates = useCallback(() => {
     const weekDates = [];
     for (let dayIdx = 0; dayIdx < 7; dayIdx++) {
       weekDates.push(addDays(firstDayOfWeek, dayIdx));
     }
     return weekDates;
-  }, []);
+  }, [firstDayOfWeek]);
 
   const DayOfWeek = (date: Date) => {
     return (
@@ -70,20 +72,38 @@ export const CalendarWeek = ({
 
   return (
     <>
-      <Box style={{ marginBottom: "20px" }}>
+      <Group style={{ marginBottom: "20px" }}>
+        <ActionIcon
+          color="gray.0"
+          radius="xl"
+          variant="outline"
+          onClick={() => options?.setFirstDay(subDays(firstDayOfWeek, 7))}
+          size="sm"
+        >
+          <RiArrowLeftSLine size={18} />
+        </ActionIcon>
         <Text
           weight={"bold"}
           style={{ display: "inline-block", marginRight: "10px" }}
         >
           Week
         </Text>
+        <ActionIcon
+          color="gray.0"
+          radius="xl"
+          variant="outline"
+          onClick={() => options?.setFirstDay(addDays(firstDayOfWeek, 7))}
+          size="sm"
+        >
+          <RiArrowRightSLine size={18} />
+        </ActionIcon>
         <Text style={{ display: "inline-block" }}>
           {`${format(firstDayOfWeek, "do MMM")} - ${format(
-            endOfWeek(new Date()),
+            lastDayOfWeek,
             "do MMM"
-          )} `}
+          )}`}
         </Text>
-      </Box>
+      </Group>
       <Grid
         justify="space-between"
         columns={4}
