@@ -11,6 +11,7 @@ import {
 import { DatePicker } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { isSameDay } from "date-fns";
 import { FormEvent, MouseEvent, useEffect, useState } from "react";
 import { APIClient, Method } from "../../api/client";
 import { ITask } from "../../models/task";
@@ -37,7 +38,11 @@ export const TaskEditDrawer = ({
     data: task,
   } = useQuery<ITask>(
     ["task", taskId],
-    () => client.singleTask(Method.GET, taskId),
+    async () => {
+      const t = await client.singleTask(Method.GET, taskId);
+      if (t.date === null) t.date = undefined;
+      return t;
+    },
     {
       enabled: taskId !== "",
       refetchOnWindowFocus: false,
@@ -158,6 +163,10 @@ export const TaskEditDrawer = ({
             mt="md"
             label="Date"
             placeholder="Date"
+            minDate={new Date()}
+            dayStyle={(date) =>
+              isSameDay(date, new Date()) ? { borderStyle: "dashed" } : null
+            }
             value={form.values.date}
             {...form.getInputProps("date")}
           />
