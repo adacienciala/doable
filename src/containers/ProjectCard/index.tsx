@@ -6,7 +6,9 @@ import {
   Image,
   Menu,
   RingProgress,
+  Stack,
   Text,
+  Title,
 } from "@mantine/core";
 import { MouseEventHandler, useCallback } from "react";
 import { RiDeleteBin5Fill, RiMore2Fill, RiSettings2Fill } from "react-icons/ri";
@@ -32,11 +34,13 @@ const sizeOptions = {
     ring: { size: 100, thickness: 8 },
     card: { height: "220px" },
     cover: { size: "100px" },
+    progressText: { size: 15 },
   },
   xl: {
     ring: { size: 150, thickness: 12 },
     card: { height: "280px" },
     cover: { size: "150px" },
+    progressText: { size: 20 },
   },
 };
 
@@ -93,6 +97,15 @@ export const ProjectCard = ({
         />
       );
     }
+
+    if (historyTasksNumber === 0)
+      return (
+        <Stack style={{ height: "100%" }} align="center" justify="center">
+          <Title>No</Title>
+          <Title>Tasks</Title>
+        </Stack>
+      );
+
     return (
       <RingProgress
         size={sizeOptions[size].ring.size}
@@ -117,7 +130,7 @@ export const ProjectCard = ({
         }
       />
     );
-  }, [getCurrentProgress, getCurrentColor, cover, size]);
+  }, [historyTasksNumber, getCurrentProgress, getCurrentColor, cover, size]);
 
   return (
     <>
@@ -157,13 +170,28 @@ export const ProjectCard = ({
 
         <Card.Section
           onClick={() => navigate(`/projects/${projectId}`, { replace: false })}
+          style={{
+            height: sizeOptions[size].cover.size,
+          }}
           mt="sm"
         >
           {getCoverImage()}
         </Card.Section>
 
         <Card.Section inheritPadding mt="sm" pb="md">
-          <UserCluster users={{ owner, party }} />
+          <Group position="apart">
+            <UserCluster users={{ owner, party }} />
+            {cover && (
+              <Text
+                color={getCurrentColor()}
+                weight={700}
+                align="center"
+                size={sizeOptions[size].progressText.size}
+              >
+                {`${getCurrentProgress()}%`}
+              </Text>
+            )}
+          </Group>
         </Card.Section>
       </Card>
     </>
