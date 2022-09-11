@@ -10,7 +10,13 @@ import {
   Text,
 } from "@mantine/core";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { MouseEvent, useCallback, useContext, useState } from "react";
+import {
+  MouseEvent,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { RiAddFill } from "react-icons/ri";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { APIClient, Method, ProjectExtended } from "../../api/client";
@@ -30,10 +36,9 @@ const Projects = () => {
   const [editProjectDrawerOpened, setEditProjectDrawerOpened] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const { classes } = projectCardStyles();
-  const [_, setHeaderText] = useContext(HeaderContext);
+  const [, setHeaderText] = useContext(HeaderContext);
 
   const {
-    isSuccess,
     isLoading,
     error,
     data: projects,
@@ -89,6 +94,10 @@ const Projects = () => {
     setOpenDeleteModal(false);
   }
 
+  useEffect(() => {
+    setHeaderText("Good organizing");
+  }, [setHeaderText]);
+
   if (error) {
     const errObj = new ApiError(error);
     if (errObj.code === 404) {
@@ -97,10 +106,6 @@ const Projects = () => {
     if (errObj.code === 500) {
       return <Navigate to="/500" state={{ from: location, errorMsg: error }} />;
     }
-  }
-
-  if (isSuccess) {
-    setHeaderText("Good organizing");
   }
 
   return (

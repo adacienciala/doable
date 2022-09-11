@@ -7,6 +7,7 @@ import {
   SetStateAction,
   useCallback,
   useContext,
+  useEffect,
   useState,
 } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
@@ -29,7 +30,7 @@ const Calendar = () => {
   const [taskEdited, setTaskEdited] = useState("");
   const [addTaskDrawerOpened, setAddTaskDrawerOpened] = useState(false);
   const [addTaskData, setAddTaskData] = useState<Partial<TaskData>>({});
-  const [_, setHeaderText] = useContext(HeaderContext);
+  const [, setHeaderText] = useContext(HeaderContext);
 
   const {
     isLoading,
@@ -101,19 +102,24 @@ const Calendar = () => {
     { title: "Not scheduled", view: "no-date" },
   ];
 
+  useEffect(() => {
+    if (tasks) {
+      if (tasks.length < 5) {
+        setHeaderText("Not that bad");
+      } else if (tasks.length < 10) {
+        setHeaderText("Take care of that backlog");
+      } else {
+        setHeaderText("You can do this, I believe in you,");
+      }
+    }
+  }, [tasks, setHeaderText]);
+
   if (isSuccess) {
     tasks.forEach((task: TaskData) => {
       if (task.date) {
         task.date = new Date(task.date);
       }
     });
-    if (tasks.length < 5) {
-      setHeaderText("Not that bad");
-    } else if (tasks.length < 10) {
-      setHeaderText("Take care of that backlog");
-    } else {
-      setHeaderText("You can do this, I believe in you,");
-    }
   }
 
   if (error) {

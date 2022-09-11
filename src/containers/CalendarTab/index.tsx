@@ -34,7 +34,7 @@ export const CalendarTab = ({
 }: CalendarTabProps) => {
   const queryClient = useQueryClient();
   const client = new APIClient();
-  const [_, setHeaderText] = useContext(HeaderContext);
+  const [, setHeaderText] = useContext(HeaderContext);
 
   const finishTaskMutation = useMutation(
     (taskId: string) =>

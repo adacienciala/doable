@@ -12,7 +12,13 @@ import {
   Text,
 } from "@mantine/core";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { MouseEvent, useCallback, useContext, useState } from "react";
+import {
+  MouseEvent,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { RiAddFill, RiSettings2Line } from "react-icons/ri";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { APIClient, Method, PartyExtended } from "../../api/client";
@@ -39,7 +45,7 @@ const Party = () => {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const queryClient = useQueryClient();
   const { classes } = projectCardStyles();
-  const [_, setHeaderText] = useContext(HeaderContext);
+  const [, setHeaderText] = useContext(HeaderContext);
 
   const {
     isLoading,
@@ -115,6 +121,10 @@ const Party = () => {
     setOpenDeleteModal(false);
   }
 
+  useEffect(() => {
+    setHeaderText("Don't let them slack off");
+  }, [setHeaderText]);
+
   if (error) {
     const errObj = new ApiError(error);
     if (errObj.code === 404) {
@@ -123,10 +133,6 @@ const Party = () => {
     if (errObj.code === 500) {
       return <Navigate to="/500" state={{ from: location, errorMsg: error }} />;
     }
-  }
-
-  if (isSuccess) {
-    setHeaderText("Don't let them slack off");
   }
 
   if (!partyId) {

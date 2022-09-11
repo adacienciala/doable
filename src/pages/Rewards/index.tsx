@@ -10,7 +10,7 @@ import {
   Text,
 } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
-import { useCallback, useContext } from "react";
+import { useCallback, useContext, useEffect } from "react";
 import {
   RiCompassFill,
   RiFundsFill,
@@ -35,10 +35,9 @@ const Rewards = () => {
   const location = useLocation() as any;
   const navigate = useNavigate();
   const client = new APIClient();
-  const [_, setHeaderText] = useContext(HeaderContext);
+  const [, setHeaderText] = useContext(HeaderContext);
 
   const {
-    isSuccess,
     isLoading,
     error,
     data: rewards,
@@ -55,6 +54,10 @@ const Rewards = () => {
     [error]
   );
 
+  useEffect(() => {
+    setHeaderText("Well well, aren't they beautiful");
+  }, [setHeaderText]);
+
   if (error) {
     const errObj = new ApiError(error);
     if (errObj.code === 404) {
@@ -63,10 +66,6 @@ const Rewards = () => {
     if (errObj.code === 500) {
       return <Navigate to="/500" state={{ from: location, errorMsg: error }} />;
     }
-  }
-
-  if (isSuccess) {
-    setHeaderText("Well well, aren't they beautiful");
   }
 
   return (
