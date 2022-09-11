@@ -1,5 +1,6 @@
 import { IParty } from "../models/party";
 import { IProject } from "../models/project";
+import { ITask } from "../models/task";
 import { IUser } from "../models/user";
 import { request } from "./utils";
 
@@ -18,6 +19,13 @@ export interface ProjectExtended extends Omit<IProject, "owner" | "party"> {
 export interface PartyExtended extends Omit<IParty, "members" | "quests"> {
   members: IUser[];
   quests: ProjectExtended[];
+}
+
+export interface TaskExtended extends ITask {
+  projectDetails: {
+    projectId: string;
+    name: string;
+  }[];
 }
 
 // TODO: make it a singleton

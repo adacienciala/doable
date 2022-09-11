@@ -1,7 +1,9 @@
-import { Checkbox, Group, Text } from "@mantine/core";
+import { Checkbox, Group, Indicator, Text } from "@mantine/core";
 import { hideNotification, showNotification } from "@mantine/notifications";
 import { useState } from "react";
+import { TaskExtended } from "../../api/client";
 import { CalendarView } from "../../pages/Calendar/CalendarView";
+import { shortenText } from "../../utils/utils";
 
 export interface TaskData {
   title: string;
@@ -12,20 +14,18 @@ export interface TaskData {
 }
 
 interface TaskPillProps {
-  data: TaskData;
+  data: TaskExtended;
   view: CalendarView;
   onTaskDone: (taskId: string) => void;
 }
 
 export const TaskPill = ({
-  data: { title, description, taskId },
+  data: { title, description, taskId, projectDetails },
   view,
   onTaskDone,
 }: TaskPillProps) => {
   const [checked, setChecked] = useState(false);
   const [clicked, setClicked] = useState(false);
-  const shortenedTitle =
-    title.length > 20 ? title.substring(0, 20) + "..." : title;
 
   const handleTaskDone = (taskId: string) => {
     const doneTimeout = setTimeout(() => onTaskDone(taskId), 3000);
@@ -34,7 +34,7 @@ export const TaskPill = ({
       autoClose: 3000,
       message: (
         <Group>
-          {`Task "${shortenedTitle}" finished`}
+          {`Task "${shortenText(title, 20)}" finished`}
           <Text
             span
             color="red"
@@ -55,33 +55,50 @@ export const TaskPill = ({
   };
 
   return (
-    <Group
-      position="apart"
-      noWrap
-      sx={(theme) => ({
-        backgroundColor: "white",
-        color: theme.colors.gray[7],
-        marginBottom: "20px",
-        padding: "10px",
-        borderRadius: "10px",
-        cursor: "grab",
-        display: clicked ? "none" : "flex",
+    <Indicator
+      position="top-end"
+      disabled={projectDetails.length === 0}
+      label={
+        projectDetails.length > 0
+          ? shortenText(projectDetails[0].name, 20)
+          : null
+      }
+      size={18}
+      styles={(theme) => ({
+        indicator: {
+          color: "black",
+          transform: "translate(10px, -50%)",
+        },
       })}
     >
-      <Checkbox
-        radius="xl"
-        checked={checked}
-        readOnly
-        onClick={(e) => {
-          setClicked(true);
-          handleTaskDone(taskId);
-        }}
-        onMouseOver={(e) => setChecked(true)}
-        onMouseOut={(e) => !clicked && setChecked(false)}
-      />
-      <Text weight={500}>{title}</Text>
-      {view === "today" && <Text weight={300}>{description}</Text>}
-      {view === "no-date" && <Text weight={300}>{description}</Text>}
-    </Group>
+      <Group
+        position="apart"
+        noWrap
+        sx={(theme) => ({
+          backgroundColor: "white",
+          color: theme.colors.gray[7],
+          marginBottom: "20px",
+          padding: "10px",
+          borderRadius: "10px",
+          cursor: "grab",
+          display: clicked ? "none" : "flex",
+        })}
+      >
+        <Checkbox
+          radius="xl"
+          checked={checked}
+          readOnly
+          onClick={(e) => {
+            setClicked(true);
+            handleTaskDone(taskId);
+          }}
+          onMouseOver={(e) => setChecked(true)}
+          onMouseOut={(e) => !clicked && setChecked(false)}
+        />
+        <Text weight={500}>{title}</Text>
+        {view === "today" && <Text weight={300}>{description}</Text>}
+        {view === "no-date" && <Text weight={300}>{description}</Text>}
+      </Group>
+    </Indicator>
   );
 };

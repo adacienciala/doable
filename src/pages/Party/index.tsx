@@ -12,7 +12,7 @@ import {
   Text,
 } from "@mantine/core";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { MouseEvent, useCallback, useState } from "react";
+import { MouseEvent, useCallback, useContext, useState } from "react";
 import { RiAddFill, RiSettings2Line } from "react-icons/ri";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { APIClient, Method, PartyExtended } from "../../api/client";
@@ -23,6 +23,7 @@ import { ProjectAddDrawer } from "../../containers/ProjectAddDrawer";
 import { ProjectCard, projectCardStyles } from "../../containers/ProjectCard";
 import { ProjectEditDrawer } from "../../containers/ProjectEditDrawer";
 import { IUser } from "../../models/user";
+import { HeaderContext } from "../../utils/context";
 import NoParty from "./NoParty";
 import { PartyMemberProfile } from "./PartyMemberProfile";
 
@@ -38,6 +39,7 @@ const Party = () => {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const queryClient = useQueryClient();
   const { classes } = projectCardStyles();
+  const [_, setHeaderText] = useContext(HeaderContext);
 
   const {
     isLoading,
@@ -121,6 +123,10 @@ const Party = () => {
     if (errObj.code === 500) {
       return <Navigate to="/500" state={{ from: location, errorMsg: error }} />;
     }
+  }
+
+  if (isSuccess) {
+    setHeaderText("Don't let them slack off");
   }
 
   if (!partyId) {

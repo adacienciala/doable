@@ -5,3 +5,6 @@ export const isCheckbox = (el: Element) =>
 export const isValidDate = (d: Date) => {
   return d instanceof Date && !isNaN(d.getTime());
 };
+
+export const shortenText = (text: string, maxLen: number = 20) =>
+  text.length > maxLen ? text.substring(0, maxLen) + "..." : text;

@@ -2,15 +2,21 @@ import { Button, Group, LoadingOverlay, Modal, Stack } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import { endOfWeek, startOfWeek } from "date-fns";
 import { motion } from "framer-motion";
-import { Dispatch, SetStateAction, useCallback, useState } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useContext,
+  useState,
+} from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
-import { APIClient, Method } from "../../api/client";
+import { APIClient, Method, TaskExtended } from "../../api/client";
 import { ApiError } from "../../api/errors";
 import { TaskData } from "../../components/TaskPill";
 import { CalendarTab } from "../../containers/CalendarTab";
 import { TaskAddDrawer } from "../../containers/TaskAddDrawer";
 import { TaskEditDrawer } from "../../containers/TaskEditDrawer";
-import { ITask } from "../../models/task";
+import { HeaderContext } from "../../utils/context";
 import { CalendarView } from "./CalendarView";
 
 const Calendar = () => {
@@ -23,13 +29,14 @@ const Calendar = () => {
   const [taskEdited, setTaskEdited] = useState("");
   const [addTaskDrawerOpened, setAddTaskDrawerOpened] = useState(false);
   const [addTaskData, setAddTaskData] = useState<Partial<TaskData>>({});
+  const [_, setHeaderText] = useContext(HeaderContext);
 
   const {
     isLoading,
     isSuccess,
     error,
     data: tasks,
-  } = useQuery<ITask[]>(["tasks"], () => {
+  } = useQuery<TaskExtended[]>(["tasks"], () => {
     return client.tasks(Method.GET);
   });
 
@@ -100,6 +107,13 @@ const Calendar = () => {
         task.date = new Date(task.date);
       }
     });
+    if (tasks.length < 5) {
+      setHeaderText("Not that bad");
+    } else if (tasks.length < 10) {
+      setHeaderText("Take care of that backlog");
+    } else {
+      setHeaderText("You can do this, I believe in you,");
+    }
   }
 
   if (error) {

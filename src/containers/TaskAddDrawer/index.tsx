@@ -9,6 +9,7 @@ import {
 import { DatePicker } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { isSameDay } from "date-fns";
 import { FormEvent, useEffect } from "react";
 import { APIClient, Method } from "../../api/client";
 import { TaskData } from "../../components/TaskPill";
@@ -121,6 +122,10 @@ export const TaskAddDrawer = ({
             mt="md"
             label="Date"
             placeholder="Date"
+            minDate={new Date()}
+            dayStyle={(date) =>
+              isSameDay(date, new Date()) ? { borderStyle: "dashed" } : null
+            }
             value={form.values.date}
             {...form.getInputProps("date")}
           />

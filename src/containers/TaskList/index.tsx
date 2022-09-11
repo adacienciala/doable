@@ -1,6 +1,7 @@
 import { Reorder } from "framer-motion";
 import { MouseEvent, useCallback, useEffect, useState } from "react";
-import { TaskData, TaskPill } from "../../components/TaskPill";
+import { TaskExtended } from "../../api/client";
+import { TaskPill } from "../../components/TaskPill";
 import { CalendarView } from "../../pages/Calendar/CalendarView";
 import { isCheckbox } from "../../utils/utils";
 
@@ -10,7 +11,7 @@ export const TaskList = ({
   onTaskDone,
   onTaskClick,
 }: {
-  tasks: TaskData[];
+  tasks: TaskExtended[];
   view: CalendarView;
   onTaskDone: (taskId: string) => void;
   onTaskClick: (taskId: string) => void;
@@ -47,8 +48,6 @@ export const TaskList = ({
           padding: 0,
           margin: 0,
           height: view === "week" ? "70%" : "90%",
-          overflowY: "auto",
-          overflowX: "hidden",
         }}
       >
         {items.map((item) => (

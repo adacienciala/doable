@@ -1,7 +1,7 @@
-import { TaskData } from "../../../components/TaskPill";
+import { TaskExtended } from "../../../api/client";
 
 export interface CalendarViewProps {
-  tasks: TaskData[];
+  tasks: TaskExtended[];
   onTaskDone: (taskId: string) => void;
   onTaskClick: (taskId: string) => void;
   onAddTask: (data?: { date?: Date; projectId?: string }) => void;

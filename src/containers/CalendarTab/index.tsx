@@ -1,21 +1,21 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence } from "framer-motion";
-import { Dispatch, SetStateAction, useMemo } from "react";
-import { APIClient, Method } from "../../api/client";
+import { Dispatch, SetStateAction, useContext, useMemo } from "react";
+import { APIClient, Method, TaskExtended } from "../../api/client";
 import { VerticalTab } from "../../components/VerticalTab";
-import { ITask } from "../../models/task";
 import {
   CalendarNoDate,
   CalendarToday,
   CalendarView,
   CalendarWeek,
 } from "../../pages/Calendar/CalendarView";
+import { HeaderContext } from "../../utils/context";
 
 interface CalendarTabProps {
   title: string;
   range?: { start: Date; end: Date; setStart?: Dispatch<SetStateAction<Date>> };
   open: boolean;
-  tasks: ITask[];
+  tasks: TaskExtended[];
   view: CalendarView;
   changeViewHandler: any;
   onTaskClick: (taskId: string) => void;
@@ -34,6 +34,7 @@ export const CalendarTab = ({
 }: CalendarTabProps) => {
   const queryClient = useQueryClient();
   const client = new APIClient();
+  const [_, setHeaderText] = useContext(HeaderContext);
 
   const finishTaskMutation = useMutation(
     (taskId: string) =>
@@ -52,6 +53,7 @@ export const CalendarTab = ({
 
   const handleTaskDone = (taskId: string) => {
     finishTaskMutation.mutate(taskId);
+    setHeaderText("Great job");
   };
 
   const CurrentCalendarView = useMemo(() => {

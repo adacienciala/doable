@@ -5,6 +5,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";
 import "./App.css";
+import { HeaderContextProvider } from "./utils/context";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -41,7 +42,9 @@ ReactDOM.render(
     >
       <NotificationsProvider>
         <QueryClientProvider client={queryClient}>
-          <App />
+          <HeaderContextProvider>
+            <App />
+          </HeaderContextProvider>
         </QueryClientProvider>
       </NotificationsProvider>
     </MantineProvider>

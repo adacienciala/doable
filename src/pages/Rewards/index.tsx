@@ -10,7 +10,7 @@ import {
   Text,
 } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
-import { useCallback } from "react";
+import { useCallback, useContext } from "react";
 import {
   RiCompassFill,
   RiFundsFill,
@@ -22,6 +22,7 @@ import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { APIClient, Method } from "../../api/client";
 import { ApiError } from "../../api/errors";
 import { IReward } from "../../models/rewards";
+import { HeaderContext } from "../../utils/context";
 
 const rewardIcons = {
   randomA: RiTodoFill,
@@ -34,8 +35,10 @@ const Rewards = () => {
   const location = useLocation() as any;
   const navigate = useNavigate();
   const client = new APIClient();
+  const [_, setHeaderText] = useContext(HeaderContext);
 
   const {
+    isSuccess,
     isLoading,
     error,
     data: rewards,
@@ -60,6 +63,10 @@ const Rewards = () => {
     if (errObj.code === 500) {
       return <Navigate to="/500" state={{ from: location, errorMsg: error }} />;
     }
+  }
+
+  if (isSuccess) {
+    setHeaderText("Well well, aren't they beautiful");
   }
 
   return (

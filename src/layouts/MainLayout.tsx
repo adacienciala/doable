@@ -1,6 +1,6 @@
 import { ActionIcon, Anchor, Box, Group, Stack, Text } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { AiOutlineProject } from "react-icons/ai";
 import { FiCalendar } from "react-icons/fi";
 import {
@@ -14,6 +14,7 @@ import { Link } from "react-router-dom";
 import { APIClient, Method } from "../api/client";
 import { Profile } from "../components/Profile";
 import { IUser } from "../models/user";
+import { HeaderContext } from "../utils/context";
 
 type Props = {
   page: string;
@@ -21,6 +22,7 @@ type Props = {
 
 const MainLayout: React.FC<Props> = ({ page, children }) => {
   const client = new APIClient();
+  const [headerText] = useContext(HeaderContext);
 
   const { data: user } = useQuery<IUser>(
     ["user", localStorage.getItem("doableId")!],
@@ -171,7 +173,9 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
             color: theme.colors.gray[9],
           })}
         >
-          <Text>You're doing great, {user?.name}!</Text>
+          <Text>
+            {headerText}, {user?.name}
+          </Text>
         </Group>
         <Box
           sx={(theme) => ({
