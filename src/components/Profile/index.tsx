@@ -3,6 +3,7 @@ import {
   Badge,
   Center,
   RingProgress,
+  Stack,
   Sx,
   Text,
   Tooltip,
@@ -60,65 +61,73 @@ export const Profile = ({
 
   return (
     <>
-      <Tooltip.Floating
-        // ! new version of mantine should support that but doesn't
-        // transition="skew-up"
-        // transitionDuration={100}
-        // openDelay={500}
-        label={`${xp}XP`}
-      >
-        <RingProgress
-          size={sizeOptions[size].ring.size}
-          thickness={sizeOptions[size].ring.thickness}
-          roundCaps
-          sections={[
-            {
-              value: getCurrentProgress(),
-              color: "yellow",
-            },
-          ]}
-          sx={[
-            (theme) => ({
-              "circle:first-of-type": {
-                stroke: theme.colors.gray[7],
-              },
-            }),
-            sx,
-          ]}
-          label={
-            <Center>
-              <Avatar
-                size={sizeOptions[size].avatar}
-                src={`data:image/svg+xml;UTF-8,${encodeURIComponent(
-                  avatar(getUserSeed())
-                )}`}
-              ></Avatar>
-            </Center>
-          }
-        />
-      </Tooltip.Floating>
-
-      <Text
-        style={{ whiteSpace: size === "lg" ? "nowrap" : "normal" }}
-        size={size}
-        weight={"bold"}
-      >
-        {user?.name} {user?.surname}
-      </Text>
-
-      <Badge
-        variant="light"
-        styles={(theme) => ({
-          leftSection: {
-            display: "flex",
-            alignItems: "center",
-          },
+      <Stack
+        sx={(theme) => ({
+          gap: 0,
+          alignItems: "center",
         })}
-        size={size}
-        leftSection={getRankBadgeIcon(user?.statistics.rank)}
       >
-        {user?.statistics.rank}
-      </Badge>
+        <Tooltip.Floating
+          // ! new version of mantine should support that but doesn't
+          // transition="skew-up"
+          // transitionDuration={100}
+          // openDelay={500}
+          label={`${xp}XP`}
+        >
+          <RingProgress
+            size={sizeOptions[size].ring.size}
+            thickness={sizeOptions[size].ring.thickness}
+            roundCaps
+            sections={[
+              {
+                value: getCurrentProgress(),
+                color: "yellow",
+              },
+            ]}
+            sx={[
+              (theme) => ({
+                "circle:first-of-type": {
+                  stroke: theme.colors.gray[7],
+                },
+              }),
+              sx,
+            ]}
+            label={
+              <Center>
+                <Avatar
+                  size={sizeOptions[size].avatar}
+                  src={`data:image/svg+xml;UTF-8,${encodeURIComponent(
+                    avatar(getUserSeed())
+                  )}`}
+                ></Avatar>
+              </Center>
+            }
+          />
+        </Tooltip.Floating>
+
+        <Text
+          align="center"
+          style={{ whiteSpace: size === "lg" ? "nowrap" : "normal" }}
+          size={size}
+          weight={"bold"}
+        >
+          {user?.name} {user?.surname}
+        </Text>
+
+        <Badge
+          variant="light"
+          styles={(theme) => ({
+            leftSection: {
+              display: "flex",
+              alignItems: "center",
+            },
+          })}
+          size={size}
+          leftSection={getRankBadgeIcon(user?.statistics.rank)}
+        >
+          {user?.statistics.rank}
+        </Badge>
+      </Stack>
     </>
   );
 };

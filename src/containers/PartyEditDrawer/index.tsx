@@ -87,7 +87,7 @@ export const PartyEditDrawer = ({
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!form.validate()) {
+    if (form.validate().hasErrors) {
       return;
     }
     editPartyMutation.mutate(form.values);

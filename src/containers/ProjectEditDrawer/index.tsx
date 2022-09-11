@@ -92,7 +92,7 @@ export const ProjectEditDrawer = ({
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!form.validate()) {
+    if (form.validate().hasErrors) {
       return;
     }
     editProjectMutation.mutate(form.values);

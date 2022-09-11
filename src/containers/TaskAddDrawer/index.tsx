@@ -72,7 +72,7 @@ export const TaskAddDrawer = ({
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!form.validate()) {
+    if (form.validate().hasErrors) {
       return;
     }
     addTaskMutation.mutate(form.values);

@@ -49,7 +49,7 @@ export const ProjectAddDrawer = ({
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!form.validate()) {
+    if (form.validate().hasErrors) {
       return;
     }
     const newData = { ...form.values, party: data?.party ? data.party : [] };

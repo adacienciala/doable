@@ -6,22 +6,15 @@ export const PartyMemberProfile = ({ user }: { user?: IUser }) => {
   return (
     <>
       <Group noWrap align="stretch">
-        <Stack
+        <Profile
+          size="lg"
+          user={user}
           sx={(theme) => ({
-            gap: 0,
-            alignItems: "center",
+            "circle:first-of-type": {
+              stroke: theme.colors.gray[8],
+            },
           })}
-        >
-          <Profile
-            size="lg"
-            user={user}
-            sx={(theme) => ({
-              "circle:first-of-type": {
-                stroke: theme.colors.gray[8],
-              },
-            })}
-          />
-        </Stack>
+        />
         <Stack
           align="center"
           sx={(theme) => ({

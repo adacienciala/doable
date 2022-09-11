@@ -15,6 +15,7 @@ import Projects from "./pages/Projects";
 import ProjectPage from "./pages/Projects/ProjectPage";
 import Rewards from "./pages/Rewards";
 import ServerError from "./pages/ServerError";
+import Settings from "./pages/Settings";
 
 function App() {
   return (
@@ -86,7 +87,9 @@ function App() {
           path="/settings"
           element={
             <RequireAuth>
-              <p>settings</p>
+              <MainLayout page="settings">
+                <Settings />
+              </MainLayout>
             </RequireAuth>
           }
         />

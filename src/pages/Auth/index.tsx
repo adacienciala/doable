@@ -74,7 +74,7 @@ export default function Auth() {
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (!form.validate()) {
+    if (form.validate().hasErrors) {
       return showError("Make sure that all fields are filled in correctly");
     }
 
