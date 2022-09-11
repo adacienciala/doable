@@ -3,15 +3,16 @@ import {
   Center,
   Drawer,
   NumberInput,
+  Select,
   Space,
   TextInput,
 } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 import { useForm } from "@mantine/form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { isSameDay } from "date-fns";
 import { FormEvent, useEffect } from "react";
-import { APIClient, Method } from "../../api/client";
+import { APIClient, Method, ProjectExtended } from "../../api/client";
 import { TaskData } from "../../components/TaskPill";
 import { ITask } from "../../models/task";
 
@@ -38,6 +39,15 @@ export const TaskAddDrawer = ({
       onSuccess: () => {
         queryClient.invalidateQueries(["tasks"]);
       },
+    }
+  );
+
+  const { isSuccess, data: projects } = useQuery<ProjectExtended[]>(
+    ["projects"],
+    async () => await client.projects(Method.GET),
+    {
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
     }
   );
 
@@ -129,11 +139,19 @@ export const TaskAddDrawer = ({
             value={form.values.date}
             {...form.getInputProps("date")}
           />
-          <TextInput
+          <Select
             mt="md"
-            label="ProjectId"
-            placeholder="ProjectId"
-            value={form.values.projectId}
+            label="Project"
+            placeholder="Project"
+            data={
+              (isSuccess &&
+                projects.map((p) => ({
+                  value: p.projectId,
+                  label: p.name,
+                }))) ??
+              []
+            }
+            clearable
             {...form.getInputProps("projectId")}
           />
           <TextInput

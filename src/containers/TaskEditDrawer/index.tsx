@@ -4,6 +4,7 @@ import {
   Drawer,
   Modal,
   NumberInput,
+  Select,
   Space,
   Text,
   TextInput,
@@ -13,7 +14,12 @@ import { useForm } from "@mantine/form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { isSameDay } from "date-fns";
 import { FormEvent, MouseEvent, useEffect, useState } from "react";
-import { APIClient, Method } from "../../api/client";
+import {
+  APIClient,
+  Method,
+  ProjectExtended,
+  TaskExtended,
+} from "../../api/client";
 import { ITask } from "../../models/task";
 import { isValidDate } from "../../utils/utils";
 
@@ -36,7 +42,7 @@ export const TaskEditDrawer = ({
     isSuccess,
     error,
     data: task,
-  } = useQuery<ITask>(
+  } = useQuery<TaskExtended>(
     ["task", taskId],
     async () => {
       const t = await client.singleTask(Method.GET, taskId);
@@ -49,6 +55,13 @@ export const TaskEditDrawer = ({
       refetchOnReconnect: false,
     }
   );
+
+  const { isSuccess: isSuccessProjects, data: projects } = useQuery<
+    ProjectExtended[]
+  >(["projects"], async () => await client.projects(Method.GET), {
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
 
   const editTaskMutation = useMutation(
     (data: Partial<ITask>) =>
@@ -170,11 +183,19 @@ export const TaskEditDrawer = ({
             value={form.values.date}
             {...form.getInputProps("date")}
           />
-          <TextInput
+          <Select
             mt="md"
-            label="ProjectId"
-            placeholder="ProjectId"
-            value={form.values.projectId}
+            label="Project"
+            placeholder="Project"
+            data={
+              (isSuccessProjects &&
+                projects.map((p) => ({
+                  value: p.projectId,
+                  label: p.name,
+                }))) ??
+              []
+            }
+            clearable
             {...form.getInputProps("projectId")}
           />
           <TextInput
