@@ -3,7 +3,7 @@ import { useContext, useEffect } from "react";
 import { HeaderContext } from "../../utils/context";
 
 const Dashboard = () => {
-  const [_, setHeaderText] = useContext(HeaderContext);
+  const [, setHeaderText] = useContext(HeaderContext);
   useEffect(() => {
     setHeaderText("Lets look at what we have here");
   }, [setHeaderText]);
