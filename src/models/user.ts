@@ -43,4 +43,5 @@ export interface IUserStatistics {
   points: IUserStatisticsPoints;
   party: IUserStatisticsParty;
   tasks: IUserStatisticsTasks;
+  rewards: string[];
 }

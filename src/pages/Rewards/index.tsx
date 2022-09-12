@@ -24,13 +24,6 @@ import { ApiError } from "../../api/errors";
 import { IReward } from "../../models/rewards";
 import { HeaderContext } from "../../utils/context";
 
-const rewardIcons = {
-  randomA: RiTodoFill,
-  randomB: RiCompassFill,
-  randomC: RiFundsFill,
-  randomD: RiMedalFill,
-};
-
 const Rewards = () => {
   const location = useLocation() as any;
   const navigate = useNavigate();
@@ -48,6 +41,20 @@ const Rewards = () => {
       return client.rewards(Method.GET, doableId);
     }
   );
+
+  const getRewardIcon = (reward: IReward) => {
+    switch (reward.type.toLowerCase()) {
+      case "tasks":
+        return RiTodoFill;
+      case "party":
+        if (reward.value === 0) {
+          return RiCompassFill;
+        }
+        return RiMedalFill;
+      default:
+        return RiFundsFill;
+    }
+  };
 
   const isAccessError = useCallback(
     () => (error ? new ApiError(error).code === 403 : false),
@@ -106,12 +113,16 @@ const Rewards = () => {
       </Modal>
       <ScrollArea
         style={{
-          height: "calc(100% - 40px)",
-          padding: "20px",
+          height: "100%",
         }}
         type="hover"
       >
-        <Group align="flex-start">
+        <Group
+          align="flex-start"
+          style={{
+            padding: "20px",
+          }}
+        >
           {rewards &&
             rewards.map((reward) => {
               const getRarityColor = (theme: MantineTheme) => {
@@ -172,11 +183,14 @@ const Rewards = () => {
                       },
                     })}
                   />
-                  {rewardIcons[reward.cover]({
+                  {getRewardIcon(reward)({
                     size: 120,
                     style: { alignSelf: "center" },
                   })}
                   <Text weight={500}>{reward.title}</Text>
+                  <Text size="xs" weight={300}>
+                    {reward.description}
+                  </Text>
                   <Group
                     noWrap
                     sx={(theme) => ({
