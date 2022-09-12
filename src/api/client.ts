@@ -71,6 +71,19 @@ export class APIClient {
     return await this.handleRes(res);
   }
 
+  async users(method: Method, options?: any): Promise<any> {
+    const usersEndpoint = `/users`;
+    const url = process.env.REACT_APP_DOABLE_API + usersEndpoint;
+    const res = await request(
+      method,
+      url,
+      this.token,
+      this.tokenSelector,
+      options?.body
+    );
+    return await this.handleRes(res);
+  }
+
   async rewards(method: Method, userId: string, options?: any): Promise<any> {
     const rewardsEndpoint = `/users/${userId}/rewards`;
     const url = process.env.REACT_APP_DOABLE_API + rewardsEndpoint;
@@ -85,8 +98,8 @@ export class APIClient {
   }
 
   async ranks(method: Method, options?: any): Promise<any> {
-    const rewardsEndpoint = `/ranks`;
-    const url = process.env.REACT_APP_DOABLE_API + rewardsEndpoint;
+    const ranksEndpoint = `/ranks`;
+    const url = process.env.REACT_APP_DOABLE_API + ranksEndpoint;
     const res = await request(
       method,
       url,

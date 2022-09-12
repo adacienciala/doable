@@ -13,6 +13,7 @@ import { useCallback } from "react";
 import { IUser } from "../../models/user";
 
 import { GiRank1, GiRank2, GiRank3 } from "react-icons/gi";
+import { getUserAvatarSeed } from "../../utils/utils";
 
 const sizeOptions = {
   lg: {
@@ -42,10 +43,6 @@ export const Profile = ({
     () => ((xp - minXp) / (maxXp - minXp)) * 100,
     [xp, minXp, maxXp]
   );
-
-  function getUserSeed() {
-    return user?.settings?.avatarSeed || user?.email || "default";
-  }
 
   function getRankBadgeIcon(rank?: string) {
     if (!rank) return "";
@@ -97,7 +94,7 @@ export const Profile = ({
                 <Avatar
                   size={sizeOptions[size].avatar}
                   src={`data:image/svg+xml;UTF-8,${encodeURIComponent(
-                    avatar(getUserSeed())
+                    avatar(getUserAvatarSeed(user))
                   )}`}
                 ></Avatar>
               </Center>

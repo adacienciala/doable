@@ -8,7 +8,7 @@ export interface CalendarViewProps {
   options?: Record<string, any>;
 }
 
-export type CalendarView = "today" | "week" | "no-date";
+export type CalendarView = "today" | "week" | "no-date" | "backlog";
 
 export { CalendarNoDate } from "./CalendarNoDate";
 export { CalendarToday } from "./CalendarToday";

@@ -9,6 +9,7 @@ import {
   CalendarView,
   CalendarWeek,
 } from "../../pages/Calendar/CalendarView";
+import { CalendarBacklog } from "../../pages/Dashboard/CalendarBacklog";
 import { HeaderContext } from "../../utils/context";
 
 interface CalendarTabProps {
@@ -71,6 +72,8 @@ export const CalendarTab = ({
         };
       case "no-date":
         return { ViewComponent: CalendarNoDate };
+      case "backlog":
+        return { ViewComponent: CalendarBacklog };
     }
   }, [view, range]);
 

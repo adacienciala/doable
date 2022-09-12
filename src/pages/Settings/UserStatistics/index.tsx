@@ -9,7 +9,7 @@ const UserStatistics = ({ user }: UserStatisticsProps) => {
     <>
       <Stack>
         <Text weight="bold">Points</Text>
-        <Table style={{ tableLayout: "fixed" }}>
+        <Table style={{ tableLayout: "fixed", color: "white" }}>
           <thead>
             <tr>
               <th>Individual</th>
@@ -28,7 +28,7 @@ const UserStatistics = ({ user }: UserStatisticsProps) => {
           </tbody>
         </Table>
         <Text weight="bold">Tasks</Text>
-        <Table style={{ tableLayout: "fixed" }}>
+        <Table style={{ tableLayout: "fixed", color: "white" }}>
           <thead>
             <tr>
               <th>Type</th>

@@ -15,6 +15,7 @@ import { APIClient, Method } from "../../api/client";
 import { ApiError } from "../../api/errors";
 import { IUser } from "../../models/user";
 import { HeaderContext } from "../../utils/context";
+import { getUserAvatarSeed } from "../../utils/utils";
 import RanksAccordion from "./RanksAccordion";
 import UserAccountForm from "./UserAccountForm";
 import UserStatistics from "./UserStatistics";
@@ -50,9 +51,6 @@ const Settings = () => {
     if (errObj.code === 500) {
       return <Navigate to="/500" state={{ from: location, errorMsg: error }} />;
     }
-  }
-  function getUserSeed() {
-    return data?.settings?.avatarSeed || data?.email || "default";
   }
 
   return (
@@ -108,7 +106,7 @@ const Settings = () => {
             style={{ alignSelf: "center" }}
             size={120}
             src={`data:image/svg+xml;UTF-8,${encodeURIComponent(
-              avatar(getUserSeed())
+              avatar(getUserAvatarSeed(data))
             )}`}
           ></Avatar>
           <UserAccountForm user={data} />

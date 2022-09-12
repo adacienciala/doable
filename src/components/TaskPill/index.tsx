@@ -1,5 +1,6 @@
 import { Checkbox, Group, Indicator, Text } from "@mantine/core";
 import { hideNotification, showNotification } from "@mantine/notifications";
+import { format, isBefore } from "date-fns";
 import { useState } from "react";
 import { TaskExtended } from "../../api/client";
 import { CalendarView } from "../../pages/Calendar/CalendarView";
@@ -20,7 +21,7 @@ interface TaskPillProps {
 }
 
 export const TaskPill = ({
-  data: { title, description, taskId, projectDetails },
+  data: { title, description, taskId, projectDetails, date },
   view,
   onTaskDone,
 }: TaskPillProps) => {
@@ -98,6 +99,22 @@ export const TaskPill = ({
         <Text weight={500}>{title}</Text>
         {view === "today" && <Text weight={300}>{description}</Text>}
         {view === "no-date" && <Text weight={300}>{description}</Text>}
+        {view === "backlog" && (
+          <Text
+            weight={300}
+            color={
+              date &&
+              isBefore(
+                date.setHours(0, 0, 0, 0),
+                new Date().setHours(0, 0, 0, 0)
+              )
+                ? "red"
+                : undefined
+            }
+          >
+            {date && format(date, "dd/MM/yyyy")}
+          </Text>
+        )}
       </Group>
     </Indicator>
   );
