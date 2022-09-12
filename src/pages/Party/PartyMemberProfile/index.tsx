@@ -25,7 +25,7 @@ export const PartyMemberProfile = ({ user }: { user?: IUser }) => {
           })}
         >
           <Text weight="bold" color="black">
-            {Math.floor(Math.random() * 10)}
+            {user?.statistics.party.level}
           </Text>
         </Stack>
       </Group>

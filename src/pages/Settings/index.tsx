@@ -1,12 +1,22 @@
-import { Button, Group, LoadingOverlay, Modal, Stack } from "@mantine/core";
+import {
+  Avatar,
+  Button,
+  Group,
+  LoadingOverlay,
+  Modal,
+  Stack,
+  Text,
+} from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
+import avatar from "animal-avatar-generator";
 import { useCallback, useContext, useEffect } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { APIClient, Method } from "../../api/client";
 import { ApiError } from "../../api/errors";
 import { IUser } from "../../models/user";
 import { HeaderContext } from "../../utils/context";
-import UserAccount from "./UserAccount";
+import RanksAccordion from "./RanksAccordion";
+import UserAccountForm from "./UserAccountForm";
 import UserStatistics from "./UserStatistics";
 
 const Settings = () => {
@@ -40,6 +50,9 @@ const Settings = () => {
     if (errObj.code === 500) {
       return <Navigate to="/500" state={{ from: location, errorMsg: error }} />;
     }
+  }
+  function getUserSeed() {
+    return data?.settings?.avatarSeed || data?.email || "default";
   }
 
   return (
@@ -87,8 +100,26 @@ const Settings = () => {
           height: "100%",
         }}
       >
-        <UserAccount user={data} />
-        <UserStatistics user={data} />
+        <Stack align={"stretch"}>
+          <Text size="xl" weight="bold">
+            Edit profile
+          </Text>
+          <Avatar
+            style={{ alignSelf: "center" }}
+            size={120}
+            src={`data:image/svg+xml;UTF-8,${encodeURIComponent(
+              avatar(getUserSeed())
+            )}`}
+          ></Avatar>
+          <UserAccountForm user={data} />
+        </Stack>
+        <Stack>
+          <Text size="xl" weight="bold">
+            Statistics
+          </Text>
+          <UserStatistics user={data} />
+          <RanksAccordion userRank={data?.statistics.points.rank} />
+        </Stack>
       </Group>
     </>
   );

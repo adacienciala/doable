@@ -20,9 +20,27 @@ export interface IUserSettings {
   avatarSeed: string;
 }
 
-export interface IUserStatistics {
+export interface IUserStatisticsParty {
+  xp: number;
+  level: number;
+}
+
+export interface IUserStatisticsPoints {
   xp: number;
   minXp: number;
   maxXp: number;
   rank: string;
+}
+
+export interface IUserStatisticsTasks {
+  current: number;
+  finished: number;
+  created: number;
+  deleted: number;
+}
+
+export interface IUserStatistics {
+  points: IUserStatisticsPoints;
+  party: IUserStatisticsParty;
+  tasks: IUserStatisticsTasks;
 }

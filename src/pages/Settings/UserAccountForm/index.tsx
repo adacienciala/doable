@@ -5,7 +5,6 @@ import {
   Modal,
   PasswordInput,
   Space,
-  Stack,
   Text,
   TextInput,
 } from "@mantine/core";
@@ -20,7 +19,7 @@ import { IUser } from "../../../models/user";
 interface UserAccountProps {
   user?: IUser;
 }
-const UserAccount = ({ user }: UserAccountProps) => {
+const UserAccountForm = ({ user }: UserAccountProps) => {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const navigate = useNavigate();
   const client = new APIClient();
@@ -122,84 +121,77 @@ const UserAccount = ({ user }: UserAccountProps) => {
           </Button>
         </Center>
       </Modal>
-      <Stack style={{ flexBasis: "40%" }}>
-        <Text size="xl" weight="bold">
-          Edit profile
-        </Text>
-        <form onSubmit={handleSubmit}>
-          <TextInput
-            mt="md"
-            label="Email"
-            placeholder="Email"
-            value={form.values.email}
-            icon={<MdOutlineEmail />}
-            onBlur={() =>
-              form.values.email !== "" && form.validateField("email")
-            }
-            {...form.getInputProps("email")}
-          />
-          <PasswordInput
-            mt="md"
-            placeholder="Password"
-            label="Password"
-            icon={<MdLockOutline />}
-            onBlur={() =>
-              form.values.password !== "" && form.validateField("password")
-            }
-            {...form.getInputProps("password")}
-          />
-          <PasswordInput
-            mt="md"
-            label="Confirm Password"
-            placeholder="Confirm password"
-            icon={<MdLockOutline />}
-            onBlur={() =>
-              form.values.confirmPassword !== "" &&
-              form.validateField("confirmPassword")
-            }
-            {...form.getInputProps("confirmPassword")}
-          />
-          <TextInput
-            mt="md"
-            label="Name"
-            placeholder="Name"
-            icon={<MdPersonOutline />}
-            value={form.values.name}
-            onBlur={() => form.validateField("name")}
-            {...form.getInputProps("name")}
-          />
-          <TextInput
-            mt="md"
-            label="Surname"
-            placeholder="Surname"
-            icon={<MdPersonOutline />}
-            value={form.values.surname}
-            onBlur={() => form.validateField("surname")}
-            {...form.getInputProps("surname")}
-          />
+      <form onSubmit={handleSubmit}>
+        <TextInput
+          mt="md"
+          label="Name"
+          placeholder="Name"
+          icon={<MdPersonOutline />}
+          value={form.values.name}
+          onBlur={() => form.validateField("name")}
+          {...form.getInputProps("name")}
+        />
+        <TextInput
+          mt="md"
+          label="Surname"
+          placeholder="Surname"
+          icon={<MdPersonOutline />}
+          value={form.values.surname}
+          onBlur={() => form.validateField("surname")}
+          {...form.getInputProps("surname")}
+        />
+        <TextInput
+          mt="md"
+          label="Email"
+          placeholder="Email"
+          value={form.values.email}
+          icon={<MdOutlineEmail />}
+          onBlur={() => form.values.email !== "" && form.validateField("email")}
+          {...form.getInputProps("email")}
+        />
+        <PasswordInput
+          mt="md"
+          placeholder="Password"
+          label="Password"
+          icon={<MdLockOutline />}
+          onBlur={() =>
+            form.values.password !== "" && form.validateField("password")
+          }
+          {...form.getInputProps("password")}
+        />
+        <PasswordInput
+          mt="md"
+          label="Confirm Password"
+          placeholder="Confirm password"
+          icon={<MdLockOutline />}
+          onBlur={() =>
+            form.values.confirmPassword !== "" &&
+            form.validateField("confirmPassword")
+          }
+          {...form.getInputProps("confirmPassword")}
+        />
 
-          <Group position="center" mt="xl">
-            <Button
-              variant="outline"
-              color={"red"}
-              onClick={() => setOpenDeleteModal(true)}
-            >
-              Delete account
-            </Button>
-            <Space />
-            <Button
-              type="submit"
-              styles={(theme) => ({
-                root: { color: theme.colors.gray[9] },
-              })}
-            >
-              Save
-            </Button>
-          </Group>
-        </form>
-      </Stack>
+        <Group position="center" mt="xl">
+          <Button
+            variant="outline"
+            color={"red"}
+            onClick={() => setOpenDeleteModal(true)}
+          >
+            Delete account
+          </Button>
+          <Space />
+          <Button
+            type="submit"
+            styles={(theme) => ({
+              root: { color: theme.colors.gray[9] },
+            })}
+          >
+            Save
+          </Button>
+        </Group>
+      </form>
     </>
   );
 };
 
-export default UserAccount;
+export default UserAccountForm;

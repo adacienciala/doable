@@ -84,6 +84,19 @@ export class APIClient {
     return await this.handleRes(res);
   }
 
+  async ranks(method: Method, options?: any): Promise<any> {
+    const rewardsEndpoint = `/ranks`;
+    const url = process.env.REACT_APP_DOABLE_API + rewardsEndpoint;
+    const res = await request(
+      method,
+      url,
+      this.token,
+      this.tokenSelector,
+      options?.body
+    );
+    return await this.handleRes(res);
+  }
+
   async singleParty(
     method: Method,
     partyId: string,

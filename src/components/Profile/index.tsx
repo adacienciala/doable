@@ -34,9 +34,9 @@ export const Profile = ({
   sx?: Sx;
   size?: "lg" | "xl";
 }) => {
-  const xp = user?.statistics?.xp ?? 0;
-  const minXp = user?.statistics?.minXp ?? 0;
-  const maxXp = user?.statistics?.maxXp ?? 100;
+  const xp = user?.statistics?.points.xp ?? 0;
+  const minXp = user?.statistics?.points.minXp ?? 0;
+  const maxXp = user?.statistics?.points.maxXp ?? 100;
 
   const getCurrentProgress = useCallback(
     () => ((xp - minXp) / (maxXp - minXp)) * 100,
@@ -123,9 +123,9 @@ export const Profile = ({
             },
           })}
           size={size}
-          leftSection={getRankBadgeIcon(user?.statistics.rank)}
+          leftSection={getRankBadgeIcon(user?.statistics.points.rank)}
         >
-          {user?.statistics.rank}
+          {user?.statistics.points.rank}
         </Badge>
       </Stack>
     </>

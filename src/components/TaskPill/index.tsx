@@ -28,13 +28,13 @@ export const TaskPill = ({
   const [clicked, setClicked] = useState(false);
 
   const handleTaskDone = (taskId: string) => {
-    const doneTimeout = setTimeout(() => onTaskDone(taskId), 3000);
+    const doneTimeout = setTimeout(() => onTaskDone(taskId), 2000);
     showNotification({
       id: `cancel-${taskId}`,
-      autoClose: 3000,
+      autoClose: 2000,
       message: (
         <Group>
-          {`Task "${shortenText(title, 20)}" finished`}
+          {`Task "${shortenText(title, 20)}" is being finished...`}
           <Text
             span
             color="red"
@@ -46,7 +46,7 @@ export const TaskPill = ({
               hideNotification(`cancel-${taskId}`);
             }}
           >
-            Undo
+            Cancel
           </Text>
         </Group>
       ),
