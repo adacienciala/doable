@@ -1,26 +1,78 @@
 import {
+  Box,
   Button,
   Center,
   Drawer,
-  NumberInput,
+  Group,
+  SegmentedControl,
   Select,
   Space,
+  Text,
   TextInput,
 } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { isSameDay } from "date-fns";
-import { FormEvent, useEffect } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { APIClient, Method, ProjectExtended } from "../../api/client";
 import { TaskData } from "../../components/TaskPill";
 import { ITask } from "../../models/task";
+import { getRandomDifficultyComment } from "../../utils/utils";
 
 interface TaskAddDrawerProps {
   data: Partial<TaskData>;
   opened: boolean;
   onClose: () => void;
 }
+
+export const taskDifficultiesSelect = [
+  {
+    value: "easy",
+    label: (
+      <Center sx={(theme) => ({ color: theme.colors.green[6] })}>
+        🙂
+        <Box ml={10}>easy</Box>
+      </Center>
+    ),
+  },
+  {
+    value: "medium",
+    label: (
+      <Center sx={(theme) => ({ color: theme.colors.yellow[6] })}>
+        😁
+        <Box ml={10}>medium</Box>
+      </Center>
+    ),
+  },
+  {
+    value: "hard",
+    label: (
+      <Center sx={(theme) => ({ color: theme.colors.red[6] })}>
+        🤯
+        <Box ml={10}>hard</Box>
+      </Center>
+    ),
+  },
+];
+
+export const difficultyComments = {
+  easy: [
+    "Easy, fast and fun?",
+    "Should be quick...",
+    "That's a piece of cake!",
+  ],
+  medium: [
+    "Are you sure you can do this?",
+    "It's going to take a bit...",
+    "Okay, let's do this!",
+  ],
+  hard: [
+    "Maybe you should break it down?",
+    "This sounds tough...",
+    "Ha, good luck with that!",
+  ],
+};
 
 export const TaskAddDrawer = ({
   data,
@@ -29,6 +81,7 @@ export const TaskAddDrawer = ({
 }: TaskAddDrawerProps) => {
   const client = new APIClient();
   const queryClient = useQueryClient();
+  const [difficultyComment, setDifficultyComment] = useState("");
 
   const addTaskMutation = useMutation(
     (data: Partial<ITask>) =>
@@ -55,7 +108,7 @@ export const TaskAddDrawer = ({
     initialValues: {
       title: "",
       description: "",
-      xp: 5,
+      difficulty: "easy",
       date: undefined,
       projectId: "",
       repeat: "",
@@ -67,6 +120,7 @@ export const TaskAddDrawer = ({
 
   const handleClose = () => {
     form.reset();
+    setDifficultyComment("");
     onClose();
   };
 
@@ -77,14 +131,18 @@ export const TaskAddDrawer = ({
     }
     addTaskMutation.mutate(form.values);
     form.reset();
+    setDifficultyComment("");
     onClose();
   }
 
   useEffect(() => {
+    setDifficultyComment(
+      getRandomDifficultyComment(data?.difficulty || "easy")
+    );
     form.setValues({
       title: "",
       description: "",
-      xp: 5,
+      difficulty: data.difficulty || "easy",
       date: data.date ?? undefined,
       projectId: data.projectId ?? "",
       repeat: "",
@@ -101,7 +159,15 @@ export const TaskAddDrawer = ({
         padding="xl"
         size="50%"
       >
-        <form onSubmit={handleSubmit}>
+        <form
+          onSubmit={handleSubmit}
+          onChange={(e) => {
+            const target = e.target as HTMLInputElement;
+            if (target.name === "Difficulty") {
+              setDifficultyComment(getRandomDifficultyComment(target.value));
+            }
+          }}
+        >
           <TextInput
             data-autofocus
             mt="md"
@@ -121,12 +187,20 @@ export const TaskAddDrawer = ({
             value={form.values.description}
             {...form.getInputProps("description")}
           />
-          <NumberInput
+          <Group position="apart">
+            <Text mt="md" size={"sm"} weight={500}>
+              Difficulty
+            </Text>
+            <Text mt="md" size={"sm"}>
+              {difficultyComment}
+            </Text>
+          </Group>
+          <SegmentedControl
             mt="md"
-            label="XP"
-            placeholder="XP"
-            value={form.values.xp}
-            {...form.getInputProps("xp")}
+            placeholder="Difficulty"
+            label="Difficulty"
+            data={taskDifficultiesSelect}
+            {...form.getInputProps("difficulty")}
           />
           <DatePicker
             mt="md"

@@ -2,8 +2,9 @@ import {
   Button,
   Center,
   Drawer,
+  Group,
   Modal,
-  NumberInput,
+  SegmentedControl,
   Select,
   Space,
   Text,
@@ -21,7 +22,8 @@ import {
   TaskExtended,
 } from "../../api/client";
 import { ITask } from "../../models/task";
-import { isValidDate } from "../../utils/utils";
+import { getRandomDifficultyComment, isValidDate } from "../../utils/utils";
+import { taskDifficultiesSelect } from "../TaskAddDrawer";
 
 interface TaskEditDrawerProps {
   taskId: string;
@@ -56,6 +58,8 @@ export const TaskEditDrawer = ({
     }
   );
 
+  const [difficultyComment, setDifficultyComment] = useState("");
+
   const { isSuccess: isSuccessProjects, data: projects } = useQuery<
     ProjectExtended[]
   >(["projects"], async () => await client.projects(Method.GET), {
@@ -88,7 +92,7 @@ export const TaskEditDrawer = ({
     initialValues: {
       title: "",
       description: "",
-      xp: 5,
+      difficulty: "easy",
       date: undefined,
       projectId: "",
       repeat: "",
@@ -101,10 +105,13 @@ export const TaskEditDrawer = ({
   useEffect(() => {
     if (isSuccess) {
       task.date = new Date(task.date);
+      setDifficultyComment(
+        getRandomDifficultyComment(task?.difficulty || "easy")
+      );
       form.setValues({
         title: task.title,
         description: task.description || "",
-        xp: task.xp || 5,
+        difficulty: task.difficulty || "easy",
         date: isValidDate(task.date) ? task.date : undefined,
         projectId: task.projectId || "",
         repeat: task.repeat || "",
@@ -115,6 +122,7 @@ export const TaskEditDrawer = ({
 
   const handleClose = () => {
     form.reset();
+    setDifficultyComment("");
     onClose();
   };
 
@@ -125,6 +133,7 @@ export const TaskEditDrawer = ({
     }
     editTaskMutation.mutate(form.values);
     form.reset();
+    setDifficultyComment("");
     onClose();
   }
 
@@ -145,7 +154,15 @@ export const TaskEditDrawer = ({
         size="50%"
       >
         {error && <p>"Try refreshing lol"</p>}
-        <form onSubmit={handleSubmit}>
+        <form
+          onSubmit={handleSubmit}
+          onChange={(e) => {
+            const target = e.target as HTMLInputElement;
+            if (target.name === "Difficulty") {
+              setDifficultyComment(getRandomDifficultyComment(target.value));
+            }
+          }}
+        >
           <TextInput
             data-autofocus
             mt="md"
@@ -165,12 +182,23 @@ export const TaskEditDrawer = ({
             value={form.values.description}
             {...form.getInputProps("description")}
           />
-          <NumberInput
-            mt="md"
-            label="XP"
-            placeholder="XP"
-            value={form.values.xp}
-            {...form.getInputProps("xp")}
+          <Group position="apart">
+            <Text mt="md" size={"sm"} weight={500}>
+              Difficulty
+            </Text>
+            <Text mt="md" size={"sm"}>
+              {difficultyComment}
+            </Text>
+          </Group>
+          <SegmentedControl
+            fullWidth
+            placeholder="Difficulty"
+            label="Difficulty"
+            input="Difficulty"
+            description="Difficulty"
+            name="Difficulty"
+            data={taskDifficultiesSelect}
+            {...form.getInputProps("difficulty")}
           />
           <DatePicker
             mt="md"

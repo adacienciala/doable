@@ -9,6 +9,7 @@ import { isValidDate, shortenText } from "../../utils/utils";
 export interface TaskData {
   title: string;
   description: string;
+  difficulty: string;
   date?: Date;
   taskId: string;
   projectId?: string;

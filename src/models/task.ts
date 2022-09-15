@@ -3,7 +3,7 @@ export interface ITask {
   title: string;
   description: string;
   date: Date;
-  xp: number;
+  difficulty: string;
   owner: string[];
   projectId: string;
   isChallenge: boolean;
