@@ -125,8 +125,8 @@ const Rewards = () => {
         >
           {rewards &&
             rewards.map((reward) => {
-              const getRarityColor = (theme: MantineTheme) => {
-                switch (reward.rarity) {
+              const getDifficultyColor = (theme: MantineTheme) => {
+                switch (reward.difficulty) {
                   case "gold":
                     return theme.colors.yellow[6];
                   case "silver":
@@ -165,7 +165,7 @@ const Rewards = () => {
                     },
                     color:
                       reward.progress === 100
-                        ? getRarityColor(theme)
+                        ? getDifficultyColor(theme)
                         : theme.colors.gray[6],
                   })}
                 >
@@ -194,7 +194,7 @@ const Rewards = () => {
                   <Group
                     noWrap
                     sx={(theme) => ({
-                      color: getRarityColor(theme),
+                      color: getDifficultyColor(theme),
                       justifyContent: "space-between",
                     })}
                   >

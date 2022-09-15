@@ -5,6 +5,6 @@ export interface IReward {
   type: string;
   value: number;
   progress: number;
-  rarity: string;
+  difficulty: string;
   popularity: number;
 }
