@@ -243,9 +243,14 @@ const Party = () => {
 
             <ScrollArea>
               <Group noWrap style={{ marginBottom: "40px" }}>
-                {party.members.map((member: IUser, idx: number) => (
-                  <PartyMemberProfile key={idx} user={member} />
-                ))}
+                {party.members
+                  .sort(
+                    (u1, u2) =>
+                      u2.statistics.party.level - u1.statistics.party.level
+                  )
+                  .map((member: IUser, idx: number) => (
+                    <PartyMemberProfile key={idx} user={member} />
+                  ))}
               </Group>
             </ScrollArea>
           </Stack>
