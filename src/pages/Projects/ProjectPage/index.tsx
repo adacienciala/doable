@@ -16,14 +16,13 @@ import {
   useNavigate,
   useParams,
 } from "react-router-dom";
-import { APIClient, Method } from "../../../api/client";
+import { APIClient, Method, TaskExtended } from "../../../api/client";
 import { ApiError } from "../../../api/errors";
 import { AddButton } from "../../../components/AddButton";
 import { TaskData } from "../../../components/TaskPill";
 import { TaskAddDrawer } from "../../../containers/TaskAddDrawer";
 import { TaskEditDrawer } from "../../../containers/TaskEditDrawer";
 import { TaskList } from "../../../containers/TaskList";
-import { ITask } from "../../../models/task";
 
 const ProjectPage = () => {
   const location = useLocation() as any;
@@ -46,7 +45,8 @@ const ProjectPage = () => {
 
   const { data: tasks } = useQuery(["tasks"], async () => {
     const allTasks = await client.tasks(Method.GET);
-    return allTasks.filter((t: ITask) => t.projectId === projectId);
+    allTasks.forEach((t: TaskExtended) => (t.date = new Date(t.date)));
+    return allTasks.filter((t: TaskExtended) => t.projectId === projectId);
   });
 
   const finishTaskMutation = useMutation(

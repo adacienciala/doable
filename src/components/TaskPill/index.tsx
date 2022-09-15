@@ -1,10 +1,10 @@
-import { Checkbox, Group, Indicator, Text } from "@mantine/core";
+import { Box, Checkbox, Group, Indicator, Text } from "@mantine/core";
 import { hideNotification, showNotification } from "@mantine/notifications";
 import { format, isBefore } from "date-fns";
 import { useState } from "react";
 import { TaskExtended } from "../../api/client";
 import { CalendarView } from "../../pages/Calendar/CalendarView";
-import { shortenText } from "../../utils/utils";
+import { isValidDate, shortenText } from "../../utils/utils";
 
 export interface TaskData {
   title: string;
@@ -60,20 +60,29 @@ export const TaskPill = ({
       position="top-end"
       disabled={projectDetails.length === 0}
       label={
-        projectDetails.length > 0
-          ? shortenText(projectDetails[0].name, 20)
-          : null
+        projectDetails.length && (
+          <Box
+            style={{
+              textOverflow: "ellipsis",
+              overflow: "hidden",
+              whiteSpace: "nowrap",
+              maxWidth: "100%",
+            }}
+          >
+            {projectDetails[0].name}
+          </Box>
+        )
       }
       size={18}
       styles={(theme) => ({
         indicator: {
+          maxWidth: "30%",
           color: "black",
           transform: "translate(10px, -50%)",
         },
       })}
     >
       <Group
-        position="apart"
         noWrap
         sx={(theme) => ({
           backgroundColor: "white",
@@ -82,6 +91,7 @@ export const TaskPill = ({
           padding: "10px",
           borderRadius: "10px",
           cursor: "grab",
+          gap: "3%",
           display: clicked ? "none" : "flex",
         })}
       >
@@ -96,25 +106,30 @@ export const TaskPill = ({
           onMouseOver={(e) => setChecked(true)}
           onMouseOut={(e) => !clicked && setChecked(false)}
         />
-        <Text weight={500}>{title}</Text>
+        <Text weight={500} style={{ minWidth: "30%" }}>
+          {title}
+        </Text>
         {view === "today" && <Text weight={300}>{description}</Text>}
         {view === "no-date" && <Text weight={300}>{description}</Text>}
-        {view === "backlog" && (
-          <Text
-            weight={300}
-            color={
-              date &&
-              isBefore(
-                date.setHours(0, 0, 0, 0),
-                new Date().setHours(0, 0, 0, 0)
-              )
-                ? "red"
-                : undefined
-            }
-          >
-            {date && format(date, "dd/MM/yyyy")}
-          </Text>
-        )}
+        {view !== "week" &&
+          (isValidDate(date) ? (
+            <Text
+              weight={300}
+              color={
+                isBefore(
+                  date.setHours(0, 0, 0, 0),
+                  new Date().setHours(0, 0, 0, 0)
+                )
+                  ? "red"
+                  : undefined
+              }
+              style={{ marginLeft: "auto" }}
+            >
+              {format(date, "dd/MM/yyyy")}
+            </Text>
+          ) : (
+            <Box style={{ width: "40px" }} />
+          ))}
       </Group>
     </Indicator>
   );
