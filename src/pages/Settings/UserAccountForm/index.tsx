@@ -74,7 +74,7 @@ const UserAccountForm = ({ user }: UserAccountProps) => {
       password: (value) =>
         !value || /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(value)
           ? null
-          : "What about min. 6 characters and 1 digit?",
+          : "What about min. 6 characters, including 1 digit?",
       confirmPassword: (val, values) =>
         val === values?.password
           ? null
