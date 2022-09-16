@@ -1,5 +1,6 @@
 import {
   Button,
+  Center,
   Group,
   Loader,
   ScrollArea,
@@ -55,7 +56,14 @@ export const Chat = ({ users, sx }: { users: IUser[]; sx?: Sx }) => {
         sx,
       ]}
     >
-      <ScrollArea type="hover" viewportRef={viewport}>
+      <ScrollArea
+        type="hover"
+        viewportRef={viewport}
+        style={{ flexGrow: 1 }}
+        styles={(theme) => ({
+          viewport: { display: "flex", placeItems: "center" },
+        })}
+      >
         {users && messages && messages.length > 0 ? (
           <Stack>
             {messages.map((m, idx) => (
@@ -67,7 +75,9 @@ export const Chat = ({ users, sx }: { users: IUser[]; sx?: Sx }) => {
             ))}
           </Stack>
         ) : (
-          <Loader style={{ height: "100%" }} />
+          <Center>
+            <Loader />
+          </Center>
         )}
       </ScrollArea>
       <Group>
