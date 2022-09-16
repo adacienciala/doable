@@ -14,7 +14,8 @@ import { Link } from "react-router-dom";
 import { APIClient, Method } from "../api/client";
 import { Profile } from "../components/Profile";
 import { IUser } from "../models/user";
-import { HeaderContext } from "../utils/context";
+import { socket } from "../utils/chatContext";
+import { HeaderContext } from "../utils/headerContext";
 
 type Props = {
   page: string;
@@ -35,6 +36,8 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
   useEffect(() => localStorage.setItem("partyId", user?.partyId ?? ""), [user]);
 
   function logOut() {
+    socket.off();
+    socket.disconnect();
     localStorage.clear();
   }
 

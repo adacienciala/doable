@@ -24,7 +24,7 @@ import { ApiError } from "../../api/errors";
 import { ProjectAddDrawer } from "../../containers/ProjectAddDrawer";
 import { ProjectCard, projectCardStyles } from "../../containers/ProjectCard";
 import { ProjectEditDrawer } from "../../containers/ProjectEditDrawer";
-import { HeaderContext } from "../../utils/context";
+import { HeaderContext } from "../../utils/headerContext";
 
 const Projects = () => {
   const location = useLocation() as any;

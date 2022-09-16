@@ -29,7 +29,7 @@ import { ProjectAddDrawer } from "../../containers/ProjectAddDrawer";
 import { ProjectCard, projectCardStyles } from "../../containers/ProjectCard";
 import { ProjectEditDrawer } from "../../containers/ProjectEditDrawer";
 import { IUser } from "../../models/user";
-import { HeaderContext } from "../../utils/context";
+import { HeaderContext } from "../../utils/headerContext";
 import NoParty from "./NoParty";
 import { PartyMemberProfile } from "./PartyMemberProfile";
 

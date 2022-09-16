@@ -6,7 +6,6 @@ export const HeaderContext = createContext<
 
 export const HeaderContextProvider = (props: any) => {
   const [headerText, setHeaderText] = useState("Welcome");
-
   return (
     <HeaderContext.Provider value={[headerText, setHeaderText]}>
       {props.children}

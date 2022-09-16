@@ -5,7 +5,8 @@ import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";
 import "./App.css";
-import { HeaderContextProvider } from "./utils/context";
+import { ChatContextProvider } from "./utils/chatContext";
+import { HeaderContextProvider } from "./utils/headerContext";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -41,11 +42,13 @@ ReactDOM.render(
       }}
     >
       <NotificationsProvider>
-        <QueryClientProvider client={queryClient}>
-          <HeaderContextProvider>
-            <App />
-          </HeaderContextProvider>
-        </QueryClientProvider>
+        <HeaderContextProvider>
+          <ChatContextProvider>
+            <QueryClientProvider client={queryClient}>
+              <App />
+            </QueryClientProvider>
+          </ChatContextProvider>
+        </HeaderContextProvider>
       </NotificationsProvider>
     </MantineProvider>
   </React.StrictMode>,

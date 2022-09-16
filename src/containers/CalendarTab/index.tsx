@@ -10,7 +10,7 @@ import {
   CalendarWeek,
 } from "../../pages/Calendar/CalendarView";
 import { CalendarBacklog } from "../../pages/Dashboard/CalendarBacklog";
-import { HeaderContext } from "../../utils/context";
+import { HeaderContext } from "../../utils/headerContext";
 
 interface CalendarTabProps {
   title: string;

@@ -70,6 +70,7 @@ export const difficultyComments = {
   hard: [
     "Maybe you should break it down?",
     "This sounds tough...",
+    "A bit of a tough cookie, isn't it?",
     "Ha, good luck with that!",
   ],
 };

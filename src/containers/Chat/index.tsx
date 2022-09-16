@@ -1,44 +1,45 @@
-import { Avatar, Group, Stack, Sx, Text } from "@mantine/core";
-import avatar from "animal-avatar-generator";
-import { format } from "date-fns";
-import { useState } from "react";
-import { IUser } from "../../models/user";
+import {
+  Button,
+  Group,
+  Loader,
+  ScrollArea,
+  Stack,
+  Sx,
+  TextInput,
+} from "@mantine/core";
+import { useContext, useEffect, useRef, useState } from "react";
+import { Message } from "../../components/Message";
 
-const chatMessages = [
-  {
-    date: new Date("2020-08-10 14:13"),
-    message: "In hac habitasse platea dictumst. Fusce ut viverra lectus.",
-  },
-  {
-    date: new Date("2020-08-10 15:13"),
-    message: "Anim ea esse cillum nulla magna minim ea esse.",
-  },
-  {
-    date: new Date("2020-08-10 16:13"),
-    message: "Do sint proident in ad eu nisi officia aute.",
-  },
-  {
-    date: new Date("2020-08-11 14:13"),
-    message: "Pariatur consectetur ea veniam ullamco irure ex in id duis.",
-  },
-  {
-    date: new Date("2020-08-12 15:13"),
-    message:
-      "Et ad fugiat aute laborum eiusmod voluptate ullamco dolor ad exercitation.",
-  },
-  {
-    date: new Date("2020-09-02 14:13"),
-    message: "Elit pariatur nisi adipisicing tempor cillum et veniam tempor.",
-  },
-  {
-    date: new Date("2020-09-12 14:13"),
-    message: "Cupidatat proident officia labore minim nostrud.",
-  },
-];
+import { IMessage } from "../../models/message";
+import { IUser } from "../../models/user";
+import { ChatContext, socket } from "../../utils/chatContext";
 
 export const Chat = ({ users, sx }: { users: IUser[]; sx?: Sx }) => {
-  const [loaded, setLoaded] = useState(true);
-  if (users.length > chatMessages.length) setLoaded(false);
+  const [message, setMessage] = useState("");
+  const [messages] = useContext(ChatContext);
+  const viewport = useRef<HTMLDivElement>(null);
+  const scrollToBottom = () =>
+    viewport?.current?.scrollTo({
+      top: viewport.current.scrollHeight,
+      behavior: "smooth",
+    });
+
+  useEffect(() => {
+    scrollToBottom();
+    console.log("state in chat", messages.length);
+  }, [messages]);
+
+  const sendMessage = (value: string) => {
+    const newMessage: IMessage = {
+      message: value,
+      partyId: localStorage.getItem("partyId")!,
+      userId: localStorage.getItem("doableId")!,
+      date: new Date(),
+    };
+    console.log("=> send: ", newMessage);
+    socket.emit("message", newMessage);
+    setMessage("");
+  };
 
   return (
     <Stack
@@ -53,31 +54,33 @@ export const Chat = ({ users, sx }: { users: IUser[]; sx?: Sx }) => {
         sx,
       ]}
     >
-      {loaded ? (
-        users.map((user, idx) => (
-          <Stack key={idx}>
-            <Group>
-              <Avatar
-                size="md"
-                src={`data:image/svg+xml;UTF-8,${encodeURIComponent(
-                  avatar(user.settings.avatarSeed)
-                )}`}
-              ></Avatar>
-              <div>
-                <Text size="sm">
-                  {user.name} {user.surname}
-                </Text>
-                <Text size="xs">
-                  {format(chatMessages[idx].date, "d MMM y, h:mm aa")}
-                </Text>
-              </div>
-            </Group>
-            <Text size="sm">{chatMessages[idx].message}</Text>
+      <ScrollArea type="hover" viewportRef={viewport}>
+        {users && messages && messages.length > 0 ? (
+          <Stack>
+            {messages.map((m, idx) => (
+              <Message
+                key={idx}
+                message={m}
+                user={users.find((u) => u.doableId === m.userId)}
+              />
+            ))}
           </Stack>
-        ))
-      ) : (
-        <Text>Could not load messages</Text>
-      )}
+        ) : (
+          <Loader />
+        )}
+      </ScrollArea>
+      <Group>
+        <TextInput
+          placeholder="Type message..."
+          style={{ flexGrow: 1 }}
+          value={message}
+          onChange={(e) => setMessage(e.currentTarget.value)}
+          onKeyUp={(e) =>
+            e.key === "Enter" ? sendMessage(message) : undefined
+          }
+        />
+        <Button onClick={() => sendMessage(message)}>Send</Button>
+      </Group>
     </Stack>
   );
 };

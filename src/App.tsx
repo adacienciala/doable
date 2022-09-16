@@ -1,3 +1,4 @@
+import { useContext, useEffect, useMemo, useState } from "react";
 import {
   BrowserRouter,
   Navigate,
@@ -6,6 +7,7 @@ import {
   useLocation,
 } from "react-router-dom";
 import MainLayout from "./layouts/MainLayout";
+import { IMessage } from "./models/message";
 import Auth from "./pages/Auth";
 import Calendar from "./pages/Calendar";
 import Dashboard from "./pages/Dashboard";
@@ -16,8 +18,113 @@ import ProjectPage from "./pages/Projects/ProjectPage";
 import Rewards from "./pages/Rewards";
 import ServerError from "./pages/ServerError";
 import Settings from "./pages/Settings";
+import { ChatContext, socket } from "./utils/chatContext";
 
 function App() {
+  const [messages, setMessages] = useContext(ChatContext);
+  const [isConnected, setIsConnected] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    console.log("state", messages.length);
+  }, [messages]);
+
+  const events = useMemo(
+    () => [
+      {
+        name: "connection",
+        callback: () => {
+          console.log("[connection]");
+          setIsConnected(true);
+        },
+      },
+      {
+        name: "disconnect",
+        callback: () => {
+          console.log("[disconnect]");
+          setIsConnected(false);
+          setIsAuthenticated(false);
+          socket.off();
+        },
+      },
+      {
+        name: "authenticated",
+        callback: () => {
+          console.log("[authenticated]");
+          setIsAuthenticated(true);
+        },
+      },
+      {
+        name: "auth denied",
+        callback: () => {
+          console.log("[auth denied]");
+          setIsAuthenticated(false);
+        },
+      },
+      {
+        name: "messages history",
+        callback: (data: IMessage[]) => {
+          console.log("[messages history]");
+          console.log("  - history messages:", data.length);
+          for (const m of data) {
+            m.date = new Date(m.date);
+          }
+          setMessages(data);
+        },
+      },
+      {
+        name: "message",
+        callback: (data: IMessage) => {
+          console.log("<= message");
+          data.date = new Date(data.date);
+          const newMessages = [...(messages ?? []), data];
+          console.log(`  - current messages: ${messages?.length}`);
+          console.log(`  - new messages: ${newMessages.length}`);
+          console.log(`    - ${data}`);
+          setMessages(newMessages);
+        },
+      },
+    ],
+    [messages, setMessages]
+  );
+
+  useEffect(() => {
+    for (const event of events) {
+      if (socket && !socket.hasListeners(event.name)) {
+        console.log("set listen to:", event.name);
+        socket.on(event.name, event.callback);
+      }
+    }
+  }, [events]);
+
+  console.log("render");
+  useEffect(() => {
+    console.log("socket status", socket?.connected ?? "down");
+    setIsConnected(socket.connected);
+    return () => {
+      console.log("[socket status] closing");
+      if (socket) socket.close();
+    };
+  }, []);
+
+  useEffect(() => {
+    console.log("[socket status] ", isConnected, isAuthenticated);
+    if (!isAuthenticated) {
+      console.log("=> try to auth");
+      socket.emit("authenticate", {
+        token: localStorage.getItem("token")!,
+        tokenSelector: localStorage.getItem("tokenSelector")!,
+      });
+    }
+    return () => {
+      console.log("[socket status] do not disconnec!");
+    };
+  }, [isConnected, isAuthenticated]);
+
+  useEffect(() => {
+    console.log("[messages] - ", messages?.length);
+  }, [messages]);
+
   return (
     <BrowserRouter>
       <Routes>

@@ -14,7 +14,7 @@ import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { APIClient, Method } from "../../api/client";
 import { ApiError } from "../../api/errors";
 import { IUser } from "../../models/user";
-import { HeaderContext } from "../../utils/context";
+import { HeaderContext } from "../../utils/headerContext";
 import { getUserAvatarSeed } from "../../utils/utils";
 import RanksAccordion from "./RanksAccordion";
 import UserAccountForm from "./UserAccountForm";

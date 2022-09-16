@@ -22,7 +22,7 @@ import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { APIClient, Method } from "../../api/client";
 import { ApiError } from "../../api/errors";
 import { IReward } from "../../models/rewards";
-import { HeaderContext } from "../../utils/context";
+import { HeaderContext } from "../../utils/headerContext";
 
 const Rewards = () => {
   const location = useLocation() as any;
