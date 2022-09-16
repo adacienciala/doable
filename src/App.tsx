@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   BrowserRouter,
   Navigate,
@@ -18,16 +18,12 @@ import ProjectPage from "./pages/Projects/ProjectPage";
 import Rewards from "./pages/Rewards";
 import ServerError from "./pages/ServerError";
 import Settings from "./pages/Settings";
-import { ChatContext, socket } from "./utils/chatContext";
+import { socket, useChat } from "./utils/chatContext";
 
 function App() {
-  const [messages, setMessages] = useContext(ChatContext);
+  const { state: messages, stateSetter: setMessages } = useChat([]);
   const [isConnected, setIsConnected] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  useEffect(() => {
-    console.log("state", messages.length);
-  }, [messages]);
 
   const events = useMemo(
     () => [
@@ -97,7 +93,6 @@ function App() {
     }
   }, [events]);
 
-  console.log("render");
   useEffect(() => {
     console.log("socket status", socket?.connected ?? "down");
     setIsConnected(socket.connected);
@@ -120,10 +115,6 @@ function App() {
       console.log("[socket status] do not disconnec!");
     };
   }, [isConnected, isAuthenticated]);
-
-  useEffect(() => {
-    console.log("[messages] - ", messages?.length);
-  }, [messages]);
 
   return (
     <BrowserRouter>

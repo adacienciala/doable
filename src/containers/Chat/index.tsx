@@ -7,16 +7,16 @@ import {
   Sx,
   TextInput,
 } from "@mantine/core";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Message } from "../../components/Message";
 
 import { IMessage } from "../../models/message";
 import { IUser } from "../../models/user";
-import { ChatContext, socket } from "../../utils/chatContext";
+import { socket, useChat } from "../../utils/chatContext";
 
 export const Chat = ({ users, sx }: { users: IUser[]; sx?: Sx }) => {
   const [message, setMessage] = useState("");
-  const [messages] = useContext(ChatContext);
+  const { state: messages } = useChat([]);
   const viewport = useRef<HTMLDivElement>(null);
   const scrollToBottom = () =>
     viewport?.current?.scrollTo({
@@ -40,6 +40,7 @@ export const Chat = ({ users, sx }: { users: IUser[]; sx?: Sx }) => {
     socket.emit("message", newMessage);
     setMessage("");
   };
+  console.log("u", users, "l", messages.length);
 
   return (
     <Stack
@@ -66,7 +67,7 @@ export const Chat = ({ users, sx }: { users: IUser[]; sx?: Sx }) => {
             ))}
           </Stack>
         ) : (
-          <Loader />
+          <Loader style={{ height: "100%" }} />
         )}
       </ScrollArea>
       <Group>
