@@ -17,7 +17,7 @@ import {
   useState,
 } from "react";
 import { RiAddFill } from "react-icons/ri";
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { APIClient, Method, ProjectExtended } from "../../api/client";
 import { ApiError } from "../../api/errors";
 import { ProjectAddDrawer } from "../../containers/ProjectAddDrawer";
@@ -28,7 +28,6 @@ import { HeaderContext } from "../../utils/headerContext";
 
 const Projects = () => {
   const location = useLocation() as any;
-  const navigate = useNavigate();
   const client = new APIClient();
   const queryClient = useQueryClient();
   const [projectMutated, setProjectMutated] = useState("");

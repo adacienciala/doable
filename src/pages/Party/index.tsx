@@ -20,7 +20,7 @@ import {
   useState,
 } from "react";
 import { RiAddFill, RiSettings2Line } from "react-icons/ri";
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { APIClient, Method, PartyExtended } from "../../api/client";
 import { ApiError } from "../../api/errors";
 import { Chat } from "../../containers/Chat";
@@ -36,7 +36,6 @@ import { PartyMemberProfile } from "./PartyMemberProfile";
 
 const Party = () => {
   const location = useLocation() as any;
-  const navigate = useNavigate();
   const client = new APIClient();
   const [partyId, setPartyId] = useState(localStorage.getItem("partyId") ?? "");
   const [projectMutated, setProjectMutated] = useState("");

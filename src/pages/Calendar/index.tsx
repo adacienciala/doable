@@ -10,7 +10,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { APIClient, Method, TaskExtended } from "../../api/client";
 import { ApiError } from "../../api/errors";
 import { TaskData } from "../../components/TaskPill";
@@ -25,7 +25,6 @@ const Calendar = () => {
   const [view, setView] = useState<CalendarView>("today");
   const [rangeStart, setRangeStart] = useState(new Date());
   const location = useLocation() as any;
-  const navigate = useNavigate();
   const client = new APIClient();
   const [editTaskDrawerOpened, setEditTaskDrawerOpened] = useState(false);
   const [taskEdited, setTaskEdited] = useState("");

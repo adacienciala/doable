@@ -16,7 +16,7 @@ import {
   RiShieldStarFill,
   RiTodoFill,
 } from "react-icons/ri";
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { APIClient, Method } from "../../api/client";
 import { ApiError } from "../../api/errors";
 import { AccessDeniedModal } from "../../layouts/AccessDeniedModal";
@@ -25,7 +25,6 @@ import { HeaderContext } from "../../utils/headerContext";
 
 const Rewards = () => {
   const location = useLocation() as any;
-  const navigate = useNavigate();
   const client = new APIClient();
   const [, setHeaderText] = useContext(HeaderContext);
 

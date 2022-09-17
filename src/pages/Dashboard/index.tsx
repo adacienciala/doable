@@ -1,7 +1,7 @@
 import { Group, LoadingOverlay } from "@mantine/core";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useContext, useEffect, useState } from "react";
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { APIClient, Method, TaskExtended } from "../../api/client";
 import { ApiError } from "../../api/errors";
 import { Scoreboard } from "../../components/Scoreboard";
@@ -16,7 +16,6 @@ import { CalendarBacklog } from "./CalendarBacklog";
 const Dashboard = () => {
   const [, setHeaderText] = useContext(HeaderContext);
   const location = useLocation() as any;
-  const navigate = useNavigate();
   const client = new APIClient();
   const queryClient = useQueryClient();
   const [editTaskDrawerOpened, setEditTaskDrawerOpened] = useState(false);
