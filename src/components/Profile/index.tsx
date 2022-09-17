@@ -30,10 +30,12 @@ export const Profile = ({
   user,
   sx,
   size = "xl",
+  ...props
 }: {
   user?: IUser;
   sx?: Sx;
   size?: "lg" | "xl";
+  [x: string]: any;
 }) => {
   const xp = user?.statistics?.points.xp ?? 0;
   const minXp = user?.statistics?.points.minXp ?? 0;
@@ -63,6 +65,7 @@ export const Profile = ({
           gap: 0,
           alignItems: "center",
         })}
+        {...props}
       >
         <Tooltip.Floating
           // ! new version of mantine should support that but doesn't

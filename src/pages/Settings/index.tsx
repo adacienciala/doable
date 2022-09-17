@@ -1,18 +1,11 @@
-import {
-  Avatar,
-  Button,
-  Group,
-  LoadingOverlay,
-  Modal,
-  Stack,
-  Text,
-} from "@mantine/core";
+import { Avatar, Group, LoadingOverlay, Stack, Text } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import avatar from "animal-avatar-generator";
 import { useCallback, useContext, useEffect } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { APIClient, Method } from "../../api/client";
 import { ApiError } from "../../api/errors";
+import { AccessDeniedModal } from "../../layouts/AccessDeniedModal";
 import { IUser } from "../../models/user";
 import { HeaderContext } from "../../utils/headerContext";
 import { getUserAvatarSeed } from "../../utils/utils";
@@ -64,31 +57,7 @@ const Settings = () => {
           position: "relative",
         }}
       />
-      <Modal
-        centered
-        overlayBlur={3}
-        transition="fade"
-        transitionDuration={600}
-        onClose={() => {
-          localStorage.clear();
-          navigate("/auth", { state: { from: location }, replace: false });
-        }}
-        opened={isAccessError()}
-        withCloseButton={false}
-      >
-        <Stack align={"center"}>
-          You no longer have access to this page.
-          <Button
-            variant="subtle"
-            onClick={() => {
-              localStorage.clear();
-              navigate("/auth", { state: { from: location }, replace: false });
-            }}
-          >
-            Log In
-          </Button>
-        </Stack>
-      </Modal>
+      <AccessDeniedModal visible={isAccessError()} />
       <Group
         position="apart"
         align="stretch"

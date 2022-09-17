@@ -1,4 +1,4 @@
-import { Button, Group, LoadingOverlay, Modal, Stack } from "@mantine/core";
+import { Group, LoadingOverlay } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import { endOfWeek, startOfWeek } from "date-fns";
 import { motion } from "framer-motion";
@@ -17,6 +17,7 @@ import { TaskData } from "../../components/TaskPill";
 import { CalendarTab } from "../../containers/CalendarTab";
 import { TaskAddDrawer } from "../../containers/TaskAddDrawer";
 import { TaskEditDrawer } from "../../containers/TaskEditDrawer";
+import { AccessDeniedModal } from "../../layouts/AccessDeniedModal";
 import { HeaderContext } from "../../utils/headerContext";
 import { CalendarView } from "./CalendarView";
 
@@ -143,31 +144,7 @@ const Calendar = () => {
           position: "relative",
         }}
       />
-      <Modal
-        centered
-        overlayBlur={3}
-        transition="fade"
-        transitionDuration={600}
-        onClose={() => {
-          localStorage.clear();
-          navigate("/auth", { state: { from: location }, replace: false });
-        }}
-        opened={isAccessError()}
-        withCloseButton={false}
-      >
-        <Stack align={"center"}>
-          You no longer have access to this page.
-          <Button
-            variant="subtle"
-            onClick={() => {
-              localStorage.clear();
-              navigate("/auth", { state: { from: location }, replace: false });
-            }}
-          >
-            Log In
-          </Button>
-        </Stack>
-      </Modal>
+      <AccessDeniedModal visible={isAccessError()} />
       <TaskEditDrawer
         taskId={taskEdited}
         opened={editTaskDrawerOpened}

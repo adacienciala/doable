@@ -5,7 +5,6 @@ import {
   Image,
   Indicator,
   LoadingOverlay,
-  Modal,
   Select,
   Stack,
   Text,
@@ -21,6 +20,7 @@ import {
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { APIClient, Method } from "../../../api/client";
 import { ApiError } from "../../../api/errors";
+import { AccessDeniedModal } from "../../../layouts/AccessDeniedModal";
 import { IParty } from "../../../models/party";
 import Lemonade from "./lemonade-chill.svg";
 
@@ -141,31 +141,7 @@ export default function NoParty({ onJoinParty }: { onJoinParty: any }) {
           position: "relative",
         }}
       />
-      <Modal
-        centered
-        overlayBlur={3}
-        transition="fade"
-        transitionDuration={600}
-        onClose={() => {
-          localStorage.clear();
-          navigate("/auth", { state: { from: location }, replace: false });
-        }}
-        opened={isAccessError()}
-        withCloseButton={false}
-      >
-        <Stack align={"center"}>
-          You no longer have access to this page.
-          <Button
-            variant="subtle"
-            onClick={() => {
-              localStorage.clear();
-              navigate("/auth", { state: { from: location }, replace: false });
-            }}
-          >
-            Log In
-          </Button>
-        </Stack>
-      </Modal>
+      <AccessDeniedModal visible={isAccessError()} />
       <Stack
         sx={() => ({
           justifyContent: "center",

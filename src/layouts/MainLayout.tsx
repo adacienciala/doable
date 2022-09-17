@@ -1,17 +1,10 @@
-import { ActionIcon, Anchor, Box, Group, Stack, Text } from "@mantine/core";
+import { Box, Button, Group, Stack, Text } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
-import { useContext, useEffect } from "react";
-import { AiOutlineProject } from "react-icons/ai";
-import { FiCalendar } from "react-icons/fi";
-import {
-  RiCompass3Line,
-  RiHome5Line,
-  RiLogoutCircleLine,
-  RiMedalLine,
-  RiSettings2Line,
-} from "react-icons/ri";
-import { Link } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
+import ReactJoyride from "react-joyride";
 import { APIClient, Method } from "../api/client";
+import { NavbarFooter } from "../components/NavbarFooter";
+import { NavbarLinks } from "../components/NavbarLinks";
 import { Profile } from "../components/Profile";
 import { IUser } from "../models/user";
 import { socket } from "../utils/chatContext";
@@ -24,6 +17,19 @@ type Props = {
 const MainLayout: React.FC<Props> = ({ page, children }) => {
   const client = new APIClient();
   const [headerText] = useContext(HeaderContext);
+  const [{ run, steps }, setSteps] = useState({
+    run: false,
+    steps: [
+      {
+        target: "#first",
+        content: "This is my awesome feature!",
+      },
+      {
+        target: "#second",
+        content: "This another awesome  secondfeature!",
+      },
+    ],
+  });
 
   const { data: user } = useQuery<IUser>(
     ["user", localStorage.getItem("doableId")!],
@@ -40,91 +46,6 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
     socket.disconnect();
     localStorage.clear();
   }
-
-  const NavbarLinks = () => {
-    const data = [
-      {
-        text: "dashboard",
-        icon: RiHome5Line,
-        to: "/",
-      },
-      {
-        text: "projects",
-        icon: AiOutlineProject,
-        to: "/projects",
-      },
-      {
-        text: "calendar",
-        icon: FiCalendar,
-        to: "/calendar",
-      },
-      {
-        text: "party",
-        icon: RiCompass3Line,
-        to: "/party",
-      },
-      {
-        text: "rewards",
-        icon: RiMedalLine,
-        to: "/rewards",
-      },
-    ];
-
-    return (
-      <Box style={{ alignSelf: "flex-start" }}>
-        {data.map((linkData, idx) => (
-          <Anchor
-            sx={(theme) => ({
-              display: "flex",
-              alignItems: "center",
-              gap: 10,
-              marginTop: 20,
-              fontWeight: "bold",
-              color:
-                page === linkData.text.toLowerCase()
-                  ? theme.colors.yellow[6]
-                  : "white",
-            })}
-            component={Link}
-            to={linkData.to}
-            key={idx}
-          >
-            {linkData.icon({
-              size: 30,
-            })}
-            <Text
-              sx={(theme) => ({
-                display: "inline-block",
-                textTransform: "uppercase",
-                textDecoration: "none",
-              })}
-            >
-              {linkData.text}
-            </Text>
-          </Anchor>
-        ))}
-      </Box>
-    );
-  };
-
-  const NavbarFooter = () => {
-    return (
-      <Group
-        sx={(theme) => ({
-          width: "100%",
-          justifyContent: "space-between",
-          gridArea: "navbar",
-        })}
-      >
-        <ActionIcon size={30} component={Link} to="/" onClick={logOut}>
-          <RiLogoutCircleLine size={30} />
-        </ActionIcon>
-        <ActionIcon size={30} component={Link} to="/settings">
-          <RiSettings2Line size={30} />
-        </ActionIcon>
-      </Group>
-    );
-  };
 
   return (
     <>
@@ -161,10 +82,22 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
               alignItems: "center",
             })}
           >
-            <Profile user={user} />
-            <NavbarLinks />
+            <Profile id="first" user={user} />
+            <NavbarLinks activePage={page} />
           </Stack>
-          <NavbarFooter />
+          <NavbarFooter logOutHandler={logOut} />
+          <Button
+            onClick={() =>
+              setSteps((prev) => ({
+                run: true,
+                steps: [...prev.steps],
+              }))
+            }
+            size="lg"
+            variant="white"
+          >
+            Start
+          </Button>
         </Group>
         <Group
           sx={(theme) => ({
@@ -175,6 +108,7 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
             padding: 20,
             color: theme.colors.gray[9],
           })}
+          id="second"
         >
           <Text>
             {headerText}, {user?.name}
@@ -189,6 +123,20 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
           {children}
         </Box>
       </Box>
+      <ReactJoyride
+        continuous
+        hideCloseButton
+        run={run}
+        scrollToFirstStep
+        showProgress
+        showSkipButton
+        steps={steps}
+        styles={{
+          options: {
+            zIndex: 10000,
+          },
+        }}
+      />
     </>
   );
 };

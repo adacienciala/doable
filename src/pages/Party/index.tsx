@@ -28,6 +28,7 @@ import { PartyEditDrawer } from "../../containers/PartyEditDrawer";
 import { ProjectAddDrawer } from "../../containers/ProjectAddDrawer";
 import { ProjectCard, projectCardStyles } from "../../containers/ProjectCard";
 import { ProjectEditDrawer } from "../../containers/ProjectEditDrawer";
+import { AccessDeniedModal } from "../../layouts/AccessDeniedModal";
 import { IUser } from "../../models/user";
 import { HeaderContext } from "../../utils/headerContext";
 import NoParty from "./NoParty";
@@ -150,31 +151,7 @@ const Party = () => {
           position: "relative",
         }}
       />
-      <Modal
-        centered
-        overlayBlur={3}
-        transition="fade"
-        transitionDuration={600}
-        onClose={() => {
-          localStorage.clear();
-          navigate("/auth", { state: { from: location }, replace: false });
-        }}
-        opened={isAccessError()}
-        withCloseButton={false}
-      >
-        <Stack align={"center"}>
-          You no longer have access to this page.
-          <Button
-            variant="subtle"
-            onClick={() => {
-              localStorage.clear();
-              navigate("/auth", { state: { from: location }, replace: false });
-            }}
-          >
-            Log In
-          </Button>
-        </Stack>
-      </Modal>
+      <AccessDeniedModal visible={isAccessError()} />
       <Modal
         centered
         opened={openDeleteModal}

@@ -80,7 +80,7 @@ export default function Auth() {
 
     setLoading(true);
     setTimeout(async () => {
-      const { token, tokenSelector, user } = await authenticate(
+      const { token, tokenSelector, user, isNewUser } = await authenticate(
         form.values.email,
         form.values.password,
         form.values.name,
@@ -93,7 +93,7 @@ export default function Auth() {
       localStorage.setItem("tokenSelector", tokenSelector);
       localStorage.setItem("doableId", user.doableId);
       localStorage.setItem("partyId", user.partyId ?? "");
-      navigate(from, { replace: true });
+      navigate(from, { state: { isNewUser }, replace: true });
     }, 250);
   }
 
@@ -122,7 +122,7 @@ export default function Auth() {
       showError(`Problem: ${json.msg}, try again`);
       return {};
     }
-    return json;
+    return { ...json, isNewUser: res.status === 201 };
   }
 
   return (

@@ -1,4 +1,4 @@
-import { Button, Group, LoadingOverlay, Modal, Stack } from "@mantine/core";
+import { Group, LoadingOverlay } from "@mantine/core";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
@@ -8,6 +8,7 @@ import { Scoreboard } from "../../components/Scoreboard";
 import { TaskData } from "../../components/TaskPill";
 import { TaskAddDrawer } from "../../containers/TaskAddDrawer";
 import { TaskEditDrawer } from "../../containers/TaskEditDrawer";
+import { AccessDeniedModal } from "../../layouts/AccessDeniedModal";
 import { IUser } from "../../models/user";
 import { HeaderContext } from "../../utils/headerContext";
 import { CalendarBacklog } from "./CalendarBacklog";
@@ -117,31 +118,7 @@ const Dashboard = () => {
           position: "relative",
         }}
       />
-      <Modal
-        centered
-        overlayBlur={3}
-        transition="fade"
-        transitionDuration={600}
-        onClose={() => {
-          localStorage.clear();
-          navigate("/auth", { state: { from: location }, replace: false });
-        }}
-        opened={isAccessError()}
-        withCloseButton={false}
-      >
-        <Stack align={"center"}>
-          You no longer have access to this page.
-          <Button
-            variant="subtle"
-            onClick={() => {
-              localStorage.clear();
-              navigate("/auth", { state: { from: location }, replace: false });
-            }}
-          >
-            Log In
-          </Button>
-        </Stack>
-      </Modal>
+      <AccessDeniedModal visible={isAccessError()} />
       <TaskEditDrawer
         taskId={taskEdited}
         opened={editTaskDrawerOpened}

@@ -117,85 +117,87 @@ function App() {
   }, [isConnected, isAuthenticated]);
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/auth" element={<Auth />} />
-        <Route
-          path="/"
-          element={
-            <RequireAuth>
-              <MainLayout page="dashboard">
-                <Dashboard />
-              </MainLayout>
-            </RequireAuth>
-          }
-        />
-        <Route
-          path="/projects"
-          element={
-            <RequireAuth>
-              <MainLayout page="projects">
-                <Projects />
-              </MainLayout>
-            </RequireAuth>
-          }
-        />
-        <Route
-          path="/projects/:projectId"
-          element={
-            <RequireAuth>
-              <MainLayout page="projects">
-                <ProjectPage />
-                {/* <p>asd</p> */}
-              </MainLayout>
-            </RequireAuth>
-          }
-        />
-        <Route
-          path="/calendar"
-          element={
-            <RequireAuth>
-              <MainLayout page="calendar">
-                <Calendar />
-              </MainLayout>
-            </RequireAuth>
-          }
-        />
-        <Route
-          path="/party"
-          element={
-            <RequireAuth>
-              <MainLayout page="party">
-                <Party />
-              </MainLayout>
-            </RequireAuth>
-          }
-        />
-        <Route
-          path="/rewards"
-          element={
-            <RequireAuth>
-              <MainLayout page="rewards">
-                <Rewards />
-              </MainLayout>
-            </RequireAuth>
-          }
-        />
-        <Route
-          path="/settings"
-          element={
-            <RequireAuth>
-              <MainLayout page="settings">
-                <Settings />
-              </MainLayout>
-            </RequireAuth>
-          }
-        />
-        <Route path="/404" element={<NotFound />} />
-        <Route path="/500" element={<ServerError />} />
-        <Route path="*" element={<Navigate to="/404" replace />} />
-      </Routes>
-    </BrowserRouter>
+    <>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/auth" element={<Auth />} />
+          <Route
+            path="/"
+            element={
+              <RequireAuth>
+                <MainLayout page="dashboard">
+                  <Dashboard />
+                </MainLayout>
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/projects"
+            element={
+              <RequireAuth>
+                <MainLayout page="projects">
+                  <Projects />
+                </MainLayout>
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/projects/:projectId"
+            element={
+              <RequireAuth>
+                <MainLayout page="projects">
+                  <ProjectPage />
+                  {/* <p>asd</p> */}
+                </MainLayout>
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/calendar"
+            element={
+              <RequireAuth>
+                <MainLayout page="calendar">
+                  <Calendar />
+                </MainLayout>
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/party"
+            element={
+              <RequireAuth>
+                <MainLayout page="party">
+                  <Party />
+                </MainLayout>
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/rewards"
+            element={
+              <RequireAuth>
+                <MainLayout page="rewards">
+                  <Rewards />
+                </MainLayout>
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <RequireAuth>
+                <MainLayout page="settings">
+                  <Settings />
+                </MainLayout>
+              </RequireAuth>
+            }
+          />
+          <Route path="/404" element={<NotFound />} />
+          <Route path="/500" element={<ServerError />} />
+          <Route path="*" element={<Navigate to="/404" replace />} />
+        </Routes>
+      </BrowserRouter>
+    </>
   );
 }
 
