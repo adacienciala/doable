@@ -8,12 +8,14 @@ import { isCheckbox } from "../../utils/utils";
 export const TaskList = ({
   tasks = [],
   view,
-  onTaskDone,
+  handleTaskDone,
+  handleTaskOnFinish,
   onTaskClick,
 }: {
   tasks: TaskExtended[];
   view: CalendarView;
-  onTaskDone: (taskId: string) => void;
+  handleTaskDone: (taskId: string) => void;
+  handleTaskOnFinish?: () => void;
   onTaskClick: (taskId: string) => void;
 }) => {
   const [items, setItems] = useState(tasks);
@@ -57,7 +59,12 @@ export const TaskList = ({
             onClick={(e) => handleTaskClick(e, item.taskId)}
             onDragStart={(e) => setIsDragged(true)}
           >
-            <TaskPill data={item} view={view} onTaskDone={onTaskDone} />
+            <TaskPill
+              data={item}
+              view={view}
+              handleTaskOnFinish={handleTaskOnFinish}
+              handleTaskDone={handleTaskDone}
+            />
           </Reorder.Item>
         ))}
       </Reorder.Group>

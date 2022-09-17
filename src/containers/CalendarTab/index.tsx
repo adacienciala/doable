@@ -47,12 +47,13 @@ export const CalendarTab = ({
         queryClient.invalidateQueries(["tasks"]);
         if (data.userUpdated) {
           queryClient.invalidateQueries(["user"]);
+          queryClient.invalidateQueries(["users"]);
         }
       },
     }
   );
 
-  const handleTaskDone = (taskId: string) => {
+  const onTaskDone = (taskId: string) => {
     finishTaskMutation.mutate(taskId);
     setHeaderText("Great job");
   };
@@ -97,7 +98,7 @@ export const CalendarTab = ({
           >
             <CurrentCalendarView.ViewComponent
               tasks={tasks}
-              onTaskDone={handleTaskDone}
+              handleTaskDone={onTaskDone}
               onTaskClick={onTaskClick}
               onAddTask={onAddTask}
               options={CurrentCalendarView.options}

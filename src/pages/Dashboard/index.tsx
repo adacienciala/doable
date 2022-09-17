@@ -1,6 +1,14 @@
-import { Group, LoadingOverlay } from "@mantine/core";
+import { Group, LoadingOverlay, useMantineTheme } from "@mantine/core";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import ReactJoyride, {
+  ACTIONS,
+  CallBackProps,
+  EVENTS,
+  LIFECYCLE,
+  STATUS,
+  StoreHelpers,
+} from "react-joyride";
 import { Navigate, useLocation } from "react-router-dom";
 import { APIClient, Method, TaskExtended } from "../../api/client";
 import { ApiError } from "../../api/errors";
@@ -9,11 +17,19 @@ import { TaskData } from "../../components/TaskPill";
 import { TaskAddDrawer } from "../../containers/TaskAddDrawer";
 import { TaskEditDrawer } from "../../containers/TaskEditDrawer";
 import { AccessDeniedModal } from "../../layouts/AccessDeniedModal";
+import { ITask } from "../../models/task";
 import { IUser } from "../../models/user";
 import { HeaderContext } from "../../utils/headerContext";
+import {
+  JoyrideStateProps,
+  joyrideStyles,
+  TourPageProps,
+  tutorialSteps,
+} from "../../utils/joyride";
 import { CalendarBacklog } from "./CalendarBacklog";
 
-const Dashboard = () => {
+const Dashboard = ({ tourStart, setTourStart }: TourPageProps) => {
+  const theme = useMantineTheme();
   const [, setHeaderText] = useContext(HeaderContext);
   const location = useLocation() as any;
   const client = new APIClient();
@@ -22,6 +38,77 @@ const Dashboard = () => {
   const [taskEdited, setTaskEdited] = useState("");
   const [addTaskDrawerOpened, setAddTaskDrawerOpened] = useState(false);
   const [addTaskData, setAddTaskData] = useState<Partial<TaskData>>({});
+
+  // -- JOYRIDE
+
+  const [{ run, steps, stepIndex, taskCreated }, setTour] =
+    useState<JoyrideStateProps>({
+      run: JSON.parse(localStorage.getItem("isNewUser") ?? "false"),
+      steps: tutorialSteps["dashboard"],
+      stepIndex: 0,
+    });
+
+  useEffect(() => {
+    setTour((prev) => ({
+      ...prev,
+      run: tourStart ?? false,
+    }));
+  }, [tourStart]);
+
+  const helpers = useRef<StoreHelpers>();
+
+  const setHelpers = (storeHelpers: StoreHelpers) => {
+    helpers.current = storeHelpers;
+  };
+
+  const handleJoyrideCallback = (data: CallBackProps) => {
+    const {
+      lifecycle,
+      action,
+      index,
+      status,
+      type,
+      step: { target },
+    } = data;
+
+    console.log("[joyride]", data);
+
+    if (([STATUS.FINISHED, STATUS.SKIPPED] as string[]).includes(status)) {
+      // Need to set our running state to false, so we can restart if we click start again.
+      setTour((prev) => ({ steps: prev.steps, run: false, stepIndex: 0 }));
+      if (setTourStart) setTourStart(false);
+    } else if (
+      ([EVENTS.STEP_AFTER, EVENTS.TARGET_NOT_FOUND] as string[]).includes(type)
+    ) {
+      const nextStepIndex = index + (action === ACTIONS.PREV ? -1 : 1);
+
+      // Create an example task
+      if (
+        lifecycle === LIFECYCLE.COMPLETE &&
+        target === '[data-tut="add-task"]' &&
+        !taskCreated
+      ) {
+        addTaskMutation.mutate({
+          title: "Create a task",
+          date: new Date(),
+        });
+        setTour((prev) => ({
+          steps: prev.steps,
+          run: false,
+          stepIndex: 3,
+        }));
+      } else {
+        // Update state to advance the tour
+        setTour((prev) => ({
+          steps: prev.steps,
+          run: true,
+          stepIndex: nextStepIndex,
+        }));
+      }
+    }
+  };
+
+  // -- JOYRIDE
 
   const {
     isLoading,
@@ -41,6 +128,27 @@ const Dashboard = () => {
     [error]
   );
 
+  const addTaskMutation = useMutation(
+    (data: Partial<ITask>) =>
+      client.tasks(Method.POST, {
+        body: data,
+      }),
+    {
+      onSuccess: (data) => {
+        queryClient.invalidateQueries(["tasks"]);
+        localStorage.setItem("tutorialTaskId", data.taskId);
+        setTimeout(() => {
+          setTour((prev) => ({
+            steps: prev.steps,
+            run: true,
+            stepIndex: 4,
+            taskCreated: true,
+          }));
+        }, 400);
+      },
+    }
+  );
+
   const finishTaskMutation = useMutation(
     (taskId: string) =>
       client.singleTask(Method.PUT, taskId, {
@@ -51,7 +159,15 @@ const Dashboard = () => {
         queryClient.invalidateQueries(["tasks"]);
         if (data.userUpdated) {
           queryClient.invalidateQueries(["user"]);
+          queryClient.invalidateQueries(["users"]);
         }
+        setTour((prev) => ({
+          ...prev,
+          stepIndex: prev.stepIndex + 1,
+          run: true,
+          taskDeleted: true,
+          taskCreated: false,
+        }));
       },
     }
   );
@@ -59,6 +175,13 @@ const Dashboard = () => {
   const handleTaskDone = (taskId: string) => {
     finishTaskMutation.mutate(taskId);
     setHeaderText("Great job");
+  };
+
+  const handleTaskOnFinish = () => {
+    setTour((prev) => ({
+      ...prev,
+      run: false,
+    }));
   };
 
   useEffect(() => {
@@ -108,6 +231,21 @@ const Dashboard = () => {
 
   return (
     <>
+      <ReactJoyride
+        continuous
+        scrollToFirstStep
+        showProgress
+        showSkipButton
+        disableCloseOnEsc
+        disableOverlayClose
+        hideCloseButton
+        stepIndex={stepIndex}
+        run={run}
+        steps={steps}
+        getHelpers={setHelpers}
+        styles={joyrideStyles(theme)}
+        callback={handleJoyrideCallback}
+      />
       <LoadingOverlay
         visible={isLoading || isLoadingTasks}
         overlayOpacity={0.8}
@@ -140,7 +278,8 @@ const Dashboard = () => {
         {tasks && (
           <CalendarBacklog
             tasks={tasks}
-            onTaskDone={handleTaskDone}
+            handleTaskDone={handleTaskDone}
+            handleTaskOnFinish={handleTaskOnFinish}
             onTaskClick={handleEditTaskDrawerOpen}
             onAddTask={handleAddTaskDrawerOpen}
           />

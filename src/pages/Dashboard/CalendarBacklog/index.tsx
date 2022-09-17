@@ -6,7 +6,8 @@ import { CalendarViewProps } from "../../Calendar/CalendarView";
 
 export const CalendarBacklog = ({
   tasks,
-  onTaskDone,
+  handleTaskDone,
+  handleTaskOnFinish,
   onTaskClick,
   onAddTask,
 }: CalendarViewProps) => {
@@ -20,6 +21,7 @@ export const CalendarBacklog = ({
         sx={() => ({
           marginBottom: "20px",
         })}
+        data-tut="backlog"
       >
         <Text weight={"bold"}>Backlog</Text>
         <AddButton
@@ -27,6 +29,7 @@ export const CalendarBacklog = ({
             marginLeft: "auto",
           })}
           onClick={() => onAddTask()}
+          data-tut="add-task"
         />
       </Group>
 
@@ -35,7 +38,8 @@ export const CalendarBacklog = ({
           return !(t.date && isAfter(t.date, new Date()));
         })}
         view="backlog"
-        onTaskDone={onTaskDone}
+        handleTaskDone={handleTaskDone}
+        handleTaskOnFinish={handleTaskOnFinish}
         onTaskClick={onTaskClick}
       />
     </Box>

@@ -2,7 +2,8 @@ import { TaskExtended } from "../../../api/client";
 
 export interface CalendarViewProps {
   tasks: TaskExtended[];
-  onTaskDone: (taskId: string) => void;
+  handleTaskDone: (taskId: string) => void;
+  handleTaskOnFinish?: () => void;
   onTaskClick: (taskId: string) => void;
   onAddTask: (data?: { date?: Date; projectId?: string }) => void;
   options?: Record<string, any>;

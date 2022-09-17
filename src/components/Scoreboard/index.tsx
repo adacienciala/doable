@@ -13,7 +13,7 @@ import { IUser } from "../../models/user";
 import { getUserAvatarSeed } from "../../utils/utils";
 
 export const Scoreboard = ({ users }: { users: IUser[]; [x: string]: any }) => {
-  const doableId = localStorage.getItem("doableId")!;
+  const isUser = (u: IUser) => u.doableId === localStorage.getItem("doableId")!;
 
   return (
     <>
@@ -51,11 +51,11 @@ export const Scoreboard = ({ users }: { users: IUser[]; [x: string]: any }) => {
                   <tr
                     key={u.doableId}
                     style={{
-                      backgroundColor:
-                        u.doableId === doableId
-                          ? "rgba(220, 220, 220, 0.2)"
-                          : undefined,
+                      backgroundColor: isUser(u)
+                        ? "rgba(220, 220, 220, 0.2)"
+                        : undefined,
                     }}
+                    {...(isUser(u) ? { "data-tut": "user-scoreboard" } : {})}
                   >
                     <td width="50px">
                       <Center>

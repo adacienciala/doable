@@ -8,7 +8,7 @@ import { TaskList } from "../../../../containers/TaskList";
 
 export const CalendarWeek = ({
   tasks,
-  onTaskDone,
+  handleTaskDone,
   onTaskClick,
   onAddTask,
   options,
@@ -43,7 +43,7 @@ export const CalendarWeek = ({
             t.date ? isSameDay(t.date, date) : false
           )}
           view="week"
-          onTaskDone={onTaskDone}
+          handleTaskDone={handleTaskDone}
           onTaskClick={onTaskClick}
         />
       </>

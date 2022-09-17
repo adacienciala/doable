@@ -56,6 +56,7 @@ export const NavbarLinks = ({
           component={Link}
           to={linkData.to}
           key={idx}
+          data-tut={linkData.text}
         >
           {linkData.icon({
             size: 30,

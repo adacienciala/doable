@@ -1,15 +1,15 @@
-import {
-  ActionIcon,
-  Box,
-  Group,
-  Stack,
-  Text,
-  useMantineTheme,
-} from "@mantine/core";
+import { ActionIcon, Box, Group, Stack, Text } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
-import { useContext, useEffect, useState } from "react";
+import {
+  Children,
+  cloneElement,
+  isValidElement,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { IoMdHelp } from "react-icons/io";
-import ReactJoyride, { CallBackProps, EVENTS } from "react-joyride";
 import { APIClient, Method } from "../api/client";
 import { NavbarFooter } from "../components/NavbarFooter";
 import { NavbarLinks } from "../components/NavbarLinks";
@@ -17,20 +17,15 @@ import { Profile } from "../components/Profile";
 import { IUser } from "../models/user";
 import { socket } from "../utils/chatContext";
 import { HeaderContext } from "../utils/headerContext";
-import { tutorialSteps } from "../utils/joyride";
 
 type Props = {
   page: string;
 };
 
 const MainLayout: React.FC<Props> = ({ page, children }) => {
-  const theme = useMantineTheme();
   const client = new APIClient();
   const [headerText] = useContext(HeaderContext);
-  const [{ run, steps }, setTour] = useState({
-    run: JSON.parse(localStorage.getItem("isNewUser") ?? "false"),
-    steps: tutorialSteps[page],
-  });
+  const [tourStart, setTourStart] = useState(false);
 
   const { data: user } = useQuery<IUser>(
     ["user", localStorage.getItem("doableId")!],
@@ -48,57 +43,17 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
     localStorage.clear();
   };
 
-  const handleJoyrideCallback = (data: CallBackProps) => {
-    const { type } = data;
-
-    if (type === EVENTS.TOUR_END && run) {
-      setTour((prev) => ({ run: false, steps: [...prev.steps] }));
-    }
-  };
-
-  const fontStyles = {
-    color: theme.colors.gray[9],
-    fontFamily: theme.fontFamily,
-    fontSize: theme.fontSizes.sm,
-  };
+  const childrenWithProps = useMemo(() => {
+    return Children.map(children, (child) => {
+      if (isValidElement(child)) {
+        return cloneElement<any>(child, { tourStart, setTourStart });
+      }
+      return child;
+    });
+  }, [children, tourStart]);
 
   return (
     <>
-      <ReactJoyride
-        continuous
-        scrollToFirstStep
-        showProgress
-        showSkipButton
-        disableCloseOnEsc
-        disableOverlayClose
-        hideCloseButton
-        spotlightClicks
-        run={run}
-        steps={steps}
-        styles={{
-          options: {
-            zIndex: 10000,
-            primaryColor: theme.colors.yellow[6],
-            textColor: theme.colors.gray[9],
-          },
-          buttonNext: {
-            borderRadius: theme.radius.sm,
-            paddingLeft: theme.spacing.md,
-            paddingRight: theme.spacing.md,
-            ...fontStyles,
-          },
-          buttonBack: {
-            ...fontStyles,
-          },
-          buttonSkip: {
-            ...fontStyles,
-          },
-          tooltipContainer: {
-            ...fontStyles,
-          },
-        }}
-        callback={handleJoyrideCallback}
-      />
       <Box
         sx={(theme) => ({
           display: "grid",
@@ -133,7 +88,7 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
             })}
           >
             <Profile data-tut="profile" user={user} />
-            <NavbarLinks data-tut="nav-links" activePage={page} />
+            <NavbarLinks activePage={page} />
           </Stack>
           <NavbarFooter logOutHandler={logOut} />
         </Group>
@@ -154,12 +109,7 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
             color="gray.9"
             radius="xl"
             variant="outline"
-            onClick={() =>
-              setTour((prev) => ({
-                run: true,
-                steps: [...prev.steps],
-              }))
-            }
+            onClick={() => setTourStart(true)}
           >
             <IoMdHelp />
           </ActionIcon>
@@ -170,7 +120,7 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
             overflow: "auto",
           })}
         >
-          {children}
+          {childrenWithProps}
         </Box>
       </Box>
     </>

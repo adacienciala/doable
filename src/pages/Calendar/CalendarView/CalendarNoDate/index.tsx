@@ -5,7 +5,7 @@ import { TaskList } from "../../../../containers/TaskList";
 
 export const CalendarNoDate = ({
   tasks,
-  onTaskDone,
+  handleTaskDone,
   onTaskClick,
   onAddTask,
 }: CalendarViewProps) => {
@@ -23,7 +23,7 @@ export const CalendarNoDate = ({
       <TaskList
         tasks={tasks.filter((t) => !t.date)}
         view="no-date"
-        onTaskDone={onTaskDone}
+        handleTaskDone={handleTaskDone}
         onTaskClick={onTaskClick}
       />
     </>

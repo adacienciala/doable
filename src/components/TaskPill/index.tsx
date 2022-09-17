@@ -18,19 +18,24 @@ export interface TaskData {
 interface TaskPillProps {
   data: TaskExtended;
   view: CalendarView;
-  onTaskDone: (taskId: string) => void;
+  handleTaskDone: (taskId: string) => void;
+  handleTaskOnFinish?: () => void;
 }
 
 export const TaskPill = ({
   data: { title, description, taskId, projectDetails, date },
   view,
-  onTaskDone,
+  handleTaskDone,
+  handleTaskOnFinish,
 }: TaskPillProps) => {
   const [checked, setChecked] = useState(false);
   const [clicked, setClicked] = useState(false);
 
-  const handleTaskDone = (taskId: string) => {
-    const doneTimeout = setTimeout(() => onTaskDone(taskId), 2000);
+  const isTutorialTask = taskId === localStorage.getItem("tutorialTaskId");
+
+  const onTaskDone = (taskId: string) => {
+    if (handleTaskOnFinish) handleTaskOnFinish();
+    const doneTimeout = setTimeout(() => handleTaskDone(taskId), 2000);
     showNotification({
       id: `cancel-${taskId}`,
       autoClose: 2000,
@@ -82,6 +87,7 @@ export const TaskPill = ({
           transform: "translate(10px, -50%)",
         },
       })}
+      {...(isTutorialTask ? { "data-tut": "created-task" } : {})}
     >
       <Group
         noWrap
@@ -102,10 +108,11 @@ export const TaskPill = ({
           readOnly
           onClick={(e) => {
             setClicked(true);
-            handleTaskDone(taskId);
+            onTaskDone(taskId);
           }}
           onMouseOver={(e) => setChecked(true)}
           onMouseOut={(e) => !clicked && setChecked(false)}
+          {...(isTutorialTask ? { "data-tut": "finish-task" } : {})}
         />
         <Text weight={500} style={{ minWidth: "30%" }}>
           {title}

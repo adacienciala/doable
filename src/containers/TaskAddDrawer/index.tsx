@@ -159,6 +159,7 @@ export const TaskAddDrawer = ({
         title="Create Task"
         padding="xl"
         size="50%"
+        data-tut="add-task-drawer"
       >
         <form
           onSubmit={handleSubmit}

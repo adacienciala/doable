@@ -6,7 +6,7 @@ import { TaskList } from "../../../../containers/TaskList";
 
 export const CalendarToday = ({
   tasks,
-  onTaskDone,
+  handleTaskDone,
   onTaskClick,
   onAddTask,
 }: CalendarViewProps) => {
@@ -30,7 +30,7 @@ export const CalendarToday = ({
       <TaskList
         tasks={tasks.filter((t) => (t.date ? isToday(t.date) : false))}
         view="today"
-        onTaskDone={onTaskDone}
+        handleTaskDone={handleTaskDone}
         onTaskClick={onTaskClick}
       />
     </>

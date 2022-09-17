@@ -52,12 +52,13 @@ const ProjectPage = () => {
         queryClient.invalidateQueries(["tasks"]);
         if (data.userUpdated) {
           queryClient.invalidateQueries(["user"]);
+          queryClient.invalidateQueries(["users"]);
         }
       },
     }
   );
 
-  const handleTaskDone = (taskId: string) => {
+  const onTaskDone = (taskId: string) => {
     finishTaskMutation.mutate(taskId);
   };
 
@@ -147,7 +148,7 @@ const ProjectPage = () => {
             tasks={tasks}
             view="no-date"
             onTaskClick={handleEditTaskDrawerOpen}
-            onTaskDone={handleTaskDone}
+            handleTaskDone={onTaskDone}
           />
         </Stack>
       )}
