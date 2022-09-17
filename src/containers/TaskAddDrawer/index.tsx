@@ -197,9 +197,12 @@ export const TaskAddDrawer = ({
             </Text>
           </Group>
           <SegmentedControl
-            mt="md"
+            fullWidth
             placeholder="Difficulty"
             label="Difficulty"
+            input="Difficulty"
+            description="Difficulty"
+            name="Difficulty"
             data={taskDifficultiesSelect}
             {...form.getInputProps("difficulty")}
           />
