@@ -131,7 +131,6 @@ const Dashboard = () => {
       <Group
         position="apart"
         align="stretch"
-        grow
         style={{
           gap: "40px",
           padding: "20px",
@@ -146,7 +145,7 @@ const Dashboard = () => {
             onAddTask={handleAddTaskDrawerOpen}
           />
         )}
-        <Scoreboard users={users ?? []} style={{ flexGrow: 1.5 }} />
+        <Scoreboard users={users ?? []} />
       </Group>
     </>
   );

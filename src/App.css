@@ -7,8 +7,11 @@
 html,
 body,
 #root,
-#root > div {
+#root > div:not(.react-joyride) {
   height: 100%;
+}
+html {
+  overflow: hidden;
 }
 
 body {

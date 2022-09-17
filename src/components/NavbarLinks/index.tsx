@@ -1,10 +1,16 @@
-import { Anchor, Box, Text } from "@mantine/core";
+import { Anchor, Stack, Text } from "@mantine/core";
 import { AiOutlineProject } from "react-icons/ai";
 import { FiCalendar } from "react-icons/fi";
 import { RiCompass3Line, RiHome5Line, RiMedalLine } from "react-icons/ri";
 import { Link } from "react-router-dom";
 
-export const NavbarLinks = ({ activePage }: { activePage: string }) => {
+export const NavbarLinks = ({
+  activePage,
+  ...props
+}: {
+  activePage: string;
+  [x: string]: any;
+}) => {
   const data = [
     {
       text: "dashboard",
@@ -34,14 +40,13 @@ export const NavbarLinks = ({ activePage }: { activePage: string }) => {
   ];
 
   return (
-    <Box style={{ alignSelf: "flex-start" }}>
+    <Stack style={{ gap: 20, alignSelf: "flex-start" }} {...props}>
       {data.map((linkData, idx) => (
         <Anchor
           sx={(theme) => ({
             display: "flex",
             alignItems: "center",
             gap: 10,
-            marginTop: 20,
             fontWeight: "bold",
             color:
               activePage === linkData.text.toLowerCase()
@@ -66,6 +71,6 @@ export const NavbarLinks = ({ activePage }: { activePage: string }) => {
           </Text>
         </Anchor>
       ))}
-    </Box>
+    </Stack>
   );
 };

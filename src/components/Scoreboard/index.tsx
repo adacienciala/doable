@@ -12,13 +12,7 @@ import { RiTeamFill } from "react-icons/ri";
 import { IUser } from "../../models/user";
 import { getUserAvatarSeed } from "../../utils/utils";
 
-export const Scoreboard = ({
-  users,
-  ...props
-}: {
-  users: IUser[];
-  [x: string]: any;
-}) => {
+export const Scoreboard = ({ users }: { users: IUser[]; [x: string]: any }) => {
   const doableId = localStorage.getItem("doableId")!;
 
   return (
@@ -31,8 +25,9 @@ export const Scoreboard = ({
           borderStyle: "solid",
           gap: 0,
           borderColor: theme.colors.yellow[6],
+          minWidth: "390px",
+          width: "50%",
         })}
-        {...props}
       >
         <Group
           position="apart"

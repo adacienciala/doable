@@ -26,7 +26,11 @@ import { ApiError } from "../../api/errors";
 import { Chat } from "../../containers/Chat";
 import { PartyEditDrawer } from "../../containers/PartyEditDrawer";
 import { ProjectAddDrawer } from "../../containers/ProjectAddDrawer";
-import { ProjectCard, projectCardStyles } from "../../containers/ProjectCard";
+import {
+  ProjectCard,
+  projectCardStyles,
+  sizeOptions,
+} from "../../containers/ProjectCard";
 import { ProjectEditDrawer } from "../../containers/ProjectEditDrawer";
 import { AccessDeniedModal } from "../../layouts/AccessDeniedModal";
 import { IUser } from "../../models/user";
@@ -196,7 +200,7 @@ const Party = () => {
         <Stack
           style={{
             padding: "20px",
-            height: "calc(100% - 40px)",
+            height: "100%",
           }}
           spacing={20}
         >
@@ -235,7 +239,7 @@ const Party = () => {
             align="stretch"
             position="apart"
             noWrap
-            style={{ maxHeight: "calc(100% - 300px)" }}
+            style={{ flexGrow: 1 }}
           >
             <Stack>
               <Text size="xl" weight="bold">
@@ -250,7 +254,7 @@ const Party = () => {
                     withBorder
                     shadow="sm"
                     radius="md"
-                    sx={() => ({ height: "220px" })}
+                    sx={() => ({ ...sizeOptions["lg"].card })}
                     className={classes.card}
                   >
                     <RiAddFill size={50} />
@@ -272,10 +276,15 @@ const Party = () => {
                 </Group>
               </ScrollArea>
             </Stack>
-            <Chat
-              sx={{ minWidth: "400px", width: "400px" }}
-              users={party.members}
-            />
+            <Stack>
+              <Text size="xl" weight="bold">
+                Chat
+              </Text>
+              <Chat
+                sx={{ flexGrow: 1, minWidth: "400px", width: "400px" }}
+                users={party.members}
+              />
+            </Stack>
           </Group>
         </Stack>
       )}

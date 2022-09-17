@@ -21,7 +21,11 @@ import { Navigate, useLocation } from "react-router-dom";
 import { APIClient, Method, ProjectExtended } from "../../api/client";
 import { ApiError } from "../../api/errors";
 import { ProjectAddDrawer } from "../../containers/ProjectAddDrawer";
-import { ProjectCard, projectCardStyles } from "../../containers/ProjectCard";
+import {
+  ProjectCard,
+  projectCardStyles,
+  sizeOptions,
+} from "../../containers/ProjectCard";
 import { ProjectEditDrawer } from "../../containers/ProjectEditDrawer";
 import { AccessDeniedModal } from "../../layouts/AccessDeniedModal";
 import { HeaderContext } from "../../utils/headerContext";
@@ -165,7 +169,7 @@ const Projects = () => {
             withBorder
             shadow="sm"
             radius="md"
-            sx={() => ({ height: "280px" })}
+            sx={() => ({ ...sizeOptions["xl"].card })}
             className={classes.card}
           >
             <RiAddFill size={50} />

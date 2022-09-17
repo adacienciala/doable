@@ -29,16 +29,16 @@ export const projectCardStyles = createStyles((theme) => ({
   },
 }));
 
-const sizeOptions = {
+export const sizeOptions = {
   lg: {
     ring: { size: 100, thickness: 8 },
-    card: { height: "220px" },
+    card: { width: "260px" },
     cover: { size: "100px" },
     progressText: { size: 15 },
   },
   xl: {
     ring: { size: 150, thickness: 12 },
-    card: { height: "280px" },
+    card: { width: "260px" },
     cover: { size: "150px" },
     progressText: { size: 20 },
   },
@@ -138,10 +138,10 @@ export const ProjectCard = ({
         withBorder
         shadow="sm"
         radius="md"
-        sx={() => ({ height: sizeOptions[size].card.height })}
+        sx={() => ({ ...sizeOptions[size].card })}
         className={classes.card}
       >
-        <Group position="apart">
+        <Group position="apart" noWrap>
           <Text weight={500}>{name}</Text>
           <Menu withinPortal position="bottom" shadow="sm">
             <Menu.Target>

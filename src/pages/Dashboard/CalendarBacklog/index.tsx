@@ -11,7 +11,11 @@ export const CalendarBacklog = ({
   onAddTask,
 }: CalendarViewProps) => {
   return (
-    <Box style={{ flexGrow: 1 }}>
+    <Box
+      sx={() => ({
+        flexGrow: 1,
+      })}
+    >
       <Group
         sx={() => ({
           marginBottom: "20px",

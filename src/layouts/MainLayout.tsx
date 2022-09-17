@@ -1,7 +1,15 @@
-import { Box, Button, Group, Stack, Text } from "@mantine/core";
+import {
+  ActionIcon,
+  Box,
+  Group,
+  Stack,
+  Text,
+  useMantineTheme,
+} from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import { useContext, useEffect, useState } from "react";
-import ReactJoyride from "react-joyride";
+import { IoMdHelp } from "react-icons/io";
+import ReactJoyride, { CallBackProps, EVENTS } from "react-joyride";
 import { APIClient, Method } from "../api/client";
 import { NavbarFooter } from "../components/NavbarFooter";
 import { NavbarLinks } from "../components/NavbarLinks";
@@ -9,26 +17,19 @@ import { Profile } from "../components/Profile";
 import { IUser } from "../models/user";
 import { socket } from "../utils/chatContext";
 import { HeaderContext } from "../utils/headerContext";
+import { tutorialSteps } from "../utils/joyride";
 
 type Props = {
   page: string;
 };
 
 const MainLayout: React.FC<Props> = ({ page, children }) => {
+  const theme = useMantineTheme();
   const client = new APIClient();
   const [headerText] = useContext(HeaderContext);
-  const [{ run, steps }, setSteps] = useState({
-    run: false,
-    steps: [
-      {
-        target: "#first",
-        content: "This is my awesome feature!",
-      },
-      {
-        target: "#second",
-        content: "This another awesome  secondfeature!",
-      },
-    ],
+  const [{ run, steps }, setTour] = useState({
+    run: JSON.parse(localStorage.getItem("isNewUser") ?? "false"),
+    steps: tutorialSteps[page],
   });
 
   const { data: user } = useQuery<IUser>(
@@ -41,14 +42,63 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
 
   useEffect(() => localStorage.setItem("partyId", user?.partyId ?? ""), [user]);
 
-  function logOut() {
+  const logOut = () => {
     socket.off();
     socket.disconnect();
     localStorage.clear();
-  }
+  };
+
+  const handleJoyrideCallback = (data: CallBackProps) => {
+    const { type } = data;
+
+    if (type === EVENTS.TOUR_END && run) {
+      setTour((prev) => ({ run: false, steps: [...prev.steps] }));
+    }
+  };
+
+  const fontStyles = {
+    color: theme.colors.gray[9],
+    fontFamily: theme.fontFamily,
+    fontSize: theme.fontSizes.sm,
+  };
 
   return (
     <>
+      <ReactJoyride
+        continuous
+        scrollToFirstStep
+        showProgress
+        showSkipButton
+        disableCloseOnEsc
+        disableOverlayClose
+        hideCloseButton
+        spotlightClicks
+        run={run}
+        steps={steps}
+        styles={{
+          options: {
+            zIndex: 10000,
+            primaryColor: theme.colors.yellow[6],
+            textColor: theme.colors.gray[9],
+          },
+          buttonNext: {
+            borderRadius: theme.radius.sm,
+            paddingLeft: theme.spacing.md,
+            paddingRight: theme.spacing.md,
+            ...fontStyles,
+          },
+          buttonBack: {
+            ...fontStyles,
+          },
+          buttonSkip: {
+            ...fontStyles,
+          },
+          tooltipContainer: {
+            ...fontStyles,
+          },
+        }}
+        callback={handleJoyrideCallback}
+      />
       <Box
         sx={(theme) => ({
           display: "grid",
@@ -78,26 +128,14 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
           <Stack
             sx={(theme) => ({
               flexGrow: 3,
-              gap: 10,
+              gap: 30,
               alignItems: "center",
             })}
           >
-            <Profile id="first" user={user} />
-            <NavbarLinks activePage={page} />
+            <Profile data-tut="profile" user={user} />
+            <NavbarLinks data-tut="nav-links" activePage={page} />
           </Stack>
           <NavbarFooter logOutHandler={logOut} />
-          <Button
-            onClick={() =>
-              setSteps((prev) => ({
-                run: true,
-                steps: [...prev.steps],
-              }))
-            }
-            size="lg"
-            variant="white"
-          >
-            Start
-          </Button>
         </Group>
         <Group
           sx={(theme) => ({
@@ -108,11 +146,23 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
             padding: 20,
             color: theme.colors.gray[9],
           })}
-          id="second"
         >
           <Text>
             {headerText}, {user?.name}
           </Text>
+          <ActionIcon
+            color="gray.9"
+            radius="xl"
+            variant="outline"
+            onClick={() =>
+              setTour((prev) => ({
+                run: true,
+                steps: [...prev.steps],
+              }))
+            }
+          >
+            <IoMdHelp />
+          </ActionIcon>
         </Group>
         <Box
           sx={(theme) => ({
@@ -123,20 +173,6 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
           {children}
         </Box>
       </Box>
-      <ReactJoyride
-        continuous
-        hideCloseButton
-        run={run}
-        scrollToFirstStep
-        showProgress
-        showSkipButton
-        steps={steps}
-        styles={{
-          options: {
-            zIndex: 10000,
-          },
-        }}
-      />
     </>
   );
 };
