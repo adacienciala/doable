@@ -1,11 +1,9 @@
 import {
   Button,
-  Center,
   Group,
   Loader,
   ScrollArea,
   Stack,
-  Sx,
   TextInput,
 } from "@mantine/core";
 import { useEffect, useRef, useState } from "react";
@@ -13,17 +11,81 @@ import { Message } from "../../components/Message";
 
 import { IMessage } from "../../models/message";
 import { IUser } from "../../models/user";
-import { socket, useChat } from "../../utils/chatContext";
+import { socket } from "../../utils/chatContext";
 
-export const Chat = ({ users, sx }: { users: IUser[]; sx?: Sx }) => {
+const mockMess: IMessage[] = [
+  {
+    partyId: "6360fa2d-ea79-45c3-80f3-8990f110f449",
+    userId: "5b21189f-4ae0-4c40-916c-27f880baf0b4",
+    message: "asd",
+    date: new Date("2022-09-16T00:21:54.145Z"),
+  },
+  {
+    partyId: "6360fa2d-ea79-45c3-80f3-8990f110f449",
+    userId: "5b21189f-4ae0-4c40-916c-27f880baf0b4",
+    message: "noice",
+    date: new Date("2022-09-16T00:25:20.605Z"),
+  },
+  {
+    partyId: "6360fa2d-ea79-45c3-80f3-8990f110f449",
+    userId: "5b21189f-4ae0-4c40-916c-27f880baf0b4",
+    message: "noice 2",
+    date: new Date("2022-09-16T00:26:28.057Z"),
+  },
+  {
+    partyId: "6360fa2d-ea79-45c3-80f3-8990f110f449",
+    userId: "cda24f8a-5134-409b-b7fa-80b6f2f93546",
+    message: "Mamy to",
+    date: new Date("2022-09-16T00:33:39.927Z"),
+  },
+  {
+    partyId: "6360fa2d-ea79-45c3-80f3-8990f110f449",
+    userId: "cda24f8a-5134-409b-b7fa-80b6f2f93546",
+    message: "Mamy to",
+    date: new Date("2022-09-16T00:33:39.927Z"),
+  },
+  {
+    partyId: "6360fa2d-ea79-45c3-80f3-8990f110f449",
+    userId: "5b21189f-4ae0-4c40-916c-27f880baf0b4",
+    message: "ha",
+    date: new Date("2022-09-16T00:34:22.328Z"),
+  },
+  {
+    partyId: "6360fa2d-ea79-45c3-80f3-8990f110f449",
+    userId: "5b21189f-4ae0-4c40-916c-27f880baf0b4",
+    message: "It's",
+    date: new Date("2022-09-16T00:42:37.784Z"),
+  },
+  {
+    partyId: "6360fa2d-ea79-45c3-80f3-8990f110f449",
+    userId: "cda24f8a-5134-409b-b7fa-80b6f2f93546",
+    message: "Alive",
+    date: new Date("2022-09-16T00:42:42.201Z"),
+  },
+  {
+    partyId: "6360fa2d-ea79-45c3-80f3-8990f110f449",
+    userId: "cda24f8a-5134-409b-b7fa-80b6f2f93546",
+    message: "Mamma",
+    date: new Date("2022-09-16T00:49:19.768Z"),
+  },
+  {
+    partyId: "6360fa2d-ea79-45c3-80f3-8990f110f449",
+    userId: "5b21189f-4ae0-4c40-916c-27f880baf0b4",
+    message: "Mia",
+    date: new Date("2022-09-16T00:49:22.835Z"),
+  },
+];
+
+export const Chat = ({ users }: { users: IUser[] }) => {
   const [message, setMessage] = useState("");
-  const { state: messages } = useChat([]);
+  // const { state: messages } = useChat(mockMess);
   const viewport = useRef<HTMLDivElement>(null);
   const scrollToBottom = () =>
     viewport?.current?.scrollTo({
       top: viewport.current.scrollHeight,
       behavior: "smooth",
     });
+  const messages = mockMess;
 
   useEffect(() => {
     scrollToBottom();
@@ -43,43 +105,53 @@ export const Chat = ({ users, sx }: { users: IUser[]; sx?: Sx }) => {
   };
   console.log("u", users, "l", messages.length);
 
+  const isLoading = !(users && messages && messages.length > 0);
+
   return (
     <Stack
-      sx={[
-        (theme) => ({
-          borderRadius: "10px",
-          padding: "20px",
-          borderStyle: "solid",
-          borderColor: theme.colors.yellow[6],
-          borderWidth: "1px",
-        }),
-        sx,
-      ]}
+      justify="space-between"
+      sx={(theme) => ({
+        borderRadius: "10px",
+        padding: "20px",
+        borderStyle: "solid",
+        borderColor: theme.colors.yellow[6],
+        borderWidth: "1px",
+        width: "400px",
+        height: "100%",
+        overflow: "hidden",
+      })}
     >
-      <ScrollArea
-        type="hover"
-        viewportRef={viewport}
-        style={{ flexGrow: 1 }}
-        styles={(theme) => ({
-          viewport: { display: "flex", placeItems: "center" },
-        })}
+      <Stack
+        style={{
+          display: "flex",
+          flexGrow: 1,
+          overflow: "hidden",
+        }}
       >
-        {users && messages && messages.length > 0 ? (
-          <Stack>
-            {messages.map((m, idx) => (
-              <Message
-                key={idx}
-                message={m}
-                user={users.find((u) => u.doableId === m.userId)}
-              />
-            ))}
-          </Stack>
+        {isLoading ? (
+          <Loader
+            style={{
+              width: "100%",
+              alignSelf: "center",
+              marginTop: "auto",
+              marginBottom: "auto",
+            }}
+          />
         ) : (
-          <Center>
-            <Loader />
-          </Center>
+          <ScrollArea type="hover" viewportRef={viewport}>
+            <Stack style={{ width: "100%" }}>
+              {messages.map((m, idx) => (
+                <Message
+                  key={idx}
+                  message={m}
+                  user={users.find((u) => u.doableId === m.userId)}
+                />
+              ))}
+            </Stack>
+          </ScrollArea>
         )}
-      </ScrollArea>
+      </Stack>
+
       <Group>
         <TextInput
           placeholder="Type message..."

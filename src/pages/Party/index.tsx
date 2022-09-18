@@ -392,10 +392,7 @@ const Party = ({ tourStart, setTourStart }: TourPageProps) => {
               <Text size="xl" weight="bold">
                 Chat
               </Text>
-              <Chat
-                sx={{ flexGrow: 1, width: "400px" }}
-                users={party.members}
-              />
+              <Chat users={party.members} />
             </Stack>
           </Group>
         </Stack>

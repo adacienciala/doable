@@ -20,6 +20,7 @@ import Rewards from "./pages/Rewards";
 import ServerError from "./pages/ServerError";
 import Settings from "./pages/Settings";
 import { socket, useChat } from "./utils/chatContext";
+import { messagesStorage } from "./utils/socket";
 
 function App() {
   const { state: messages, stateSetter: setMessages } = useChat([]);
@@ -66,6 +67,8 @@ function App() {
           for (const m of data) {
             m.date = new Date(m.date);
           }
+          messagesStorage.splice(0, messagesStorage.length);
+          messagesStorage.push(...data);
           setMessages(data);
         },
       },
@@ -78,6 +81,8 @@ function App() {
           console.log(`  - current messages: ${messages?.length}`);
           console.log(`  - new messages: ${newMessages.length}`);
           console.log(`    - ${data}`);
+          messagesStorage.splice(0, messagesStorage.length);
+          messagesStorage.push(...newMessages);
           setMessages(newMessages);
         },
       },
