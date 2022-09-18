@@ -42,7 +42,7 @@ export const TaskList = ({
 
   return (
     <Stack style={{ height: "100%" }}>
-      <ScrollArea>
+      <ScrollArea style={{ height: "100%" }}>
         <Reorder.Group
           axis="y"
           values={items}
