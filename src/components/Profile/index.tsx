@@ -13,6 +13,7 @@ import { useCallback } from "react";
 import { IUser } from "../../models/user";
 
 import { GiRank1, GiRank2, GiRank3 } from "react-icons/gi";
+import { useNavigate } from "react-router-dom";
 import { getUserAvatarSeed } from "../../utils/utils";
 
 const sizeOptions = {
@@ -40,6 +41,7 @@ export const Profile = ({
   const xp = user?.statistics?.points.xp ?? 0;
   const minXp = user?.statistics?.points.minXp ?? 0;
   const maxXp = user?.statistics?.points.maxXp ?? 100;
+  const navigate = useNavigate();
 
   const getCurrentProgress = useCallback(
     () => ((xp - minXp) / (maxXp - minXp)) * 100,
@@ -67,52 +69,63 @@ export const Profile = ({
         })}
         {...props}
       >
-        <Tooltip.Floating
-          // ! new version of mantine should support that but doesn't
-          // transition="skew-up"
-          // transitionDuration={100}
-          // openDelay={500}
-          label={`${xp}XP`}
+        <Stack
+          onClick={() =>
+            navigate(`/profile/${user?.doableId}`, { replace: false })
+          }
+          sx={(theme) => ({
+            gap: 0,
+            alignItems: "center",
+            cursor: "pointer",
+          })}
         >
-          <RingProgress
-            size={sizeOptions[size].ring.size}
-            thickness={sizeOptions[size].ring.thickness}
-            roundCaps
-            sections={[
-              {
-                value: getCurrentProgress(),
-                color: "yellow",
-              },
-            ]}
-            sx={[
-              (theme) => ({
-                "circle:first-of-type": {
-                  stroke: theme.colors.gray[7],
+          <Tooltip.Floating
+            // ! new version of mantine should support that but doesn't
+            // transition="skew-up"
+            // transitionDuration={100}
+            // openDelay={500}
+            label={`${xp}XP`}
+          >
+            <RingProgress
+              size={sizeOptions[size].ring.size}
+              thickness={sizeOptions[size].ring.thickness}
+              roundCaps
+              sections={[
+                {
+                  value: getCurrentProgress(),
+                  color: "yellow",
                 },
-              }),
-              sx,
-            ]}
-            label={
-              <Center>
-                <Avatar
-                  size={sizeOptions[size].avatar}
-                  src={`data:image/svg+xml;UTF-8,${encodeURIComponent(
-                    avatar(getUserAvatarSeed(user))
-                  )}`}
-                ></Avatar>
-              </Center>
-            }
-          />
-        </Tooltip.Floating>
+              ]}
+              sx={[
+                (theme) => ({
+                  "circle:first-of-type": {
+                    stroke: theme.colors.gray[7],
+                  },
+                }),
+                sx,
+              ]}
+              label={
+                <Center>
+                  <Avatar
+                    size={sizeOptions[size].avatar}
+                    src={`data:image/svg+xml;UTF-8,${encodeURIComponent(
+                      avatar(getUserAvatarSeed(user))
+                    )}`}
+                  ></Avatar>
+                </Center>
+              }
+            />
+          </Tooltip.Floating>
 
-        <Text
-          align="center"
-          style={{ whiteSpace: size === "lg" ? "nowrap" : "normal" }}
-          size={size}
-          weight={"bold"}
-        >
-          {user?.name} {user?.surname}
-        </Text>
+          <Text
+            align="center"
+            style={{ whiteSpace: size === "lg" ? "nowrap" : "normal" }}
+            size={size}
+            weight={"bold"}
+          >
+            {user?.name} {user?.surname}
+          </Text>
+        </Stack>
 
         <Badge
           variant="light"

@@ -15,6 +15,7 @@ import NotFound from "./pages/NotFound";
 import Party from "./pages/Party";
 import Projects from "./pages/Projects";
 import ProjectPage from "./pages/Projects/ProjectPage";
+import QuestProfile from "./pages/QuestProfile";
 import Rewards from "./pages/Rewards";
 import ServerError from "./pages/ServerError";
 import Settings from "./pages/Settings";
@@ -178,6 +179,16 @@ function App() {
               <RequireAuth>
                 <MainLayout page="rewards">
                   <Rewards />
+                </MainLayout>
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/profile/:userId"
+            element={
+              <RequireAuth>
+                <MainLayout page="questProfile">
+                  <QuestProfile />
                 </MainLayout>
               </RequireAuth>
             }
