@@ -12,6 +12,7 @@ import {
   Text,
   useMantineTheme,
 } from "@mantine/core";
+import { cleanNotifications } from "@mantine/notifications";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   MouseEvent,
@@ -203,6 +204,10 @@ const Party = ({ tourStart, setTourStart }: TourPageProps) => {
     setProjectMutated("");
     setOpenDeleteModal(false);
   }
+
+  useEffect(() => {
+    cleanNotifications();
+  }, []);
 
   useEffect(() => {
     setHeaderText("Don't let them slack off");

@@ -1,4 +1,6 @@
+import { showNotification } from "@mantine/notifications";
 import { createContext, Dispatch, useEffect, useState } from "react";
+import { RiMessage3Line } from "react-icons/ri";
 import { io } from "socket.io-client";
 import { IMessage } from "../models/message";
 
@@ -14,6 +16,8 @@ export const ChatContextProvider = (props: any) => {
   const [isConnected, setIsConnected] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
+  const doableId = localStorage.getItem("doableId")!;
+  const partyId = localStorage.getItem("partyId")!;
 
   useEffect(() => {
     if (DEBUG)
@@ -37,7 +41,7 @@ export const ChatContextProvider = (props: any) => {
   }, [messages]);
 
   useEffect(() => {
-    const shouldReconnect = loggedIn || localStorage.getItem("doableId")!;
+    const shouldReconnect = loggedIn || doableId;
     if (shouldReconnect && !socket.hasListeners("connection")) {
       if (DEBUG) console.log("[ChatContext] setting listeners");
 
@@ -71,15 +75,26 @@ export const ChatContextProvider = (props: any) => {
         setIsAuthenticated(false);
       });
 
-      socket.on("message", (data: IMessage) => {
-        if (DEBUG) console.log("<= message");
+      socket.on("message", (data: IMessage & { userDisplay: string }) => {
+        if (DEBUG) console.log("<= message", data);
         data.date = new Date(data.date);
+
+        const { userDisplay, ...messageData } = data;
+
+        if (window.location.pathname !== "/party" && data.userId !== doableId) {
+          showNotification({
+            icon: <RiMessage3Line />,
+            autoClose: 4000,
+            message: messageData.message,
+            title: userDisplay,
+          });
+        }
 
         setMessages((prev) => {
           const newMessages = [...(prev ?? []), data];
           if (DEBUG) console.log(`  - current messages: ${prev?.length}`);
           if (DEBUG) console.log(`  - new messages: ${newMessages?.length}`);
-          return [...(prev ?? []), data];
+          return [...(prev ?? []), messageData];
         });
       });
     } else {
@@ -93,13 +108,14 @@ export const ChatContextProvider = (props: any) => {
       socket?.off();
       socket?.disconnect();
     };
-  }, [loggedIn]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loggedIn, doableId]);
 
   const sendMessage = (value: string) => {
     const newMessage: IMessage = {
       message: value,
-      partyId: localStorage.getItem("partyId")!,
-      userId: localStorage.getItem("doableId")!,
+      partyId: partyId,
+      userId: doableId,
       date: new Date(),
     };
     if (DEBUG) console.log("[ChatContext] before send", messages.length);
