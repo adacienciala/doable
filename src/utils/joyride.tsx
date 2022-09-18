@@ -67,8 +67,9 @@ export const tutorialSteps: { [key: string]: Step[] } = {
           </Text>
           <Text>
             <Text>
-              With more XP, you get a higher <strong>rank</strong>. For the
-              detailed description of those, go to{" "}
+              With more XP, you get a higher <strong>rank</strong>. With a
+              higher rank, you get more and more information about The Zest.
+              Curious? For more information, go to{" "}
               <Text
                 underline
                 span
@@ -356,6 +357,116 @@ export const tutorialSteps: { [key: string]: Step[] } = {
       spotlightClicks: true,
       placement: "right" as Placement,
       disableBeacon: false,
+    },
+  ],
+  party: [
+    {
+      title: "Party tour",
+      target: "body",
+      content: (
+        <>
+          <Text mb={10}>
+            Welcome to your party! Here is the place where you can talk with
+            others, motivate each other, do tasks, and call out for laziness -
+            whatever you want, really!
+          </Text>
+          <Text mb={10}>
+            Just remember - you and your party are people who share a common
+            goal. If you notice that your objectives don't match up amynore, you
+            can always leave the party.
+          </Text>
+          <Text>
+            Having that out of the way... let's have a look around here, shall
+            we?
+          </Text>
+        </>
+      ),
+      styles: {
+        tooltipContent: {
+          textAlign: "center",
+        },
+      },
+      placement: "center" as Placement,
+      disableBeacon: true,
+    },
+    {
+      title: "Members",
+      target: '[data-tut="party-members"]',
+      content: (
+        <>
+          <Text>
+            Here is the list of people that currently share the journey with
+            you. The more people in the party, the more hands on deck to finish
+            your quests but also, the more the chaos!
+          </Text>
+        </>
+      ),
+      placement: "bottom" as Placement,
+      disableBeacon: false,
+    },
+    {
+      title: "Quests",
+      target: '[data-tut="party-quests"]',
+      content: (
+        <>
+          <Text mb={10}>
+            Speaking about quests, your goal as party members is to unite and
+            finish tasks that you have under quests.
+          </Text>
+          <Text mb={10}>
+            Quests are essentialy projects but they are a responsibility of all
+            of you. While a big quest can seem scary and unachievable to do
+            alone, a project that is divided between party members turns into a
+            manageable challenge. Break down the work and cooperate so you all
+            win!
+          </Text>
+        </>
+      ),
+      placement: "top" as Placement,
+      disableBeacon: false,
+    },
+    {
+      title: "Chat",
+      target: '[data-tut="party-chat"]',
+      content: (
+        <>
+          <Text mb={10}>Do you have a big task you can't handle?</Text>
+          <Text mb={10}>
+            Or you see the deadline is coming, the quest has not been finished,
+            and your fellow party members are in trouble?
+          </Text>
+          <Text mb={10}>
+            Jump into the chat, motivate each other, and talk trash about how
+            life is hard. After that - spring into action, do the tasks, and
+            save the party!
+          </Text>
+        </>
+      ),
+      placement: "left" as Placement,
+      disableBeacon: false,
+    },
+    {
+      title: "Party profile",
+      target: '[data-tut="party-profile"]',
+      content: (
+        <>
+          <Text mb={10}>
+            Each member of your party can see your XP and rank. Next you have
+            the indicator of your party level - it rises whenever you do tasks
+            under party's quests. If you see that someone from your party is not
+            rising their party level, that means they're slacking off for some
+            reason. Reach out to them, maybe they need your help!
+          </Text>
+          <Text>
+            Here you can also see the <b>profile</b> of each party member. After
+            clicking on it, you might see some more information about their
+            journey. Curious what yours looks like? Go ahead!
+          </Text>
+        </>
+      ),
+      placement: "bottom" as Placement,
+      disableBeacon: false,
+      spotlightClicks: true,
     },
   ],
 };

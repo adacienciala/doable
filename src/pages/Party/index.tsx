@@ -10,6 +10,7 @@ import {
   Space,
   Stack,
   Text,
+  useMantineTheme,
 } from "@mantine/core";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -17,9 +18,18 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import { RiAddFill, RiSettings2Line } from "react-icons/ri";
+import ReactJoyride, {
+  ACTIONS,
+  CallBackProps,
+  EVENTS,
+  LIFECYCLE,
+  STATUS,
+  StoreHelpers,
+} from "react-joyride";
 import { Navigate, useLocation } from "react-router-dom";
 import { APIClient, Method, PartyExtended } from "../../api/client";
 import { ApiError } from "../../api/errors";
@@ -35,10 +45,16 @@ import { ProjectEditDrawer } from "../../containers/ProjectEditDrawer";
 import { AccessDeniedModal } from "../../layouts/AccessDeniedModal";
 import { IUser } from "../../models/user";
 import { HeaderContext } from "../../utils/headerContext";
+import {
+  JoyrideStateProps,
+  joyrideStyles,
+  TourPageProps,
+  tutorialSteps,
+} from "../../utils/joyride";
 import NoParty from "./NoParty";
 import { PartyMemberProfile } from "./PartyMemberProfile";
 
-const Party = () => {
+const Party = ({ tourStart, setTourStart }: TourPageProps) => {
   const location = useLocation() as any;
   const client = new APIClient();
   const [partyId, setPartyId] = useState(localStorage.getItem("partyId") ?? "");
@@ -50,6 +66,85 @@ const Party = () => {
   const queryClient = useQueryClient();
   const { classes } = projectCardStyles();
   const [, setHeaderText] = useContext(HeaderContext);
+
+  // -- JOYRIDE
+
+  const theme = useMantineTheme();
+  const [{ run, steps, stepIndex }, setTour] = useState<JoyrideStateProps>({
+    run: JSON.parse(localStorage.getItem("isNewUser") ?? "false"),
+    steps: tutorialSteps["party"],
+    stepIndex: 0,
+  });
+
+  console.log(localStorage.getItem("isNewUser"), run);
+
+  useEffect(() => {
+    return () => {
+      if (setTourStart) setTourStart(false);
+    };
+  }, [setTourStart]);
+
+  useEffect(() => {
+    setTour((prev) => ({
+      ...prev,
+      run: tourStart ?? false,
+    }));
+  }, [tourStart]);
+
+  const helpers = useRef<StoreHelpers>();
+
+  const setHelpers = (storeHelpers: StoreHelpers) => {
+    helpers.current = storeHelpers;
+  };
+
+  const handleJoyrideCallback = (data: CallBackProps) => {
+    const {
+      lifecycle,
+      action,
+      index,
+      status,
+      type,
+      step: { target },
+    } = data;
+
+    console.log("[joyride]", data);
+
+    if (([STATUS.FINISHED, STATUS.SKIPPED] as string[]).includes(status)) {
+      // Need to set our running state to false, so we can restart if we click start again.
+      setTour((prev) => ({
+        ...prev,
+        run: false,
+        stepIndex: 0,
+      }));
+      if (setTourStart) setTourStart(false);
+    } else if (
+      ([EVENTS.STEP_AFTER, EVENTS.TARGET_NOT_FOUND] as string[]).includes(type)
+    ) {
+      const nextStepIndex = index + (action === ACTIONS.PREV ? -1 : 1);
+
+      // Create an example project and tasks
+      if (
+        lifecycle === LIFECYCLE.COMPLETE &&
+        target === '[data-tut="add-project"]' &&
+        action === ACTIONS.NEXT
+      ) {
+        setTour((prev) => ({
+          ...prev,
+          run: false,
+          projectTasksCount: 0,
+        }));
+      } else {
+        // Update state to advance the tour
+        setTour((prev) => ({
+          ...prev,
+          run: true,
+          stepIndex: nextStepIndex,
+        }));
+      }
+    }
+  };
+
+  // -- JOYRIDE
 
   const {
     isLoading,
@@ -145,6 +240,21 @@ const Party = () => {
 
   return (
     <>
+      <ReactJoyride
+        continuous
+        scrollToFirstStep
+        showProgress
+        showSkipButton
+        disableCloseOnEsc
+        disableOverlayClose
+        hideCloseButton
+        stepIndex={stepIndex}
+        run={run}
+        steps={steps}
+        getHelpers={setHelpers}
+        styles={joyrideStyles(theme)}
+        callback={handleJoyrideCallback}
+      />
       <LoadingOverlay
         visible={isLoading}
         overlayOpacity={0.8}
@@ -205,7 +315,7 @@ const Party = () => {
           spacing={20}
         >
           <Stack>
-            <Group>
+            <Group data-tut="party-members">
               <Text size="xl" weight="bold">
                 Members
               </Text>
@@ -222,7 +332,7 @@ const Party = () => {
             </Group>
 
             <ScrollArea>
-              <Group noWrap style={{ marginBottom: "40px" }}>
+              <Group noWrap pb={20}>
                 {party.members
                   .sort(
                     (u1, u2) =>
@@ -239,7 +349,7 @@ const Party = () => {
             align="stretch"
             position="apart"
             noWrap
-            style={{ flexGrow: 1 }}
+            style={{ overflow: "hidden", flexGrow: 1 }}
           >
             <Stack>
               <Text size="xl" weight="bold">
@@ -254,7 +364,9 @@ const Party = () => {
                     withBorder
                     shadow="sm"
                     radius="md"
-                    sx={() => ({ ...sizeOptions["lg"].card })}
+                    sx={() => ({
+                      ...sizeOptions["lg"].card,
+                    })}
                     className={classes.card}
                   >
                     <RiAddFill size={50} />
@@ -281,7 +393,7 @@ const Party = () => {
                 Chat
               </Text>
               <Chat
-                sx={{ flexGrow: 1, minWidth: "400px", width: "400px" }}
+                sx={{ flexGrow: 1, width: "400px" }}
                 users={party.members}
               />
             </Stack>

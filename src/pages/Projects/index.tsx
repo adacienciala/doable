@@ -327,7 +327,7 @@ const Projects = ({ tourStart, setTourStart }: TourPageProps) => {
         <Group
           align="stretch"
           style={{
-            margin: "20px",
+            padding: "20px",
           }}
         >
           <Card

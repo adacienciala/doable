@@ -3,9 +3,14 @@ import { Profile } from "../../../components/Profile";
 import { IUser } from "../../../models/user";
 
 export const PartyMemberProfile = ({ user }: { user?: IUser }) => {
+  const isUser = user?.doableId === localStorage.getItem("doableId")!;
   return (
     <>
-      <Group noWrap align="stretch">
+      <Group
+        noWrap
+        align="stretch"
+        {...(isUser ? { "data-tut": "party-profile" } : {})}
+      >
         <Profile
           size="lg"
           user={user}

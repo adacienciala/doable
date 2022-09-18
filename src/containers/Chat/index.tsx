@@ -55,6 +55,7 @@ export const Chat = ({ users, sx }: { users: IUser[]; sx?: Sx }) => {
         }),
         sx,
       ]}
+      data-tut="party-chat"
     >
       <ScrollArea
         type="hover"
