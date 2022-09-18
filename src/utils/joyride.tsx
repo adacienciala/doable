@@ -422,7 +422,7 @@ export const tutorialSteps: { [key: string]: Step[] } = {
           </Text>
         </>
       ),
-      placement: "top" as Placement,
+      placement: "auto" as Placement,
       disableBeacon: false,
     },
     {
@@ -430,7 +430,10 @@ export const tutorialSteps: { [key: string]: Step[] } = {
       target: '[data-tut="party-chat"]',
       content: (
         <>
-          <Text mb={10}>Do you have a big task you can't handle?</Text>
+          <Text mb={10}>
+            Do you have a big task ahead of you and you're not sure you can do
+            it?
+          </Text>
           <Text mb={10}>
             Or you see the deadline is coming, the quest has not been finished,
             and your fellow party members are in trouble?
@@ -453,15 +456,19 @@ export const tutorialSteps: { [key: string]: Step[] } = {
           <Text mb={10}>
             Each member of your party can see your XP and rank. Next you have
             the indicator of your party level - it rises whenever you do tasks
-            under party's quests. If you see that someone from your party is not
-            rising their party level, that means they're slacking off for some
-            reason. Reach out to them, maybe they need your help!
+            under party's quests.
           </Text>
-          <Text>
-            Here you can also see the <b>profile</b> of each party member. After
-            clicking on it, you might see some more information about their
-            journey. Curious what yours looks like? Go ahead!
+          <Text mb={10}>
+            If you see that someone from your party is not rising their party
+            level, that means they're slacking off for some reason. Reach out to
+            them, maybe they need your help!
           </Text>
+          <Text mb={10}>
+            Here you can also see the <b>quest profile</b> of each party member.
+            After clicking on it, you might see some more information about
+            their journey.
+          </Text>
+          <Text>Curious what yours looks like? Go ahead!</Text>
         </>
       ),
       placement: "bottom" as Placement,

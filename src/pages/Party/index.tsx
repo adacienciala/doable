@@ -314,8 +314,8 @@ const Party = ({ tourStart, setTourStart }: TourPageProps) => {
           }}
           spacing={20}
         >
-          <Stack>
-            <Group data-tut="party-members">
+          <Stack data-tut="party-members">
+            <Group>
               <Text size="xl" weight="bold">
                 Members
               </Text>
@@ -351,7 +351,7 @@ const Party = ({ tourStart, setTourStart }: TourPageProps) => {
             noWrap
             style={{ overflow: "hidden", flexGrow: 1 }}
           >
-            <Stack>
+            <Stack data-tut="party-quests">
               <Text size="xl" weight="bold">
                 Quests
               </Text>
@@ -388,7 +388,7 @@ const Party = ({ tourStart, setTourStart }: TourPageProps) => {
                 </Group>
               </ScrollArea>
             </Stack>
-            <Stack>
+            <Stack data-tut="party-chat">
               <Text size="xl" weight="bold">
                 Chat
               </Text>
