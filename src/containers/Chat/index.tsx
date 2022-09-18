@@ -6,7 +6,7 @@ import {
   Stack,
   TextInput,
 } from "@mantine/core";
-import { useContext, useEffect, useRef } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Message } from "../../components/Message";
 
 import { IUser } from "../../models/user";
@@ -14,12 +14,13 @@ import { ChatContext } from "../../utils/chatContext";
 
 export const Chat = ({ users }: { users: IUser[] }) => {
   const [messages, sendMessage] = useContext(ChatContext);
+  const [firstMessagesFetched, setFirstMessagesFetched] = useState(false);
   const viewport = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const scrollToBottom = () =>
+  const scrollToBottom = (behavior?: ScrollBehavior) =>
     viewport?.current?.scrollTo({
       top: viewport.current.scrollHeight,
-      behavior: "smooth",
+      behavior,
     });
 
   const handleSendMessage = () => {
@@ -31,8 +32,11 @@ export const Chat = ({ users }: { users: IUser[] }) => {
   };
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    scrollToBottom(firstMessagesFetched ? "smooth" : undefined);
+    if (messages.length > 0 && !firstMessagesFetched) {
+      setFirstMessagesFetched(true);
+    }
+  }, [firstMessagesFetched, messages]);
 
   return (
     <Stack
