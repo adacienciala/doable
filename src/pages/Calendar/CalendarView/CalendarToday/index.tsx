@@ -1,4 +1,4 @@
-import { Group, Text } from "@mantine/core";
+import { Group, Stack, Text } from "@mantine/core";
 import { format, isToday } from "date-fns";
 import { CalendarViewProps } from "..";
 import { AddButton } from "../../../../components/AddButton";
@@ -11,12 +11,8 @@ export const CalendarToday = ({
   onAddTask,
 }: CalendarViewProps) => {
   return (
-    <>
-      <Group
-        sx={() => ({
-          marginBottom: "20px",
-        })}
-      >
+    <Stack style={{ height: "100%" }}>
+      <Group>
         <Text weight={"bold"}>Today</Text>
         <Text>{format(Date.now(), "EEEE, do MMM")}</Text>
         <AddButton
@@ -33,6 +29,6 @@ export const CalendarToday = ({
         handleTaskDone={handleTaskDone}
         onTaskClick={onTaskClick}
       />
-    </>
+    </Stack>
   );
 };

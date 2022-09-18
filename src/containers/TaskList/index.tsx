@@ -1,3 +1,4 @@
+import { ScrollArea, Stack } from "@mantine/core";
 import { Reorder } from "framer-motion";
 import { MouseEvent, useCallback, useEffect, useState } from "react";
 import { TaskExtended } from "../../api/client";
@@ -40,34 +41,36 @@ export const TaskList = ({
   }, [tasks]);
 
   return (
-    <>
-      <Reorder.Group
-        axis="y"
-        values={items}
-        onReorder={setItems}
-        style={{
-          listStyle: "none",
-          padding: 0,
-          margin: 0,
-          height: view === "week" ? "70%" : "90%",
-        }}
-      >
-        {items.map((item) => (
-          <Reorder.Item
-            key={item.taskId}
-            value={item}
-            onClick={(e) => handleTaskClick(e, item.taskId)}
-            onDragStart={(e) => setIsDragged(true)}
-          >
-            <TaskPill
-              data={item}
-              view={view}
-              handleTaskOnFinish={handleTaskOnFinish}
-              handleTaskDone={handleTaskDone}
-            />
-          </Reorder.Item>
-        ))}
-      </Reorder.Group>
-    </>
+    <Stack style={{ height: "100%" }}>
+      <ScrollArea>
+        <Reorder.Group
+          axis="y"
+          values={items}
+          onReorder={setItems}
+          layoutScroll
+          style={{
+            listStyle: "none",
+            padding: 0,
+            margin: 0,
+          }}
+        >
+          {items.map((item) => (
+            <Reorder.Item
+              key={item.taskId}
+              value={item}
+              onClick={(e) => handleTaskClick(e, item.taskId)}
+              onDragStart={(e) => setIsDragged(true)}
+            >
+              <TaskPill
+                data={item}
+                view={view}
+                handleTaskOnFinish={handleTaskOnFinish}
+                handleTaskDone={handleTaskDone}
+              />
+            </Reorder.Item>
+          ))}
+        </Reorder.Group>
+      </ScrollArea>
+    </Stack>
   );
 };

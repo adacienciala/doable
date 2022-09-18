@@ -5,6 +5,7 @@ import {
   Group,
   LoadingOverlay,
   Modal,
+  ScrollArea,
   Space,
   Text,
   useMantineTheme,
@@ -324,38 +325,44 @@ const Projects = ({ tourStart, setTourStart }: TourPageProps) => {
         onClose={handleEditProjectDrawerClosed}
       />
       {projects && (
-        <Group
-          align="stretch"
+        <ScrollArea
           style={{
-            padding: "20px",
+            height: "100%",
           }}
         >
-          <Card
-            component="button"
-            onClick={() => handleAddProjectDrawerOpen()}
-            withBorder
-            shadow="sm"
-            radius="md"
-            sx={() => ({ ...sizeOptions["xl"].card })}
-            className={classes.card}
-            data-tut="add-project"
+          <Group
+            align="stretch"
+            style={{
+              padding: "20px",
+            }}
           >
-            <RiAddFill size={50} />
-          </Card>
+            <Card
+              component="button"
+              onClick={() => handleAddProjectDrawerOpen()}
+              withBorder
+              shadow="sm"
+              radius="md"
+              sx={() => ({ ...sizeOptions["xl"].card })}
+              className={classes.card}
+              data-tut="add-project"
+            >
+              <RiAddFill size={50} />
+            </Card>
 
-          {projects.map((project: ProjectExtended) => (
-            <ProjectCard
-              onEditProject={() =>
-                handleEditProjectDrawerOpen(project.projectId)
-              }
-              onDeleteProject={() =>
-                handleDeleteProjectModalOpen(project.projectId)
-              }
-              key={project.projectId}
-              data={project}
-            />
-          ))}
-        </Group>
+            {projects.map((project: ProjectExtended) => (
+              <ProjectCard
+                onEditProject={() =>
+                  handleEditProjectDrawerOpen(project.projectId)
+                }
+                onDeleteProject={() =>
+                  handleDeleteProjectModalOpen(project.projectId)
+                }
+                key={project.projectId}
+                data={project}
+              />
+            ))}
+          </Group>
+        </ScrollArea>
       )}
     </>
   );

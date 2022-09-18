@@ -120,7 +120,7 @@ const MainLayout: React.FC<Props> = ({ page, noTour, children }) => {
         <Box
           sx={(theme) => ({
             gridArea: "content",
-            overflow: "auto",
+            overflow: "hidden",
           })}
         >
           {childrenWithProps}

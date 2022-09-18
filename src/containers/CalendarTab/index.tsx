@@ -1,3 +1,4 @@
+import { Box } from "@mantine/core";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence } from "framer-motion";
 import { Dispatch, SetStateAction, useContext, useMemo } from "react";
@@ -87,13 +88,11 @@ export const CalendarTab = ({
       />
       <AnimatePresence>
         {open && (
-          <div
+          <Box
             style={{
               width: "100%",
               borderRight: "1px solid gray",
               padding: "20px",
-              overflowY: "auto",
-              overflowX: "hidden",
             }}
           >
             <CurrentCalendarView.ViewComponent
@@ -103,7 +102,7 @@ export const CalendarTab = ({
               onAddTask={onAddTask}
               options={CurrentCalendarView.options}
             />
-          </div>
+          </Box>
         )}
       </AnimatePresence>
     </>

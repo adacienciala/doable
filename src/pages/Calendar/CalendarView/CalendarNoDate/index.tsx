@@ -14,7 +14,6 @@ export const CalendarNoDate = ({
       <Group
         sx={(theme) => ({
           justifyContent: "space-between",
-          marginBottom: "20px",
         })}
       >
         <Text weight={"bold"}>Not scheduled</Text>

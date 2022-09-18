@@ -124,11 +124,7 @@ const ProjectPage = () => {
       />
       {project && (
         <Stack sx={{ padding: "20px", height: "100%" }}>
-          <Group
-            sx={() => ({
-              paddingBottom: "20px",
-            })}
-          >
+          <Group>
             <ActionIcon
               variant="transparent"
               onClick={() => navigate(-1)}

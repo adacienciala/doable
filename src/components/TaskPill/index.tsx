@@ -84,7 +84,7 @@ export const TaskPill = ({
         indicator: {
           maxWidth: "30%",
           color: "black",
-          transform: "translate(10px, -50%)",
+          transform: "translate(0px, -50%) !important",
         },
       })}
       {...(isTutorialTask ? { "data-tut": "created-task" } : {})}
@@ -94,7 +94,7 @@ export const TaskPill = ({
         sx={(theme) => ({
           backgroundColor: "white",
           color: theme.colors.gray[7],
-          marginBottom: "20px",
+          marginTop: "15px",
           padding: "10px",
           borderRadius: "10px",
           cursor: "grab",

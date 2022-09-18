@@ -1,4 +1,4 @@
-import { ActionIcon, Grid, Group, Text } from "@mantine/core";
+import { ActionIcon, Grid, Group, Stack, Text } from "@mantine/core";
 import { addDays, format, isSameDay, subDays } from "date-fns";
 import { useCallback, useMemo } from "react";
 import { RiArrowLeftSLine, RiArrowRightSLine } from "react-icons/ri";
@@ -30,7 +30,7 @@ export const CalendarWeek = ({
         <Group
           sx={(theme) => ({
             justifyContent: "space-between",
-            marginBottom: "20px",
+            marginBottom: "10px",
             flexWrap: "nowrap",
           })}
         >
@@ -71,8 +71,8 @@ export const CalendarWeek = ({
   };
 
   return (
-    <>
-      <Group style={{ marginBottom: "20px" }}>
+    <Stack style={{ height: "100%" }}>
+      <Group>
         <ActionIcon
           color="gray.0"
           radius="xl"
@@ -108,7 +108,16 @@ export const CalendarWeek = ({
         justify="space-between"
         columns={4}
         gutter={50}
-        style={{ height: "100%" }}
+        sx={{
+          flexGrow: 1,
+          margin: 0,
+          height: "100%",
+          " >div": {
+            paddingLeft: 0,
+            paddingTop: 5,
+            overflow: "hidden",
+          },
+        }}
       >
         {WeekDates().map((date, idx) => (
           <Grid.Col
@@ -117,6 +126,7 @@ export const CalendarWeek = ({
             sx={() => ({
               order: idx < 3 ? idx : idx + 1,
               height: "50%",
+              marginBottom: "10px",
             })}
           >
             {DayOfWeek(date)}
@@ -131,6 +141,6 @@ export const CalendarWeek = ({
           <HabitTracker />
         </Grid.Col>
       </Grid>
-    </>
+    </Stack>
   );
 };
