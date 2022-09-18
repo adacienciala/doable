@@ -7,6 +7,7 @@ import {
   Modal,
   Space,
   Text,
+  useMantineTheme,
 } from "@mantine/core";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -14,9 +15,18 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import { RiAddFill } from "react-icons/ri";
+import ReactJoyride, {
+  ACTIONS,
+  CallBackProps,
+  EVENTS,
+  LIFECYCLE,
+  STATUS,
+  StoreHelpers,
+} from "react-joyride";
 import { Navigate, useLocation } from "react-router-dom";
 import { APIClient, Method, ProjectExtended } from "../../api/client";
 import { ApiError } from "../../api/errors";
@@ -28,9 +38,18 @@ import {
 } from "../../containers/ProjectCard";
 import { ProjectEditDrawer } from "../../containers/ProjectEditDrawer";
 import { AccessDeniedModal } from "../../layouts/AccessDeniedModal";
+import { IProject } from "../../models/project";
+import { ITask } from "../../models/task";
 import { HeaderContext } from "../../utils/headerContext";
+import {
+  JoyrideStateProps,
+  joyrideStyles,
+  mockProjectTasks,
+  TourPageProps,
+  tutorialSteps,
+} from "../../utils/joyride";
 
-const Projects = () => {
+const Projects = ({ tourStart, setTourStart }: TourPageProps) => {
   const location = useLocation() as any;
   const client = new APIClient();
   const queryClient = useQueryClient();
@@ -40,6 +59,91 @@ const Projects = () => {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const { classes } = projectCardStyles();
   const [, setHeaderText] = useContext(HeaderContext);
+
+  // -- JOYRIDE
+
+  const theme = useMantineTheme();
+  const [{ run, steps, stepIndex, projectCreated }, setTour] =
+    useState<JoyrideStateProps>({
+      run: JSON.parse(localStorage.getItem("isNewUser") ?? "false"),
+      steps: tutorialSteps["projects"],
+      stepIndex: 0,
+    });
+
+  console.log(localStorage.getItem("isNewUser"), run);
+
+  useEffect(() => {
+    return () => {
+      if (setTourStart) setTourStart(false);
+    };
+  }, [setTourStart]);
+
+  useEffect(() => {
+    setTour((prev) => ({
+      ...prev,
+      run: tourStart ?? false,
+    }));
+  }, [tourStart]);
+
+  const helpers = useRef<StoreHelpers>();
+
+  const setHelpers = (storeHelpers: StoreHelpers) => {
+    helpers.current = storeHelpers;
+  };
+
+  const handleJoyrideCallback = (data: CallBackProps) => {
+    const {
+      lifecycle,
+      action,
+      index,
+      status,
+      type,
+      step: { target },
+    } = data;
+
+    console.log("[joyride]", data);
+
+    if (([STATUS.FINISHED, STATUS.SKIPPED] as string[]).includes(status)) {
+      // Need to set our running state to false, so we can restart if we click start again.
+      setTour((prev) => ({
+        ...prev,
+        run: false,
+        stepIndex: 0,
+        projectCreated: false,
+      }));
+      if (setTourStart) setTourStart(false);
+    } else if (
+      ([EVENTS.STEP_AFTER, EVENTS.TARGET_NOT_FOUND] as string[]).includes(type)
+    ) {
+      const nextStepIndex = index + (action === ACTIONS.PREV ? -1 : 1);
+
+      // Create an example project and tasks
+      if (
+        lifecycle === LIFECYCLE.COMPLETE &&
+        target === '[data-tut="add-project"]' &&
+        action === ACTIONS.NEXT &&
+        !projectCreated
+      ) {
+        addProjectMutation.mutate({
+          name: "Create a project",
+        });
+        setTour((prev) => ({
+          ...prev,
+          run: false,
+          projectTasksCount: 0,
+        }));
+      } else {
+        // Update state to advance the tour
+        setTour((prev) => ({
+          ...prev,
+          run: true,
+          stepIndex: nextStepIndex,
+        }));
+      }
+    }
+  };
+
+  // -- JOYRIDE
 
   const {
     isLoading,
@@ -53,6 +157,54 @@ const Projects = () => {
     () => client.singleProject(Method.DELETE, projectMutated),
     {
       onSuccess: () => {
+        queryClient.invalidateQueries(["projects"]);
+      },
+    }
+  );
+
+  const addProjectMutation = useMutation(
+    (data: Partial<IProject>) =>
+      client.projects(Method.POST, {
+        body: data,
+      }),
+    {
+      onSuccess: (data) => {
+        queryClient.invalidateQueries(["projects"]);
+        queryClient.invalidateQueries(["party"]);
+        localStorage.setItem("tutorialProjectId", data.projectId);
+        addTaskMutation.mutate({
+          ...mockProjectTasks[0],
+          projectId: data.projectId,
+        });
+        addTaskMutation.mutate({
+          ...mockProjectTasks[1],
+          projectId: data.projectId,
+        });
+        addTaskMutation.mutate({
+          ...mockProjectTasks[2],
+          projectId: data.projectId,
+        });
+        setTimeout(
+          () =>
+            setTour((prev) => ({
+              ...prev,
+              run: true,
+              stepIndex: prev.stepIndex + 1,
+              projectCreated: true,
+            })),
+          300
+        );
+      },
+    }
+  );
+
+  const addTaskMutation = useMutation(
+    (data: Partial<ITask>) =>
+      client.tasks(Method.POST, {
+        body: data,
+      }),
+    {
+      onSuccess: (data) => {
         queryClient.invalidateQueries(["projects"]);
       },
     }
@@ -113,6 +265,21 @@ const Projects = () => {
 
   return (
     <>
+      <ReactJoyride
+        continuous
+        scrollToFirstStep
+        showProgress
+        showSkipButton
+        disableCloseOnEsc
+        disableOverlayClose
+        hideCloseButton
+        stepIndex={stepIndex}
+        run={run}
+        steps={steps}
+        getHelpers={setHelpers}
+        styles={joyrideStyles(theme)}
+        callback={handleJoyrideCallback}
+      />
       <LoadingOverlay
         visible={isLoading}
         overlayOpacity={0.8}
@@ -171,6 +338,7 @@ const Projects = () => {
             radius="md"
             sx={() => ({ ...sizeOptions["xl"].card })}
             className={classes.card}
+            data-tut="add-project"
           >
             <RiAddFill size={50} />
           </Card>

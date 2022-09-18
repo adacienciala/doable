@@ -145,7 +145,7 @@ function App() {
             path="/projects/:projectId"
             element={
               <RequireAuth>
-                <MainLayout page="projects">
+                <MainLayout page="projects" noTour={true}>
                   <ProjectPage />
                   {/* <p>asd</p> */}
                 </MainLayout>

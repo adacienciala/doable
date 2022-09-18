@@ -29,7 +29,6 @@ import {
 import { CalendarBacklog } from "./CalendarBacklog";
 
 const Dashboard = ({ tourStart, setTourStart }: TourPageProps) => {
-  const theme = useMantineTheme();
   const [, setHeaderText] = useContext(HeaderContext);
   const location = useLocation() as any;
   const client = new APIClient();
@@ -41,6 +40,7 @@ const Dashboard = ({ tourStart, setTourStart }: TourPageProps) => {
 
   // -- JOYRIDE
 
+  const theme = useMantineTheme();
   const [{ run, steps, stepIndex, taskCreated }, setTour] =
     useState<JoyrideStateProps>({
       run: JSON.parse(localStorage.getItem("isNewUser") ?? "false"),
@@ -54,6 +54,12 @@ const Dashboard = ({ tourStart, setTourStart }: TourPageProps) => {
       run: tourStart ?? false,
     }));
   }, [tourStart]);
+
+  useEffect(() => {
+    return () => {
+      if (setTourStart) setTourStart(false);
+    };
+  }, [setTourStart]);
 
   const helpers = useRef<StoreHelpers>();
 
@@ -75,7 +81,12 @@ const Dashboard = ({ tourStart, setTourStart }: TourPageProps) => {
 
     if (([STATUS.FINISHED, STATUS.SKIPPED] as string[]).includes(status)) {
       // Need to set our running state to false, so we can restart if we click start again.
-      setTour((prev) => ({ steps: prev.steps, run: false, stepIndex: 0 }));
+      setTour((prev) => ({
+        ...prev,
+        run: false,
+        stepIndex: 0,
+        taskCreated: false,
+      }));
       if (setTourStart) setTourStart(false);
     } else if (
       ([EVENTS.STEP_AFTER, EVENTS.TARGET_NOT_FOUND] as string[]).includes(type)
@@ -86,6 +97,7 @@ const Dashboard = ({ tourStart, setTourStart }: TourPageProps) => {
       if (
         lifecycle === LIFECYCLE.COMPLETE &&
         target === '[data-tut="add-task"]' &&
+        action === ACTIONS.NEXT &&
         !taskCreated
       ) {
         addTaskMutation.mutate({
@@ -93,14 +105,13 @@ const Dashboard = ({ tourStart, setTourStart }: TourPageProps) => {
           date: new Date(),
         });
         setTour((prev) => ({
-          steps: prev.steps,
+          ...prev,
           run: false,
-          stepIndex: 3,
         }));
       } else {
         // Update state to advance the tour
         setTour((prev) => ({
-          steps: prev.steps,
+          ...prev,
           run: true,
           stepIndex: nextStepIndex,
         }));
@@ -141,7 +152,7 @@ const Dashboard = ({ tourStart, setTourStart }: TourPageProps) => {
           setTour((prev) => ({
             steps: prev.steps,
             run: true,
-            stepIndex: 4,
+            stepIndex: prev.stepIndex + 1,
             taskCreated: true,
           }));
         }, 400);
@@ -161,13 +172,15 @@ const Dashboard = ({ tourStart, setTourStart }: TourPageProps) => {
           queryClient.invalidateQueries(["user"]);
           queryClient.invalidateQueries(["users"]);
         }
-        setTour((prev) => ({
-          ...prev,
-          stepIndex: prev.stepIndex + 1,
-          run: true,
-          taskDeleted: true,
-          taskCreated: false,
-        }));
+        if (data.taskId === localStorage.getItem("tutorialTaskId")) {
+          setTour((prev) => ({
+            ...prev,
+            stepIndex: prev.stepIndex + 1,
+            run: true,
+            taskDeleted: true,
+            taskCreated: false,
+          }));
+        }
       },
     }
   );

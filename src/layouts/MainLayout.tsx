@@ -20,9 +20,10 @@ import { HeaderContext } from "../utils/headerContext";
 
 type Props = {
   page: string;
+  noTour?: boolean;
 };
 
-const MainLayout: React.FC<Props> = ({ page, children }) => {
+const MainLayout: React.FC<Props> = ({ page, noTour, children }) => {
   const client = new APIClient();
   const [headerText] = useContext(HeaderContext);
   const [tourStart, setTourStart] = useState(false);
@@ -105,14 +106,16 @@ const MainLayout: React.FC<Props> = ({ page, children }) => {
           <Text>
             {headerText}, {user?.name}
           </Text>
-          <ActionIcon
-            color="gray.9"
-            radius="xl"
-            variant="outline"
-            onClick={() => setTourStart(true)}
-          >
-            <IoMdHelp />
-          </ActionIcon>
+          {!noTour && (
+            <ActionIcon
+              color="gray.9"
+              radius="xl"
+              variant="outline"
+              onClick={() => setTourStart(true)}
+            >
+              <IoMdHelp />
+            </ActionIcon>
+          )}
         </Group>
         <Box
           sx={(theme) => ({

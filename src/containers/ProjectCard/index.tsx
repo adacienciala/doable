@@ -68,6 +68,9 @@ export const ProjectCard = ({
   const navigate = useNavigate();
   const { classes } = projectCardStyles();
 
+  const isTutorialProject =
+    projectId === localStorage.getItem("tutorialProjectId");
+
   const getCurrentProgress = useCallback(
     () =>
       historyTasksNumber !== 0
@@ -140,10 +143,16 @@ export const ProjectCard = ({
         radius="md"
         sx={() => ({ ...sizeOptions[size].card })}
         className={classes.card}
+        {...(isTutorialProject ? { "data-tut": "created-project" } : {})}
       >
         <Group position="apart" noWrap>
           <Text weight={500}>{name}</Text>
-          <Menu withinPortal position="bottom" shadow="sm">
+          <Menu
+            withinPortal
+            position="bottom"
+            shadow="sm"
+            {...(isTutorialProject ? { "data-tut": "project-edit" } : {})}
+          >
             <Menu.Target>
               <ActionIcon color="gray.9">
                 <RiMore2Fill size={16} />
@@ -174,12 +183,16 @@ export const ProjectCard = ({
             height: sizeOptions[size].cover.size,
           }}
           mt="sm"
+          {...(isTutorialProject ? { "data-tut": "project-cover" } : {})}
         >
           {getCoverImage()}
         </Card.Section>
 
         <Card.Section inheritPadding mt="sm" pb="md">
-          <Group position="apart">
+          <Group
+            position="apart"
+            {...(isTutorialProject ? { "data-tut": "project-footer" } : {})}
+          >
             <UserCluster users={{ owner, party }} />
             {cover && (
               <Text
