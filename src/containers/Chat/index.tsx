@@ -6,33 +6,33 @@ import {
   Stack,
   TextInput,
 } from "@mantine/core";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { Message } from "../../components/Message";
 
 import { IUser } from "../../models/user";
 import { ChatContext } from "../../utils/chatContext";
 
 export const Chat = ({ users }: { users: IUser[] }) => {
-  const [message, setMessage] = useState("");
-  const [messages, , sendMessage] = useContext(ChatContext);
+  const [messages, sendMessage] = useContext(ChatContext);
   const viewport = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const scrollToBottom = () =>
     viewport?.current?.scrollTo({
       top: viewport.current.scrollHeight,
       behavior: "smooth",
     });
 
-  useEffect(() => {
-    console.log("[chat] messages effect", messages.length);
-  }, [messages]);
-
-  const handleSendMessage = (value: string) => {
-    sendMessage(value);
-    setMessage("");
+  const handleSendMessage = () => {
+    if (inputRef?.current) {
+      const val = inputRef.current.value;
+      if (val) sendMessage(val);
+      inputRef.current.value = "";
+    }
   };
 
-  console.log("[chat]:[render] messages", messages.length);
-  // scrollToBottom();
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   return (
     <Stack
@@ -81,15 +81,12 @@ export const Chat = ({ users }: { users: IUser[] }) => {
 
       <Group>
         <TextInput
+          ref={inputRef}
           placeholder="Type message..."
           style={{ flexGrow: 1 }}
-          value={message}
-          onChange={(e) => setMessage(e.currentTarget.value)}
-          onKeyUp={(e) =>
-            e.key === "Enter" ? handleSendMessage(message) : undefined
-          }
+          onKeyUp={(e) => (e.key === "Enter" ? handleSendMessage() : undefined)}
         />
-        <Button onClick={() => handleSendMessage(message)}>Send</Button>
+        <Button onClick={() => handleSendMessage()}>Send</Button>
       </Group>
     </Stack>
   );

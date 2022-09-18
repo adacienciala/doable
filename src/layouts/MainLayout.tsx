@@ -26,7 +26,7 @@ type Props = {
 const MainLayout: React.FC<Props> = ({ page, noTour, children }) => {
   const client = new APIClient();
   const [headerText] = useContext(HeaderContext);
-  const [, socket] = useContext(ChatContext);
+  const [, , setLoggedIn] = useContext(ChatContext);
   const [tourStart, setTourStart] = useState(false);
 
   const { data: user } = useQuery<IUser>(
@@ -40,9 +40,8 @@ const MainLayout: React.FC<Props> = ({ page, noTour, children }) => {
   useEffect(() => localStorage.setItem("partyId", user?.partyId ?? ""), [user]);
 
   const logOut = () => {
-    socket?.off();
-    socket?.disconnect();
     localStorage.clear();
+    setLoggedIn(false);
   };
 
   const childrenWithProps = useMemo(() => {
