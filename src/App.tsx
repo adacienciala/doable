@@ -20,10 +20,9 @@ import Rewards from "./pages/Rewards";
 import ServerError from "./pages/ServerError";
 import Settings from "./pages/Settings";
 import { socket, useChat } from "./utils/chatContext";
-import { messagesStorage } from "./utils/socket";
 
 function App() {
-  const { state: messages, stateSetter: setMessages } = useChat([]);
+  const { state: messages, stateSetter: setMessages } = useChat();
   const [isConnected, setIsConnected] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -50,6 +49,7 @@ function App() {
         callback: () => {
           console.log("[authenticated]");
           setIsAuthenticated(true);
+          setIsConnected(true);
         },
       },
       {
@@ -63,12 +63,13 @@ function App() {
         name: "messages history",
         callback: (data: IMessage[]) => {
           console.log("[messages history]");
+          console.log("  - current messages:", messages.length);
           console.log("  - history messages:", data.length);
           for (const m of data) {
             m.date = new Date(m.date);
           }
-          messagesStorage.splice(0, messagesStorage.length);
-          messagesStorage.push(...data);
+          // messagesStorage.splice(0, messagesStorage.length);
+          // messagesStorage.push(...data);
           setMessages(data);
         },
       },
@@ -79,10 +80,9 @@ function App() {
           data.date = new Date(data.date);
           const newMessages = [...(messages ?? []), data];
           console.log(`  - current messages: ${messages?.length}`);
-          console.log(`  - new messages: ${newMessages.length}`);
-          console.log(`    - ${data}`);
-          messagesStorage.splice(0, messagesStorage.length);
-          messagesStorage.push(...newMessages);
+          console.log(`  - new messages: ${newMessages?.length}`);
+          // messagesStorage.splice(0, messagesStorage.length);
+          // messagesStorage.push(data);
           setMessages(newMessages);
         },
       },
@@ -100,16 +100,24 @@ function App() {
   }, [events]);
 
   useEffect(() => {
-    console.log("socket status", socket?.connected ?? "down");
+    console.log(
+      "[socket status]:[App mount] set isConnected",
+      socket?.connected
+    );
     setIsConnected(socket.connected);
     return () => {
-      console.log("[socket status] closing");
+      console.log("[socket status]:[App unmount] closing");
       if (socket) socket.close();
     };
   }, []);
 
   useEffect(() => {
-    console.log("[socket status] ", isConnected, isAuthenticated);
+    console.log(
+      "[socket status] isConnected",
+      isConnected,
+      "isAuth",
+      isAuthenticated
+    );
     if (!isAuthenticated) {
       console.log("=> try to auth");
       socket.emit("authenticate", {
@@ -117,9 +125,6 @@ function App() {
         tokenSelector: localStorage.getItem("tokenSelector")!,
       });
     }
-    return () => {
-      console.log("[socket status] do not disconnec!");
-    };
   }, [isConnected, isAuthenticated]);
 
   return (

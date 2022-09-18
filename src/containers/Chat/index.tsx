@@ -11,85 +11,20 @@ import { Message } from "../../components/Message";
 
 import { IMessage } from "../../models/message";
 import { IUser } from "../../models/user";
-import { socket } from "../../utils/chatContext";
-
-const mockMess: IMessage[] = [
-  {
-    partyId: "6360fa2d-ea79-45c3-80f3-8990f110f449",
-    userId: "5b21189f-4ae0-4c40-916c-27f880baf0b4",
-    message: "asd",
-    date: new Date("2022-09-16T00:21:54.145Z"),
-  },
-  {
-    partyId: "6360fa2d-ea79-45c3-80f3-8990f110f449",
-    userId: "5b21189f-4ae0-4c40-916c-27f880baf0b4",
-    message: "noice",
-    date: new Date("2022-09-16T00:25:20.605Z"),
-  },
-  {
-    partyId: "6360fa2d-ea79-45c3-80f3-8990f110f449",
-    userId: "5b21189f-4ae0-4c40-916c-27f880baf0b4",
-    message: "noice 2",
-    date: new Date("2022-09-16T00:26:28.057Z"),
-  },
-  {
-    partyId: "6360fa2d-ea79-45c3-80f3-8990f110f449",
-    userId: "cda24f8a-5134-409b-b7fa-80b6f2f93546",
-    message: "Mamy to",
-    date: new Date("2022-09-16T00:33:39.927Z"),
-  },
-  {
-    partyId: "6360fa2d-ea79-45c3-80f3-8990f110f449",
-    userId: "cda24f8a-5134-409b-b7fa-80b6f2f93546",
-    message: "Mamy to",
-    date: new Date("2022-09-16T00:33:39.927Z"),
-  },
-  {
-    partyId: "6360fa2d-ea79-45c3-80f3-8990f110f449",
-    userId: "5b21189f-4ae0-4c40-916c-27f880baf0b4",
-    message: "ha",
-    date: new Date("2022-09-16T00:34:22.328Z"),
-  },
-  {
-    partyId: "6360fa2d-ea79-45c3-80f3-8990f110f449",
-    userId: "5b21189f-4ae0-4c40-916c-27f880baf0b4",
-    message: "It's",
-    date: new Date("2022-09-16T00:42:37.784Z"),
-  },
-  {
-    partyId: "6360fa2d-ea79-45c3-80f3-8990f110f449",
-    userId: "cda24f8a-5134-409b-b7fa-80b6f2f93546",
-    message: "Alive",
-    date: new Date("2022-09-16T00:42:42.201Z"),
-  },
-  {
-    partyId: "6360fa2d-ea79-45c3-80f3-8990f110f449",
-    userId: "cda24f8a-5134-409b-b7fa-80b6f2f93546",
-    message: "Mamma",
-    date: new Date("2022-09-16T00:49:19.768Z"),
-  },
-  {
-    partyId: "6360fa2d-ea79-45c3-80f3-8990f110f449",
-    userId: "5b21189f-4ae0-4c40-916c-27f880baf0b4",
-    message: "Mia",
-    date: new Date("2022-09-16T00:49:22.835Z"),
-  },
-];
+import { socket, useChat } from "../../utils/chatContext";
 
 export const Chat = ({ users }: { users: IUser[] }) => {
   const [message, setMessage] = useState("");
-  // const { state: messages } = useChat(mockMess);
+  const { state: messages } = useChat();
   const viewport = useRef<HTMLDivElement>(null);
   const scrollToBottom = () =>
     viewport?.current?.scrollTo({
       top: viewport.current.scrollHeight,
       behavior: "smooth",
     });
-  const messages = mockMess;
 
   useEffect(() => {
-    scrollToBottom();
-    console.log("state in chat", messages.length);
+    console.log("[chat] messages effect", messages.length);
   }, [messages]);
 
   const sendMessage = (value: string) => {
@@ -103,9 +38,9 @@ export const Chat = ({ users }: { users: IUser[] }) => {
     socket.emit("message", newMessage);
     setMessage("");
   };
-  console.log("u", users, "l", messages.length);
 
-  const isLoading = !(users && messages && messages.length > 0);
+  console.log("[chat]:[render] messages", messages.length);
+  scrollToBottom();
 
   return (
     <Stack
@@ -128,7 +63,7 @@ export const Chat = ({ users }: { users: IUser[] }) => {
           overflow: "hidden",
         }}
       >
-        {isLoading ? (
+        {!(users && messages && messages.length > 0) ? (
           <Loader
             style={{
               width: "100%",

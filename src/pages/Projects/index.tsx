@@ -71,8 +71,6 @@ const Projects = ({ tourStart, setTourStart }: TourPageProps) => {
       stepIndex: 0,
     });
 
-  console.log(localStorage.getItem("isNewUser"), run);
-
   useEffect(() => {
     return () => {
       if (setTourStart) setTourStart(false);

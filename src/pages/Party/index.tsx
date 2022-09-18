@@ -26,7 +26,6 @@ import ReactJoyride, {
   ACTIONS,
   CallBackProps,
   EVENTS,
-  LIFECYCLE,
   STATUS,
   StoreHelpers,
 } from "react-joyride";
@@ -76,8 +75,6 @@ const Party = ({ tourStart, setTourStart }: TourPageProps) => {
     stepIndex: 0,
   });
 
-  console.log(localStorage.getItem("isNewUser"), run);
-
   useEffect(() => {
     return () => {
       if (setTourStart) setTourStart(false);
@@ -122,25 +119,12 @@ const Party = ({ tourStart, setTourStart }: TourPageProps) => {
     ) {
       const nextStepIndex = index + (action === ACTIONS.PREV ? -1 : 1);
 
-      // Create an example project and tasks
-      if (
-        lifecycle === LIFECYCLE.COMPLETE &&
-        target === '[data-tut="add-project"]' &&
-        action === ACTIONS.NEXT
-      ) {
-        setTour((prev) => ({
-          ...prev,
-          run: false,
-          projectTasksCount: 0,
-        }));
-      } else {
-        // Update state to advance the tour
-        setTour((prev) => ({
-          ...prev,
-          run: true,
-          stepIndex: nextStepIndex,
-        }));
-      }
+      // Update state to advance the tour
+      setTour((prev) => ({
+        ...prev,
+        run: true,
+        stepIndex: nextStepIndex,
+      }));
     }
   };
 
