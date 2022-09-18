@@ -15,7 +15,7 @@ import { NavbarFooter } from "../components/NavbarFooter";
 import { NavbarLinks } from "../components/NavbarLinks";
 import { Profile } from "../components/Profile";
 import { IUser } from "../models/user";
-import { socket } from "../utils/chatContext";
+import { ChatContext } from "../utils/chatContext";
 import { HeaderContext } from "../utils/headerContext";
 
 type Props = {
@@ -26,6 +26,7 @@ type Props = {
 const MainLayout: React.FC<Props> = ({ page, noTour, children }) => {
   const client = new APIClient();
   const [headerText] = useContext(HeaderContext);
+  const [, socket] = useContext(ChatContext);
   const [tourStart, setTourStart] = useState(false);
 
   const { data: user } = useQuery<IUser>(
@@ -39,8 +40,8 @@ const MainLayout: React.FC<Props> = ({ page, noTour, children }) => {
   useEffect(() => localStorage.setItem("partyId", user?.partyId ?? ""), [user]);
 
   const logOut = () => {
-    socket.off();
-    socket.disconnect();
+    socket?.off();
+    socket?.disconnect();
     localStorage.clear();
   };
 

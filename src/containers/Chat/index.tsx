@@ -6,16 +6,15 @@ import {
   Stack,
   TextInput,
 } from "@mantine/core";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Message } from "../../components/Message";
 
-import { IMessage } from "../../models/message";
 import { IUser } from "../../models/user";
-import { socket, useChat } from "../../utils/chatContext";
+import { ChatContext } from "../../utils/chatContext";
 
 export const Chat = ({ users }: { users: IUser[] }) => {
   const [message, setMessage] = useState("");
-  const { state: messages } = useChat();
+  const [messages, , sendMessage] = useContext(ChatContext);
   const viewport = useRef<HTMLDivElement>(null);
   const scrollToBottom = () =>
     viewport?.current?.scrollTo({
@@ -27,20 +26,13 @@ export const Chat = ({ users }: { users: IUser[] }) => {
     console.log("[chat] messages effect", messages.length);
   }, [messages]);
 
-  const sendMessage = (value: string) => {
-    const newMessage: IMessage = {
-      message: value,
-      partyId: localStorage.getItem("partyId")!,
-      userId: localStorage.getItem("doableId")!,
-      date: new Date(),
-    };
-    console.log("=> send: ", newMessage);
-    socket.emit("message", newMessage);
+  const handleSendMessage = (value: string) => {
+    sendMessage(value);
     setMessage("");
   };
 
   console.log("[chat]:[render] messages", messages.length);
-  scrollToBottom();
+  // scrollToBottom();
 
   return (
     <Stack
@@ -94,10 +86,10 @@ export const Chat = ({ users }: { users: IUser[] }) => {
           value={message}
           onChange={(e) => setMessage(e.currentTarget.value)}
           onKeyUp={(e) =>
-            e.key === "Enter" ? sendMessage(message) : undefined
+            e.key === "Enter" ? handleSendMessage(message) : undefined
           }
         />
-        <Button onClick={() => sendMessage(message)}>Send</Button>
+        <Button onClick={() => handleSendMessage(message)}>Send</Button>
       </Group>
     </Stack>
   );
