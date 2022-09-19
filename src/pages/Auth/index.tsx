@@ -57,6 +57,7 @@ export default function Auth() {
 
   useEffect(() => {
     setMounted(true);
+    localStorage.clear();
   }, []);
 
   const toggleFormType = () => {
@@ -95,16 +96,19 @@ export default function Auth() {
       localStorage.setItem("tokenSelector", tokenSelector);
       localStorage.setItem("doableId", user.doableId);
       localStorage.setItem("partyId", user.partyId ?? "");
-      localStorage.setItem(
-        "hadTutorial",
-        JSON.stringify({
-          questProfile: false,
-          challenges: false,
-          dashboard: false,
-          projects: false,
-          party: false,
-        })
-      );
+      if (isNewUser) {
+        localStorage.setItem("isNewUser", "true");
+        localStorage.setItem(
+          "hadTutorial",
+          JSON.stringify({
+            questProfile: false,
+            challenges: false,
+            dashboard: false,
+            projects: false,
+            party: false,
+          })
+        );
+      }
       setLoggedIn(true);
       navigate(isNewUser ? `/profile/${user.doableId}` : from, {
         replace: true,

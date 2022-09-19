@@ -48,7 +48,7 @@ const Dashboard = ({ tourStart, setTourStart }: TourPageProps) => {
   const theme = useMantineTheme();
   const [{ run, steps, stepIndex, taskCreated }, setTour] =
     useState<JoyrideStateProps>({
-      run: !hadTutorial.dashboard,
+      run: hadTutorial.dashboard === false,
       steps: tutorialSteps["dashboard"],
       stepIndex: 0,
     });
@@ -56,20 +56,22 @@ const Dashboard = ({ tourStart, setTourStart }: TourPageProps) => {
   useEffect(() => {
     setTour((prev) => ({
       ...prev,
-      run: tourStart || !hadTutorial.dashboard ? true : false,
+      run: tourStart || hadTutorial.dashboard === false,
     }));
   }, [tourStart]);
 
   useEffect(() => {
     return () => {
       if (setTourStart) setTourStart(false);
-      localStorage.setItem(
-        "hadTutorial",
-        JSON.stringify({
-          ...hadTutorial,
-          dashboard: true,
-        })
-      );
+      if (localStorage.getItem("isNewUser")!) {
+        localStorage.setItem(
+          "hadTutorial",
+          JSON.stringify({
+            ...hadTutorial,
+            dashboard: true,
+          })
+        );
+      }
     };
   }, [setTourStart]);
 
@@ -100,13 +102,15 @@ const Dashboard = ({ tourStart, setTourStart }: TourPageProps) => {
         taskCreated: false,
       }));
       if (setTourStart) setTourStart(false);
-      localStorage.setItem(
-        "hadTutorial",
-        JSON.stringify({
-          ...hadTutorial,
-          dashboard: true,
-        })
-      );
+      if (localStorage.getItem("isNewUser")!) {
+        localStorage.setItem(
+          "hadTutorial",
+          JSON.stringify({
+            ...hadTutorial,
+            dashboard: true,
+          })
+        );
+      }
     } else if (
       ([EVENTS.STEP_AFTER, EVENTS.TARGET_NOT_FOUND] as string[]).includes(type)
     ) {

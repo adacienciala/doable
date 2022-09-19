@@ -63,7 +63,7 @@ const Challenges = ({ tourStart, setTourStart }: TourPageProps) => {
 
   const theme = useMantineTheme();
   const [{ run, steps, stepIndex }, setTour] = useState<JoyrideStateProps>({
-    run: !hadTutorial.challenges,
+    run: hadTutorial.challenges === false,
     steps: [
       {
         title: "Challenges tour",
@@ -171,7 +171,7 @@ const Challenges = ({ tourStart, setTourStart }: TourPageProps) => {
   useEffect(() => {
     setTour((prev) => ({
       ...prev,
-      run: tourStart || !hadTutorial.challenges ? true : false,
+      run: tourStart || hadTutorial.challenges === false,
     }));
   }, [tourStart]);
 

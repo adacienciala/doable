@@ -18,11 +18,11 @@ export interface TourPageProps {
 }
 
 export interface HadTutorialProps {
-  questProfile: false;
-  challenges: false;
-  dashboard: false;
-  projects: false;
-  party: false;
+  questProfile?: boolean;
+  challenges?: boolean;
+  dashboard?: boolean;
+  projects?: boolean;
+  party?: boolean;
 }
 
 export const tutorialSteps: { [key: string]: Step[] } = {

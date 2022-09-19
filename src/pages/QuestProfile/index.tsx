@@ -200,7 +200,7 @@ const QuestProfile = ({ tourStart, setTourStart }: TourPageProps) => {
           <Box style={{ flexGrow: 1 }} data-tut="ranks-story">
             <RanksTabs
               handleCloseModal={handleCloseModal}
-              openStory={!hadTutorial.questProfile}
+              openStory={hadTutorial.questProfile === false}
               user={user!}
             />
           </Box>

@@ -176,10 +176,14 @@ export default function NoParty({ onJoinParty }: { onJoinParty: any }) {
             addPartyMutation.mutate({ name: query });
             return item;
           }}
-          filter={(value, item) =>
-            item.name.toLowerCase().includes(value.toLowerCase().trim()) ||
-            item.description.toLowerCase().includes(value.toLowerCase().trim())
-          }
+          filter={(value, item) => {
+            return (
+              item.name.toLowerCase().includes(value.toLowerCase().trim()) ||
+              item.description
+                ?.toLowerCase()
+                .includes(value.toLowerCase().trim())
+            );
+          }}
         />
         <Button
           disabled={!chosenParty}

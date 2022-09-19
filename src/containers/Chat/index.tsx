@@ -59,7 +59,7 @@ export const Chat = ({ users }: { users: IUser[] }) => {
           overflow: "hidden",
         }}
       >
-        {!(users && messages && messages.length > 0) ? (
+        {!(users && messages) ? (
           <Loader
             style={{
               width: "100%",

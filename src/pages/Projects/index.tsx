@@ -71,7 +71,7 @@ const Projects = ({ tourStart, setTourStart }: TourPageProps) => {
   const theme = useMantineTheme();
   const [{ run, steps, stepIndex, projectCreated }, setTour] =
     useState<JoyrideStateProps>({
-      run: !hadTutorial.projects,
+      run: hadTutorial.projects === false,
       steps: tutorialSteps["projects"],
       stepIndex: 0,
     });
@@ -92,7 +92,7 @@ const Projects = ({ tourStart, setTourStart }: TourPageProps) => {
   useEffect(() => {
     setTour((prev) => ({
       ...prev,
-      run: tourStart || !hadTutorial.projects ? true : false,
+      run: tourStart || hadTutorial.projects === false,
     }));
   }, [tourStart]);
 

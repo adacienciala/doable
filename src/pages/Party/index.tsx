@@ -44,6 +44,7 @@ import {
 import { ProjectEditDrawer } from "../../containers/ProjectEditDrawer";
 import { AccessDeniedModal } from "../../layouts/AccessDeniedModal";
 import { IUser } from "../../models/user";
+import { ChatContext } from "../../utils/chatContext";
 import { HeaderContext } from "../../utils/headerContext";
 import {
   HadTutorialProps,
@@ -67,6 +68,7 @@ const Party = ({ tourStart, setTourStart }: TourPageProps) => {
   const queryClient = useQueryClient();
   const { classes } = projectCardStyles();
   const [, setHeaderText] = useContext(HeaderContext);
+  const [, , setLoggedIn] = useContext(ChatContext);
 
   // -- JOYRIDE
 
@@ -76,7 +78,7 @@ const Party = ({ tourStart, setTourStart }: TourPageProps) => {
 
   const theme = useMantineTheme();
   const [{ run, steps, stepIndex }, setTour] = useState<JoyrideStateProps>({
-    run: !hadTutorial.party,
+    run: hadTutorial.party === false,
     steps: tutorialSteps["party"],
     stepIndex: 0,
   });
@@ -97,7 +99,7 @@ const Party = ({ tourStart, setTourStart }: TourPageProps) => {
   useEffect(() => {
     setTour((prev) => ({
       ...prev,
-      run: tourStart || !hadTutorial.party ? true : false,
+      run: tourStart || hadTutorial.party === false,
     }));
   }, [tourStart]);
 
@@ -199,6 +201,7 @@ const Party = ({ tourStart, setTourStart }: TourPageProps) => {
   const handleLeaveParty = useCallback(() => {
     setEditPartyDrawerOpened(false);
     setPartyId("");
+    setLoggedIn(false);
   }, []);
 
   const handleDeleteProjectModalOpen = useCallback((projectId: string) => {
@@ -219,6 +222,7 @@ const Party = ({ tourStart, setTourStart }: TourPageProps) => {
 
   useEffect(() => {
     cleanNotifications();
+    setLoggedIn(!!partyId);
   }, []);
 
   useEffect(() => {
