@@ -33,9 +33,9 @@ export const NavbarLinks = ({
       to: "/party",
     },
     {
-      text: "rewards",
+      text: "challenges",
       icon: RiMedalLine,
-      to: "/rewards",
+      to: "/challenges",
     },
   ];
 

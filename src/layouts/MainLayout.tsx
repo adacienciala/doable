@@ -109,7 +109,7 @@ const MainLayout: React.FC<Props> = ({ page, noTour, children }) => {
           <Text>
             {headerText}, {user?.name}
           </Text>
-          {!noTour && (
+          {!noTour && user?.partyId && (
             <ActionIcon
               color="gray.9"
               radius="xl"

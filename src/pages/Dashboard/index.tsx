@@ -21,6 +21,7 @@ import { ITask } from "../../models/task";
 import { IUser } from "../../models/user";
 import { HeaderContext } from "../../utils/headerContext";
 import {
+  HadTutorialProps,
   JoyrideStateProps,
   joyrideStyles,
   TourPageProps,
@@ -40,10 +41,14 @@ const Dashboard = ({ tourStart, setTourStart }: TourPageProps) => {
 
   // -- JOYRIDE
 
+  const hadTutorial = JSON.parse(
+    localStorage.getItem("hadTutorial") ?? "{}"
+  ) as HadTutorialProps;
+
   const theme = useMantineTheme();
   const [{ run, steps, stepIndex, taskCreated }, setTour] =
     useState<JoyrideStateProps>({
-      run: JSON.parse(localStorage.getItem("isNewUser") ?? "false"),
+      run: !hadTutorial.dashboard,
       steps: tutorialSteps["dashboard"],
       stepIndex: 0,
     });
@@ -51,13 +56,20 @@ const Dashboard = ({ tourStart, setTourStart }: TourPageProps) => {
   useEffect(() => {
     setTour((prev) => ({
       ...prev,
-      run: tourStart ?? false,
+      run: tourStart || !hadTutorial.dashboard ? true : false,
     }));
   }, [tourStart]);
 
   useEffect(() => {
     return () => {
       if (setTourStart) setTourStart(false);
+      localStorage.setItem(
+        "hadTutorial",
+        JSON.stringify({
+          ...hadTutorial,
+          dashboard: true,
+        })
+      );
     };
   }, [setTourStart]);
 
@@ -88,6 +100,13 @@ const Dashboard = ({ tourStart, setTourStart }: TourPageProps) => {
         taskCreated: false,
       }));
       if (setTourStart) setTourStart(false);
+      localStorage.setItem(
+        "hadTutorial",
+        JSON.stringify({
+          ...hadTutorial,
+          dashboard: true,
+        })
+      );
     } else if (
       ([EVENTS.STEP_AFTER, EVENTS.TARGET_NOT_FOUND] as string[]).includes(type)
     ) {
@@ -166,13 +185,13 @@ const Dashboard = ({ tourStart, setTourStart }: TourPageProps) => {
         body: { isDone: true },
       }),
     {
-      onSettled: (data) => {
+      onSettled: ({ task, userUpdated }) => {
         queryClient.invalidateQueries(["tasks"]);
-        if (data.userUpdated) {
+        if (userUpdated) {
           queryClient.invalidateQueries(["user"]);
           queryClient.invalidateQueries(["users"]);
         }
-        if (data.taskId === localStorage.getItem("tutorialTaskId")) {
+        if (task.taskId === localStorage.getItem("tutorialTaskId")) {
           setTour((prev) => ({
             ...prev,
             stepIndex: prev.stepIndex + 1,

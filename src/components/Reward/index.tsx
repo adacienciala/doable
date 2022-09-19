@@ -9,7 +9,13 @@ import {
 } from "react-icons/ri";
 import { IReward } from "../../models/rewards";
 
-export const Reward = ({ reward }: { reward: IReward }) => {
+export const Reward = ({
+  reward,
+  isTutorialReward,
+}: {
+  reward: IReward;
+  isTutorialReward?: boolean;
+}) => {
   const getDifficultyColor = (theme: MantineTheme) => {
     switch (reward.difficulty) {
       case "gold":
@@ -81,6 +87,7 @@ export const Reward = ({ reward }: { reward: IReward }) => {
             color: theme.colors.gray[9],
           },
         })}
+        {...(isTutorialReward ? { "data-tut": "reward-progress" } : {})}
       />
       {getRewardIcon(reward)({
         size: 120,
@@ -97,8 +104,13 @@ export const Reward = ({ reward }: { reward: IReward }) => {
           justifyContent: "space-between",
         })}
       >
-        <RiShieldStarFill size={20} />
-        <Group>
+        <RiShieldStarFill
+          size={20}
+          {...(isTutorialReward ? { "data-tut": "reward-difficulty" } : {})}
+        />
+        <Group
+          {...(isTutorialReward ? { "data-tut": "reward-popularity" } : {})}
+        >
           <RiTeamFill size={20} />
           <Text>{reward.popularity}</Text>
         </Group>

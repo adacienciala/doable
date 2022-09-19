@@ -46,6 +46,7 @@ import { AccessDeniedModal } from "../../layouts/AccessDeniedModal";
 import { IUser } from "../../models/user";
 import { HeaderContext } from "../../utils/headerContext";
 import {
+  HadTutorialProps,
   JoyrideStateProps,
   joyrideStyles,
   TourPageProps,
@@ -69,9 +70,13 @@ const Party = ({ tourStart, setTourStart }: TourPageProps) => {
 
   // -- JOYRIDE
 
+  const hadTutorial = JSON.parse(
+    localStorage.getItem("hadTutorial") ?? "{}"
+  ) as HadTutorialProps;
+
   const theme = useMantineTheme();
   const [{ run, steps, stepIndex }, setTour] = useState<JoyrideStateProps>({
-    run: JSON.parse(localStorage.getItem("isNewUser") ?? "false"),
+    run: !hadTutorial.party,
     steps: tutorialSteps["party"],
     stepIndex: 0,
   });
@@ -79,13 +84,20 @@ const Party = ({ tourStart, setTourStart }: TourPageProps) => {
   useEffect(() => {
     return () => {
       if (setTourStart) setTourStart(false);
+      localStorage.setItem(
+        "hadTutorial",
+        JSON.stringify({
+          ...hadTutorial,
+          party: true,
+        })
+      );
     };
   }, [setTourStart]);
 
   useEffect(() => {
     setTour((prev) => ({
       ...prev,
-      run: tourStart ?? false,
+      run: tourStart || !hadTutorial.party ? true : false,
     }));
   }, [tourStart]);
 
@@ -96,14 +108,7 @@ const Party = ({ tourStart, setTourStart }: TourPageProps) => {
   };
 
   const handleJoyrideCallback = (data: CallBackProps) => {
-    const {
-      lifecycle,
-      action,
-      index,
-      status,
-      type,
-      step: { target },
-    } = data;
+    const { action, index, status, type } = data;
 
     console.log("[joyride]", data);
 
@@ -115,6 +120,13 @@ const Party = ({ tourStart, setTourStart }: TourPageProps) => {
         stepIndex: 0,
       }));
       if (setTourStart) setTourStart(false);
+      localStorage.setItem(
+        "hadTutorial",
+        JSON.stringify({
+          ...hadTutorial,
+          party: true,
+        })
+      );
     } else if (
       ([EVENTS.STEP_AFTER, EVENTS.TARGET_NOT_FOUND] as string[]).includes(type)
     ) {

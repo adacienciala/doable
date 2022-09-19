@@ -8,13 +8,13 @@ import {
 import MainLayout from "./layouts/MainLayout";
 import Auth from "./pages/Auth";
 import Calendar from "./pages/Calendar";
+import Challenges from "./pages/Challenges";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import Party from "./pages/Party";
 import Projects from "./pages/Projects";
 import ProjectPage from "./pages/Projects/ProjectPage";
 import QuestProfile from "./pages/QuestProfile";
-import Rewards from "./pages/Rewards";
 import ServerError from "./pages/ServerError";
 import Settings from "./pages/Settings";
 
@@ -76,11 +76,11 @@ function App() {
             }
           />
           <Route
-            path="/rewards"
+            path="/challenges"
             element={
               <RequireAuth>
-                <MainLayout page="rewards">
-                  <Rewards />
+                <MainLayout page="challenges">
+                  <Challenges />
                 </MainLayout>
               </RequireAuth>
             }

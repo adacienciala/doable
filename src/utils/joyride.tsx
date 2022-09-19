@@ -17,7 +17,121 @@ export interface TourPageProps {
   setTourStart?: Dispatch<React.SetStateAction<boolean>>;
 }
 
+export interface HadTutorialProps {
+  questProfile: false;
+  challenges: false;
+  dashboard: false;
+  projects: false;
+  party: false;
+}
+
 export const tutorialSteps: { [key: string]: Step[] } = {
+  questProfile: [
+    {
+      title: "Quest profile tour",
+      target: "body",
+      content: (
+        <Text>
+          Welcome to your quest profile, it's so nice to meet you! Here you can
+          find your public profile and some important information about the
+          Life's Quest for Zest story.
+        </Text>
+      ),
+      styles: {
+        tooltipContent: {
+          textAlign: "center",
+        },
+      },
+      placement: "center" as Placement,
+      disableBeacon: true,
+    },
+    {
+      title: "Your profile",
+      target: '[data-tut="profile"]',
+      content: (
+        <>
+          <Text mb={10}>
+            <Text>
+              Your <strong>avatar</strong> shows how cool you would look as an
+              animal! Don't like it? You can always change it in the
+            </Text>
+            <Text
+              underline
+              span
+              component={Link}
+              to="/settings"
+              target="_blank"
+            >
+              settings
+            </Text>
+            .
+          </Text>
+          <Text mb={10}>
+            The ring around the picture shows your curent{" "}
+            <strong>progress</strong>. Try <u>hovering</u> over your avatar.
+            That's how much XP you have.
+          </Text>
+          <Text>Want to have more? Finish tasks!</Text>
+        </>
+      ),
+      spotlightClicks: true,
+      placement: "right" as Placement,
+      disableBeacon: false,
+    },
+    {
+      title: "Story",
+      target: '[data-tut="ranks-story"]',
+      content: (
+        <>
+          <Text mb={10}>
+            Here's a recap on the parts of the story you already unlocked. Every
+            user gets their own storyline, tailored especially for them and
+            their style of play.
+          </Text>
+          <Text mb={10}>
+            Each story is associated with a <strong>rank</strong>. The more XP
+            you gain, the higher rank you get. With a higher rank, you get more
+            and more information about <b>The Zest</b>.{" "}
+          </Text>
+          <Text>
+            Curious to knwow more? Gain XP and unravel, how the story ends!
+          </Text>
+        </>
+      ),
+      placement: "center" as Placement,
+      disableBeacon: false,
+    },
+    {
+      title: "Rewards",
+      target: '[data-tut="rewards-list"]',
+      content: (
+        <>
+          <Text>
+            Some actions that you take will be noticed and awarded with a
+            special achievement. They will show up here, a list of rewards for
+            everyone to see.
+          </Text>
+        </>
+      ),
+      placement: "auto" as Placement,
+      disableBeacon: false,
+    },
+    {
+      title: "Challenges",
+      target: '[data-tut="challenges"]',
+      content: (
+        <>
+          <Text mb={10}>
+            Do you want to know what challenges await for you? Go ahead and
+            click the <b>challenges</b> tab!
+          </Text>
+        </>
+      ),
+      placement: "right" as Placement,
+      disableBeacon: false,
+      spotlightClicks: true,
+    },
+  ],
   dashboard: [
     {
       title: "Dashboard tour",
@@ -38,57 +152,6 @@ export const tutorialSteps: { [key: string]: Step[] } = {
       disableBeacon: true,
     },
     {
-      title: "Your profile",
-      target: '[data-tut="profile"]',
-      content: (
-        <>
-          <Text mb={10}>
-            <Text>
-              Your <strong>avatar</strong> shows how cool you would look as an
-              animal! Don't like it? Change it in the
-            </Text>
-            <Text
-              underline
-              span
-              component={Link}
-              to="/settings"
-              target="_blank"
-            >
-              settings
-            </Text>
-            .
-          </Text>
-          <Text mb={10}>
-            <Text>
-              The ring around the picture shows your <strong>progress</strong>.
-              Try <u>hovering</u> over your avatar. That's how much XP you have.
-              Want to have more? Finish tasks!
-            </Text>
-          </Text>
-          <Text>
-            <Text>
-              With more XP, you get a higher <strong>rank</strong>. With a
-              higher rank, you get more and more information about The Zest.
-              Curious? For more information, go to{" "}
-              <Text
-                underline
-                span
-                component={Link}
-                to="/settings"
-                target="_blank"
-              >
-                settings
-              </Text>
-              .
-            </Text>
-          </Text>
-        </>
-      ),
-      spotlightClicks: true,
-      placement: "right" as Placement,
-      disableBeacon: false,
-    },
-    {
       title: "Backlog",
       target: '[data-tut="backlog"]',
       content: (
@@ -96,8 +159,7 @@ export const tutorialSteps: { [key: string]: Step[] } = {
           <Text>
             Here you can find the list of the tasks that require your utmost
             attention - the things you <i>forgot</i> to do, the things you have
-            to do
-            <i>today</i>, or the things you haven't yet <i>scheduled</i>.
+            to do <i>today</i>, or the things you haven't yet <i>scheduled</i>.
           </Text>
         </>
       ),
@@ -417,9 +479,9 @@ export const tutorialSteps: { [key: string]: Step[] } = {
             Quests are essentialy projects but they are a responsibility of all
             of you. While a big quest can seem scary and unachievable to do
             alone, a project that is divided between party members turns into a
-            manageable challenge. Break down the work and cooperate so you all
-            win!
+            manageable challenge.
           </Text>
+          <Text>Break down the work and cooperate so you all win!</Text>
         </>
       ),
       placement: "auto" as Placement,

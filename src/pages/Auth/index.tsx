@@ -95,8 +95,20 @@ export default function Auth() {
       localStorage.setItem("tokenSelector", tokenSelector);
       localStorage.setItem("doableId", user.doableId);
       localStorage.setItem("partyId", user.partyId ?? "");
+      localStorage.setItem(
+        "hadTutorial",
+        JSON.stringify({
+          questProfile: false,
+          challenges: false,
+          dashboard: false,
+          projects: false,
+          party: false,
+        })
+      );
       setLoggedIn(true);
-      navigate(from, { state: { isNewUser }, replace: true });
+      navigate(isNewUser ? `/profile/${user.doableId}` : from, {
+        replace: true,
+      });
     }, 250);
   }
 

@@ -43,6 +43,7 @@ import { IProject } from "../../models/project";
 import { ITask } from "../../models/task";
 import { HeaderContext } from "../../utils/headerContext";
 import {
+  HadTutorialProps,
   JoyrideStateProps,
   joyrideStyles,
   mockProjectTasks,
@@ -63,10 +64,14 @@ const Projects = ({ tourStart, setTourStart }: TourPageProps) => {
 
   // -- JOYRIDE
 
+  const hadTutorial = JSON.parse(
+    localStorage.getItem("hadTutorial") ?? "{}"
+  ) as HadTutorialProps;
+
   const theme = useMantineTheme();
   const [{ run, steps, stepIndex, projectCreated }, setTour] =
     useState<JoyrideStateProps>({
-      run: JSON.parse(localStorage.getItem("isNewUser") ?? "false"),
+      run: !hadTutorial.projects,
       steps: tutorialSteps["projects"],
       stepIndex: 0,
     });
@@ -74,13 +79,20 @@ const Projects = ({ tourStart, setTourStart }: TourPageProps) => {
   useEffect(() => {
     return () => {
       if (setTourStart) setTourStart(false);
+      localStorage.setItem(
+        "hadTutorial",
+        JSON.stringify({
+          ...hadTutorial,
+          projects: true,
+        })
+      );
     };
   }, [setTourStart]);
 
   useEffect(() => {
     setTour((prev) => ({
       ...prev,
-      run: tourStart ?? false,
+      run: tourStart || !hadTutorial.projects ? true : false,
     }));
   }, [tourStart]);
 
@@ -111,6 +123,13 @@ const Projects = ({ tourStart, setTourStart }: TourPageProps) => {
         projectCreated: false,
       }));
       if (setTourStart) setTourStart(false);
+      localStorage.setItem(
+        "hadTutorial",
+        JSON.stringify({
+          ...hadTutorial,
+          projects: true,
+        })
+      );
     } else if (
       ([EVENTS.STEP_AFTER, EVENTS.TARGET_NOT_FOUND] as string[]).includes(type)
     ) {

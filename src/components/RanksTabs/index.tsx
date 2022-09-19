@@ -26,8 +26,8 @@ const rankStories = {
     <div>
       <p>
         It was a beautiful day. You were walking around the park, not caring for
-        anything in the world, especially for the work you were supposed to be
-        doing that day. Birds were chirping, sun was shining, and you were
+        anything in the world, especially not for the work you were supposed to
+        be doing that day. Birds were chirping, sun was shining, and you were
         sipping happily on a drink that you got for free from a strange woman
         just a few minutes ago. Not everyday you get to taste such a good citrus
         drink from a chiton-wearing, greek-looking, unbelievably beautiful lady.
@@ -102,9 +102,19 @@ const rankStories = {
     `You called your friend but the signal was weak. Will you ever see them again? Will you manage to find the Zest and save the city?`,
 };
 
-export const RanksTabs = ({ user }: { user: IUser }) => {
+export const RanksTabs = ({
+  handleCloseModal,
+  user,
+  openStory,
+}: {
+  user: IUser;
+  openStory?: boolean;
+  handleCloseModal?: () => void;
+}) => {
   const client = new APIClient();
-  const [story, setStory] = useState("");
+  const [story, setStory] = useState(
+    openStory ? user.statistics.points.rank : ""
+  );
 
   const { data: ranks } = useQuery<IRank[]>(["ranks"], () =>
     client.ranks(Method.GET)
@@ -171,7 +181,12 @@ export const RanksTabs = ({ user }: { user: IUser }) => {
     <>
       <Modal
         opened={story !== ""}
-        onClose={() => setStory("")}
+        onClose={() => {
+          if (openStory && handleCloseModal) {
+            handleCloseModal();
+          }
+          setStory("");
+        }}
         title={
           <Title align="center" style={{ width: "100%" }}>
             {story}
