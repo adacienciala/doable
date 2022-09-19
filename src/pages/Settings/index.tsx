@@ -6,10 +6,10 @@ import { Navigate, useLocation } from "react-router-dom";
 import { APIClient, Method } from "../../api/client";
 import { ApiError } from "../../api/errors";
 import { AccessDeniedModal } from "../../layouts/AccessDeniedModal";
+import { IReward } from "../../models/rewards";
 import { IUser } from "../../models/user";
 import { HeaderContext } from "../../utils/headerContext";
 import { getUserAvatarSeed } from "../../utils/utils";
-import RanksAccordion from "./RanksAccordion";
 import UserAccountForm from "./UserAccountForm";
 import UserStatistics from "./UserStatistics";
 
@@ -18,13 +18,18 @@ const Settings = () => {
   const client = new APIClient();
   const [, setHeaderText] = useContext(HeaderContext);
 
-  const { isLoading, error, data } = useQuery<IUser>(
-    ["user", localStorage.getItem("doableId")!],
-    () => {
-      const doableId = localStorage.getItem("doableId")!;
-      return client.singleUser(Method.GET, doableId);
-    }
-  );
+  const {
+    isLoading,
+    error,
+    data: resData,
+  } = useQuery<{
+    user: IUser;
+    rewards: IReward[];
+  }>(["user", localStorage.getItem("doableId")!], () => {
+    const doableId = localStorage.getItem("doableId")!;
+    return client.singleUser(Method.GET, doableId);
+  });
+  const data = resData?.user;
 
   const isAccessError = useCallback(
     () => (error ? new ApiError(error).code === 403 : false),
@@ -76,7 +81,7 @@ const Settings = () => {
             src={`data:image/svg+xml;UTF-8,${encodeURIComponent(
               avatar(getUserAvatarSeed(data))
             )}`}
-          ></Avatar>
+          />
           <UserAccountForm user={data} />
         </Stack>
         <Stack>
@@ -84,7 +89,6 @@ const Settings = () => {
             Statistics
           </Text>
           <UserStatistics user={data} />
-          <RanksAccordion userRank={data?.statistics.points.rank} />
         </Stack>
       </Group>
     </>

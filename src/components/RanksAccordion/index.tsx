@@ -1,8 +1,8 @@
-import { Accordion, Center, Loader, Text } from "@mantine/core";
+import { Accordion, Box, Center, Loader, Text } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import { GiRank1 } from "react-icons/gi";
-import { APIClient, Method } from "../../../api/client";
-import { IRank } from "../../../models/rank";
+import { APIClient, Method } from "../../api/client";
+import { IRank } from "../../models/rank";
 
 const RanksAccordion = ({ userRank = "private" }: { userRank?: string }) => {
   const client = new APIClient();
@@ -16,14 +16,18 @@ const RanksAccordion = ({ userRank = "private" }: { userRank?: string }) => {
   }
 
   return (
-    <>
+    <Box style={{ height: "100%" }}>
       <Text weight="bold">Ranks summary</Text>
       {!isLoading ? (
         <Accordion
           variant="contained"
           radius="md"
           defaultValue={userRank.toLowerCase()}
-          styles={(theme) => ({ control: { color: "white" } })}
+          styles={(theme) => ({
+            item: { height: "100%" },
+            panel: { height: "100%" },
+            control: { color: "white" },
+          })}
         >
           {ranks.map((r) => (
             <Accordion.Item key={r.name} value={r.name.toLowerCase()}>
@@ -46,7 +50,7 @@ const RanksAccordion = ({ userRank = "private" }: { userRank?: string }) => {
           <Loader />
         </Center>
       )}
-    </>
+    </Box>
   );
 };
 

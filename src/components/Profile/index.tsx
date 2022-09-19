@@ -1,31 +1,9 @@
-import {
-  Avatar,
-  Badge,
-  Center,
-  RingProgress,
-  Stack,
-  Sx,
-  Text,
-  Tooltip,
-} from "@mantine/core";
-import avatar from "animal-avatar-generator";
-import { useCallback } from "react";
+import { Badge, Stack, Sx, Text } from "@mantine/core";
 import { IUser } from "../../models/user";
 
 import { GiRank1, GiRank2, GiRank3 } from "react-icons/gi";
 import { useNavigate } from "react-router-dom";
-import { getUserAvatarSeed } from "../../utils/utils";
-
-const sizeOptions = {
-  lg: {
-    ring: { size: 125, thickness: 7.5 },
-    avatar: 75,
-  },
-  xl: {
-    ring: { size: 200, thickness: 12 },
-    avatar: 120,
-  },
-};
+import { AvatarProgress } from "./AvatarProgress";
 
 export const Profile = ({
   user,
@@ -38,15 +16,7 @@ export const Profile = ({
   size?: "lg" | "xl";
   [x: string]: any;
 }) => {
-  const xp = user?.statistics?.points.xp ?? 0;
-  const minXp = user?.statistics?.points.minXp ?? 0;
-  const maxXp = user?.statistics?.points.maxXp ?? 100;
   const navigate = useNavigate();
-
-  const getCurrentProgress = useCallback(
-    () => ((xp - minXp) / (maxXp - minXp)) * 100,
-    [xp, minXp, maxXp]
-  );
 
   function getRankBadgeIcon(rank?: string) {
     if (!rank) return "";
@@ -66,70 +36,29 @@ export const Profile = ({
         sx={(theme) => ({
           gap: 0,
           alignItems: "center",
+          cursor: "pointer",
         })}
+        onClick={() =>
+          navigate(`/profile/${user?.doableId}`, { replace: false })
+        }
         {...props}
       >
-        <Stack
-          onClick={() =>
-            navigate(`/profile/${user?.doableId}`, { replace: false })
-          }
-          sx={(theme) => ({
-            gap: 0,
-            alignItems: "center",
-            cursor: "pointer",
-          })}
+        <AvatarProgress user={user} sx={sx} size={size} {...props} />
+        <Text
+          align="center"
+          style={{ whiteSpace: size === "lg" ? "nowrap" : "normal" }}
+          size={size}
+          weight={"bold"}
         >
-          <Tooltip.Floating
-            // ! new version of mantine should support that but doesn't
-            // transition="skew-up"
-            // transitionDuration={100}
-            // openDelay={500}
-            label={`${xp}XP`}
-          >
-            <RingProgress
-              size={sizeOptions[size].ring.size}
-              thickness={sizeOptions[size].ring.thickness}
-              roundCaps
-              sections={[
-                {
-                  value: getCurrentProgress(),
-                  color: "yellow",
-                },
-              ]}
-              sx={[
-                (theme) => ({
-                  "circle:first-of-type": {
-                    stroke: theme.colors.gray[7],
-                  },
-                }),
-                sx,
-              ]}
-              label={
-                <Center>
-                  <Avatar
-                    size={sizeOptions[size].avatar}
-                    src={`data:image/svg+xml;UTF-8,${encodeURIComponent(
-                      avatar(getUserAvatarSeed(user))
-                    )}`}
-                  ></Avatar>
-                </Center>
-              }
-            />
-          </Tooltip.Floating>
-
-          <Text
-            align="center"
-            style={{ whiteSpace: size === "lg" ? "nowrap" : "normal" }}
-            size={size}
-            weight={"bold"}
-          >
-            {user?.name} {user?.surname}
-          </Text>
-        </Stack>
+          {user?.name} {user?.surname}
+        </Text>
 
         <Badge
           variant="light"
           styles={(theme) => ({
+            root: {
+              cursor: "pointer",
+            },
             leftSection: {
               display: "flex",
               alignItems: "center",

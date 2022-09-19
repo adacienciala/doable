@@ -14,6 +14,7 @@ import { APIClient, Method } from "../api/client";
 import { NavbarFooter } from "../components/NavbarFooter";
 import { NavbarLinks } from "../components/NavbarLinks";
 import { Profile } from "../components/Profile";
+import { IReward } from "../models/rewards";
 import { IUser } from "../models/user";
 import { ChatContext } from "../utils/chatContext";
 import { HeaderContext } from "../utils/headerContext";
@@ -29,13 +30,15 @@ const MainLayout: React.FC<Props> = ({ page, noTour, children }) => {
   const [, , setLoggedIn] = useContext(ChatContext);
   const [tourStart, setTourStart] = useState(false);
 
-  const { data: user } = useQuery<IUser>(
+  const { data } = useQuery<{ user: IUser; rewards: IReward[] }>(
     ["user", localStorage.getItem("doableId")!],
     () => {
       const doableId = localStorage.getItem("doableId")!;
       return client.singleUser(Method.GET, doableId);
     }
   );
+
+  const user = data?.user;
 
   useEffect(() => localStorage.setItem("partyId", user?.partyId ?? ""), [user]);
 

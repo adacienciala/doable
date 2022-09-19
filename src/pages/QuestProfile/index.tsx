@@ -1,58 +1,38 @@
 import {
+  Box,
+  Center,
   Group,
   LoadingOverlay,
-  MantineTheme,
-  Progress,
   ScrollArea,
   Stack,
   Text,
 } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useContext, useEffect } from "react";
-import {
-  RiCompassFill,
-  RiFundsFill,
-  RiMedalFill,
-  RiShieldStarFill,
-  RiTodoFill,
-} from "react-icons/ri";
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate, useLocation, useParams } from "react-router-dom";
 import { APIClient, Method } from "../../api/client";
 import { ApiError } from "../../api/errors";
+import { AvatarProgress } from "../../components/Profile/AvatarProgress";
+import { RanksTabs } from "../../components/RanksTabs";
+import { Reward } from "../../components/Reward";
 import { AccessDeniedModal } from "../../layouts/AccessDeniedModal";
 import { IReward } from "../../models/rewards";
+import { IUser } from "../../models/user";
 import { HeaderContext } from "../../utils/headerContext";
 
 const QuestProfile = () => {
   const location = useLocation() as any;
   const client = new APIClient();
   const [, setHeaderText] = useContext(HeaderContext);
+  const { userId } = useParams();
 
-  const {
-    isLoading,
-    error,
-    data: rewards,
-  } = useQuery<IReward[]>(
-    ["rewards", localStorage.getItem("doableId")!],
-    () => {
-      const doableId = localStorage.getItem("doableId")!;
-      return client.rewards(Method.GET, doableId);
-    }
-  );
+  const { isLoading, error, data } = useQuery<{
+    user: IUser;
+    rewards: IReward[];
+  }>(["users", userId], () => client.singleUser(Method.GET, userId!));
 
-  const getRewardIcon = (reward: IReward) => {
-    switch (reward.type.toLowerCase()) {
-      case "tasks":
-        return RiTodoFill;
-      case "party":
-        if (reward.value === 0) {
-          return RiCompassFill;
-        }
-        return RiMedalFill;
-      default:
-        return RiFundsFill;
-    }
-  };
+  const user = data?.user;
+  const rewards = data?.rewards;
 
   const isAccessError = useCallback(
     () => (error ? new ApiError(error).code === 403 : false),
@@ -60,7 +40,7 @@ const QuestProfile = () => {
   );
 
   useEffect(() => {
-    setHeaderText("Well well, aren't they beautiful");
+    setHeaderText("Will you be the one to find the Zest");
   }, [setHeaderText]);
 
   if (error) {
@@ -85,101 +65,45 @@ const QuestProfile = () => {
         }}
       />
       <AccessDeniedModal visible={isAccessError()} />
-      <ScrollArea
+      <Stack
+        justify="space-between"
         style={{
           height: "100%",
+          padding: "20px",
         }}
-        type="hover"
       >
-        <Group
-          align="flex-start"
-          style={{
-            padding: "20px",
-          }}
-        >
-          {rewards &&
-            rewards.map((reward) => {
-              const getDifficultyColor = (theme: MantineTheme) => {
-                switch (reward.difficulty) {
-                  case "gold":
-                    return theme.colors.yellow[6];
-                  case "silver":
-                    return theme.colors.blue[2];
-                  case "bronze":
-                    return theme.colors.orange[6];
-                  default:
-                    return theme.colors.gray[6];
-                }
-              };
-              const getProgressColor = (theme: MantineTheme) =>
-                reward.progress === 100
-                  ? theme.colors.gray[9]
-                  : theme.colors.gray[8];
-              return (
-                <Stack
-                  align="stretch"
-                  key={reward.rewardId}
-                  sx={(theme) => ({
-                    marginRight: "50px",
-                    height: "300px",
-                    width: "300px",
-                    textAlign: "center",
-                    padding: "20px",
-                    boxSizing: "border-box",
-                    borderRadius: "8px",
-                    boxShadow:
-                      "0 1px 3px rgb(0 0 0 / 5%), rgb(0 0 0 / 5%) 0px 10px 15px -5px, rgb(0 0 0 / 4%) 0px 7px 7px -5px",
-                    borderWidth: "1px",
-                    borderStyle: "solid",
-                    borderColor: getProgressColor(theme),
-                    backgroundColor: getProgressColor(theme),
-                    justifyContent: "space-between",
-                    ":hover": {
-                      scale: "1.05",
-                    },
-                    color:
-                      reward.progress === 100
-                        ? getDifficultyColor(theme)
-                        : theme.colors.gray[6],
-                  })}
-                >
-                  <Progress
-                    radius="xl"
-                    size="xl"
-                    value={reward.progress}
-                    label={reward.progress + "%"}
-                    styles={(theme) => ({
-                      root: {
-                        backgroundColor: theme.colors.gray[6],
-                      },
-                      label: {
-                        color: theme.colors.gray[9],
-                      },
-                    })}
-                  />
-                  {getRewardIcon(reward)({
-                    size: 120,
-                    style: { alignSelf: "center" },
-                  })}
-                  <Text weight={500}>{reward.title}</Text>
-                  <Text size="xs" weight={300}>
-                    {reward.description}
-                  </Text>
-                  <Group
-                    noWrap
-                    sx={(theme) => ({
-                      color: getDifficultyColor(theme),
-                      justifyContent: "space-between",
-                    })}
-                  >
-                    <RiShieldStarFill size={20} />
-                    <Text>{reward.popularity}</Text>
-                  </Group>
-                </Stack>
-              );
-            })}
+        <Text style={{ alignSelf: "center" }} size={50} weight="bold">
+          The Quest for Zest
+        </Text>
+        <Text mt={-20} style={{ alignSelf: "center" }} size="xs">
+          written by {user?.name} {user?.surname}
+        </Text>
+        <Group align="stretch" noWrap style={{ flexGrow: 1 }}>
+          <Box style={{ flexGrow: 1 }}>
+            <RanksTabs user={user} />
+          </Box>
+          <Center style={{ width: "30%", minWidth: "30%" }}>
+            <AvatarProgress
+              sx={(theme) => ({
+                "circle:first-of-type": {
+                  stroke: theme.colors.gray[6],
+                  strokeOpacity: 0.7,
+                },
+              })}
+              user={user}
+            />
+          </Center>
         </Group>
-      </ScrollArea>
+
+        <ScrollArea>
+          <Group noWrap align="flex-start" style={{ padding: "20px" }}>
+            {rewards &&
+              rewards
+                .filter((r) => r.progress >= 100)
+                .map((r) => <Reward key={r.rewardId} reward={r} />)}
+          </Group>
+        </ScrollArea>
+      </Stack>
     </>
   );
 };

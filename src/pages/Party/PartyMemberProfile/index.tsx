@@ -16,7 +16,8 @@ export const PartyMemberProfile = ({ user }: { user?: IUser }) => {
           user={user}
           sx={(theme) => ({
             "circle:first-of-type": {
-              stroke: theme.colors.gray[8],
+              stroke: theme.colors.gray[9],
+              strokeOpacity: 0.7,
             },
           })}
         />
