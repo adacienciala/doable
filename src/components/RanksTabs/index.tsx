@@ -177,14 +177,12 @@ export const RanksTabs = ({ user }: { user: IUser }) => {
             {story}
           </Title>
         }
-        centered
         radius={20}
         overlayBlur={5}
         size="80%"
         styles={(theme) => ({
           modal: {
             background: "#ffffff4c",
-            height: "90%",
             color: "white",
           },
           title: { width: "100%" },
