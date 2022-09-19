@@ -53,10 +53,10 @@ const QuestProfile = () => {
     }
   }
 
-  return (
-    <>
+  if (!user || isLoading) {
+    return (
       <LoadingOverlay
-        visible={isLoading}
+        visible={true}
         overlayOpacity={0.8}
         style={{
           width: "100%",
@@ -64,6 +64,11 @@ const QuestProfile = () => {
           position: "relative",
         }}
       />
+    );
+  }
+
+  return (
+    <>
       <AccessDeniedModal visible={isAccessError()} />
       <Stack
         justify="space-between"
@@ -76,11 +81,11 @@ const QuestProfile = () => {
           The Quest for Zest
         </Text>
         <Text mt={-20} style={{ alignSelf: "center" }} size="xs">
-          written by {user?.name} {user?.surname}
+          written for {user?.name} {user?.surname}
         </Text>
         <Group align="stretch" noWrap style={{ flexGrow: 1 }}>
           <Box style={{ flexGrow: 1 }}>
-            <RanksTabs user={user} />
+            <RanksTabs user={user!} />
           </Box>
           <Center style={{ width: "30%", minWidth: "30%" }}>
             <AvatarProgress
