@@ -98,8 +98,38 @@ const rankStories = {
       <p>And then your friend disappeared.</p>
     </div>
   ),
-  [RankName.Sergeant]: (name: string) =>
-    `You called your friend but the signal was weak. Will you ever see them again? Will you manage to find the Zest and save the city?`,
+  [RankName.Sergeant]: (name: string) => (
+    <div>
+      <p>
+        After so many day, weeks, maybe even months - it's hard for you to tell
+        - you finally did it. You tracked down the Zest. It was tricky, to be
+        fair. Everyone's Zest is different and only you could find your own.
+      </p>
+      <p>
+        You managed to get the Zest. How did you know? Because you went back to
+        your human form. Your friend turned out to be teleported by Kirke away
+        from you - she does not like cheaters. People from your city are all
+        safe and sound. <b>You saved the day!</b>
+      </p>
+      <p>
+        What drove you to organize your workload? What motivated you day and
+        night to finish those pesky tasks? Was that because of your party
+        members? Maybe you wanted to collect all the rewards there are? Or maybe
+        - just maybe - you wanted to know how this story ends, what is this
+        weird Zest of Life.
+      </p>
+      <p>
+        Well, we can't tell your what's your zest in life. But you can tell{" "}
+        <b>us</b>! Share you journey and insights on our social media.
+      </p>
+      <p>
+        What's left, you might ask. And we dare to answer. If this way of
+        working got you so far, maybe you could cotinue. Or reset your journey
+        and get to know a completely different story. It's entirely up to you.
+        Good luck!
+      </p>
+    </div>
+  ),
 };
 
 export const RanksTabs = ({
