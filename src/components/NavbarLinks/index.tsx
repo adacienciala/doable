@@ -6,9 +6,11 @@ import { Link } from "react-router-dom";
 
 export const NavbarLinks = ({
   activePage,
+  partyId,
   ...props
 }: {
   activePage: string;
+  partyId?: string;
   [x: string]: any;
 }) => {
   const data = [
@@ -30,7 +32,7 @@ export const NavbarLinks = ({
     {
       text: "party",
       icon: RiCompass3Line,
-      to: "/party",
+      to: partyId ? `/party/${partyId}` : "/party",
     },
     {
       text: "challenges",

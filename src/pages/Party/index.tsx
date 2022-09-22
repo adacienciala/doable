@@ -30,7 +30,12 @@ import ReactJoyride, {
   STATUS,
   StoreHelpers,
 } from "react-joyride";
-import { Navigate, useLocation } from "react-router-dom";
+import {
+  Navigate,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import { APIClient, Method, PartyExtended } from "../../api/client";
 import { ApiError } from "../../api/errors";
 import { Chat } from "../../containers/Chat";
@@ -53,13 +58,12 @@ import {
   TourPageProps,
   tutorialSteps,
 } from "../../utils/joyride";
-import NoParty from "./NoParty";
 import { PartyMemberProfile } from "./PartyMemberProfile";
 
 const Party = ({ tourStart, setTourStart }: TourPageProps) => {
   const location = useLocation() as any;
   const client = new APIClient();
-  const [partyId, setPartyId] = useState(localStorage.getItem("partyId") ?? "");
+  const { partyId } = useParams();
   const [projectMutated, setProjectMutated] = useState("");
   const [addProjectDrawerOpened, setAddProjectDrawerOpened] = useState(false);
   const [editProjectDrawerOpened, setEditProjectDrawerOpened] = useState(false);
@@ -69,6 +73,7 @@ const Party = ({ tourStart, setTourStart }: TourPageProps) => {
   const { classes } = projectCardStyles();
   const [, setHeaderText] = useContext(HeaderContext);
   const [, , setLoggedIn] = useContext(ChatContext);
+  const navigate = useNavigate();
 
   // -- JOYRIDE
 
@@ -152,9 +157,9 @@ const Party = ({ tourStart, setTourStart }: TourPageProps) => {
     data: party,
   } = useQuery<PartyExtended>(
     ["party", partyId],
-    () => client.singleParty(Method.GET, partyId),
+    () => client.singleParty(Method.GET, partyId!),
     {
-      enabled: partyId !== "",
+      enabled: partyId !== undefined && partyId !== "",
     }
   );
 
@@ -200,8 +205,8 @@ const Party = ({ tourStart, setTourStart }: TourPageProps) => {
 
   const handleLeaveParty = useCallback(() => {
     setEditPartyDrawerOpened(false);
-    setPartyId("");
     setLoggedIn(false);
+    navigate(`/`, { replace: true });
   }, []);
 
   const handleDeleteProjectModalOpen = useCallback((projectId: string) => {
@@ -237,10 +242,6 @@ const Party = ({ tourStart, setTourStart }: TourPageProps) => {
     if (errObj.code === 500) {
       return <Navigate to="/500" state={{ from: location, errorMsg: error }} />;
     }
-  }
-
-  if (!partyId) {
-    return <NoParty onJoinParty={setPartyId} />;
   }
 
   return (
@@ -300,7 +301,7 @@ const Party = ({ tourStart, setTourStart }: TourPageProps) => {
         onClose={handleEditProjectDrawerClosed}
       />
       <ProjectAddDrawer
-        data={{ party: [partyId] }}
+        data={{ party: [partyId!] }}
         opened={addProjectDrawerOpened}
         onClose={handleAddProjectDrawerClosed}
       />

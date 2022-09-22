@@ -92,7 +92,7 @@ const MainLayout: React.FC<Props> = ({ page, noTour, children }) => {
             })}
           >
             <Profile data-tut="profile" user={user} />
-            <NavbarLinks activePage={page} />
+            <NavbarLinks partyId={user?.partyId} activePage={page} />
           </Stack>
           <NavbarFooter logOutHandler={logOut} />
         </Group>

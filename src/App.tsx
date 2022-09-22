@@ -12,6 +12,7 @@ import Challenges from "./pages/Challenges";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import Party from "./pages/Party";
+import NoParty from "./pages/Party/NoParty";
 import Projects from "./pages/Projects";
 import ProjectPage from "./pages/Projects/ProjectPage";
 import QuestProfile from "./pages/QuestProfile";
@@ -67,6 +68,16 @@ function App() {
           />
           <Route
             path="/party"
+            element={
+              <RequireAuth>
+                <MainLayout page="party">
+                  <NoParty />
+                </MainLayout>
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/party/:partyId"
             element={
               <RequireAuth>
                 <MainLayout page="party">

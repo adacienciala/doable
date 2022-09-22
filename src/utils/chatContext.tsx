@@ -9,39 +9,48 @@ export const ChatContext = createContext<
 >([[], (value: string) => {}, () => {}]);
 
 const socket = io(process.env.REACT_APP_DOABLE_API!);
-const DEBUG = true;
+const DEBUG = false;
 
 export const ChatContextProvider = (props: any) => {
   const [messages, setMessages] = useState<IMessage[]>([]);
-  const [isConnected, setIsConnected] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [, setIsConnected] = useState(false);
+  const [, setIsAuthenticated] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
   const doableId = localStorage.getItem("doableId")!;
-  const partyId = localStorage.getItem("partyId")!;
+  const partyId =
+    localStorage.getItem("partyId") ??
+    window.location.pathname.split("/").pop();
+  console.log("partyId", partyId);
 
-  useEffect(() => {
-    if (DEBUG)
-      console.log(
-        "[ChatContext] isConnected",
-        isConnected,
-        "isAuth",
-        isAuthenticated
-      );
-    if (isConnected && !isAuthenticated) {
-      if (DEBUG) console.log("=> try to auth");
-      socket?.emit("authenticate", {
-        token: localStorage.getItem("token")!,
-        tokenSelector: localStorage.getItem("tokenSelector")!,
-      });
-    }
-  }, [isConnected, isAuthenticated]);
+  // useEffect(() => {
+  //   if (DEBUG)
+  //     console.log(
+  //       "[ChatContext] isConnected",
+  //       isConnected,
+  //       "isAuth",
+  //       isAuthenticated
+  //     );
+  //   if (isConnected && !isAuthenticated) {
+  //     if (DEBUG) console.log("=> try to auth");
+  //     socket?.emit("authenticate", {
+  //       token: localStorage.getItem("token")!,
+  //       tokenSelector: localStorage.getItem("tokenSelector")!,
+  //     });
+  //   }
+  // }, [isConnected, isAuthenticated]);
 
   useEffect(() => {
     if (DEBUG) console.log("[ChatContext] messages effect", messages.length);
   }, [messages]);
 
+  const getAuthInfo = () => ({
+    token: localStorage.getItem("token")!,
+    tokenSelector: localStorage.getItem("tokenSelector")!,
+    partyId: partyId,
+  });
+
   useEffect(() => {
-    const shouldReconnect = loggedIn || doableId;
+    const shouldReconnect = loggedIn || (doableId && partyId);
     if (shouldReconnect && !socket.hasListeners("connection")) {
       if (DEBUG) console.log("[ChatContext] setting listeners");
 
@@ -50,6 +59,8 @@ export const ChatContextProvider = (props: any) => {
       socket.on("connection", () => {
         if (DEBUG) console.log("[connection]");
         setIsConnected(true);
+        if (DEBUG) console.log("=> try auth");
+        socket?.emit("authenticate", getAuthInfo());
       });
 
       socket.on("disconnect", () => {
@@ -70,8 +81,8 @@ export const ChatContextProvider = (props: any) => {
         setIsAuthenticated(true);
       });
 
-      socket.on("auth denied", () => {
-        if (DEBUG) console.log("[auth denied]");
+      socket.on("auth denied", (data: any) => {
+        if (DEBUG) console.log("[auth denied]", data);
         setIsAuthenticated(false);
       });
 
@@ -105,16 +116,17 @@ export const ChatContextProvider = (props: any) => {
     }
 
     return () => {
+      if (DEBUG) console.log("[ChatContext] disconnect");
       socket?.off();
       socket?.disconnect();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loggedIn, doableId]);
+  }, [loggedIn, partyId]);
 
   const sendMessage = (value: string) => {
     const newMessage: IMessage = {
       message: value,
-      partyId: partyId,
+      partyId: partyId!,
       userId: doableId,
       date: new Date(),
     };

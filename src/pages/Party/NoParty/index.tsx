@@ -17,7 +17,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { APIClient, Method } from "../../../api/client";
 import { ApiError } from "../../../api/errors";
 import { AccessDeniedModal } from "../../../layouts/AccessDeniedModal";
@@ -56,10 +56,11 @@ const PartyItem = forwardRef<HTMLDivElement, PartyItemProps>(
   )
 );
 
-export default function NoParty({ onJoinParty }: { onJoinParty: any }) {
+export default function NoParty() {
   const location = useLocation() as any;
   const client = new APIClient();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const [chosenParty, setChosenParty] = useState<string | null>(null);
   const [data, setData] = useState<PartyItemProps[]>([]);
@@ -82,7 +83,7 @@ export default function NoParty({ onJoinParty }: { onJoinParty: any }) {
       onSuccess: (data) => {
         queryClient.invalidateQueries(["parties"]);
         queryClient.invalidateQueries(["user"]);
-        onJoinParty(data.partyId);
+        navigate(`/party/${data.partyId}`, { replace: false });
       },
     }
   );
@@ -96,7 +97,10 @@ export default function NoParty({ onJoinParty }: { onJoinParty: any }) {
       onSuccess: (data) => {
         queryClient.invalidateQueries(["parties"]);
         queryClient.invalidateQueries(["user"]);
-        onJoinParty(data.party.partyId);
+        setTimeout(
+          () => navigate(`/party/${data.party.partyId}`, { replace: false }),
+          400
+        );
       },
     }
   );
