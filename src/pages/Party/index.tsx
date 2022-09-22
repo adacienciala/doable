@@ -99,6 +99,7 @@ const Party = ({ tourStart, setTourStart }: TourPageProps) => {
         })
       );
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setTourStart]);
 
   useEffect(() => {
@@ -106,6 +107,7 @@ const Party = ({ tourStart, setTourStart }: TourPageProps) => {
       ...prev,
       run: tourStart || hadTutorial.party === false,
     }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tourStart]);
 
   const helpers = useRef<StoreHelpers>();
@@ -207,6 +209,7 @@ const Party = ({ tourStart, setTourStart }: TourPageProps) => {
     setEditPartyDrawerOpened(false);
     setLoggedIn(false);
     navigate(`/`, { replace: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleDeleteProjectModalOpen = useCallback((projectId: string) => {
@@ -228,6 +231,7 @@ const Party = ({ tourStart, setTourStart }: TourPageProps) => {
   useEffect(() => {
     cleanNotifications();
     setLoggedIn(!!partyId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

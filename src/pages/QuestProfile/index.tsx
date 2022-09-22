@@ -89,6 +89,7 @@ const QuestProfile = ({ tourStart, setTourStart }: TourPageProps) => {
         })
       );
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setTourStart]);
 
   const helpers = useRef<StoreHelpers>();

@@ -58,6 +58,7 @@ const Dashboard = ({ tourStart, setTourStart }: TourPageProps) => {
       ...prev,
       run: tourStart || hadTutorial.dashboard === false,
     }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tourStart]);
 
   useEffect(() => {
@@ -73,6 +74,7 @@ const Dashboard = ({ tourStart, setTourStart }: TourPageProps) => {
         );
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setTourStart]);
 
   const helpers = useRef<StoreHelpers>();

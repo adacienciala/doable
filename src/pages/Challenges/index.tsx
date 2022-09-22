@@ -173,6 +173,7 @@ const Challenges = ({ tourStart, setTourStart }: TourPageProps) => {
       ...prev,
       run: tourStart || hadTutorial.challenges === false,
     }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tourStart]);
 
   useEffect(() => {
@@ -186,6 +187,7 @@ const Challenges = ({ tourStart, setTourStart }: TourPageProps) => {
         })
       );
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setTourStart]);
 
   const helpers = useRef<StoreHelpers>();

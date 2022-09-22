@@ -87,6 +87,7 @@ const Projects = ({ tourStart, setTourStart }: TourPageProps) => {
         })
       );
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setTourStart]);
 
   useEffect(() => {
@@ -94,6 +95,7 @@ const Projects = ({ tourStart, setTourStart }: TourPageProps) => {
       ...prev,
       run: tourStart || hadTutorial.projects === false,
     }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tourStart]);
 
   const helpers = useRef<StoreHelpers>();
